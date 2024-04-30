@@ -1,0 +1,49 @@
+---
+import ExperienceComponent from './Experience.astro';
+import {IconType} from './TecnologyBox.astro';
+
+const EXPERIENCES: {time?: string
+	title: string
+	company: string
+    tecnologies: IconType[]
+	description: string
+    icon?: any} [] = [{
+        company: "Inxeption",
+        description: "Desarrollar las nuevas funcionalidades de los diferentes aplicativos internos. Esto implica la creación de APIs, el diseño y desarrollo de las aplicacioens web, y la gestión eficiente de las bases de datos para garantizar un rendimiento óptimo",
+        title: "Desarrollador Full Stack",
+        time: "Jun. 2019 - Actualmente",
+        tecnologies: ["nodejs","react","prisma","graphql"]
+    },{
+        company: "Tech and Solve",
+        title: "Desarrollador Full Stack",
+        description: `
+        
+        Diseño y Desarrollo de software utilizando .NET Core y React, aplicando los principios SOLID y TDD dentro del marco de SCRUM. 
+        Además, Creación e implementación de estrategias DevOps utilizando plataformas en la nube como Azure DevOps. 
+        Desarrollo de múltiples microservicios utilizando tecnologías como RabbitMQ, AKS, Azure Cloud, Pipelines e infraestructura como código con Terraform
+        `,
+        time: "Jun. 2019 - May. 2021",
+        tecnologies: ["csharp","azure", "devops"]
+    },{
+        company: "DELOIM",
+        description: `
+        Diseño y desarrollo de aplicaciones web para los principales clientes de los sectores comercial, financiero y tecnológico utilizando .Net MVC, WebApi, Angular y SQL Server.
+        Automatización de tareas a través del flujos de trabajo y el motor de decisiones utilizando la plataforma camunda.
+        Diseño y desarrollo de aplicaciones móviles usando la plataforma Xamarin`,
+        title: "Desarrollador Full Stack",
+        time: "Oct. 2016 - Jun. 2019",
+        tecnologies: ["csharp","terraform","angular", "azure", "aws", "xamarin"]
+    },{
+        company: "Aplisalud",
+        description: "Desarrollo del sistema de gestión utilizado para auditorías de salud en los principales hospitales del país",
+        title: "Analista de Desarrollo",
+        time:"Dic. 2015 - Oct. 2016",
+        tecnologies: ["csharp"]
+    }];
+---
+
+<ol class="relative border-s border-gray-200 dark:border-gray-700">
+    {EXPERIENCES.map(x=> (
+        <ExperienceComponent company={x.company} description={x.description} title={x.title} time={x.time} tecnologies={x.tecnologies}></ExperienceComponent>
+    ))}
+</ol>

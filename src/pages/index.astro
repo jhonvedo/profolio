@@ -1,0 +1,72 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Experiences from "../components/Experiences.astro";
+import BriefCaseIcon from "../components/icons/briefcase.astro";
+import CodeIcon from "../components/icons/code.astro";
+import Social from "../components/Social.astro";
+import Projects from "../components/Projects.astro";
+---
+
+<Layout title="Jhon Acevedo">
+    <main class="px-4 md:w-3/5 w-full" id="aboutme">
+        
+        <nav class="fixed w-full z-20 top-0 start-0 bg-[#182838]">
+            <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+                <a class="flex items-center space-x-3 rtl:space-x-reverse"></a>
+                <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse"> </div>
+                
+                <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
+                    <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
+                        <li class="px-2"><a href="#aboutme">Sobre mi</a></li>
+                        <li class="px-2"><a href="#experience">Experiencia</a></li>
+                        <li class="px-2"><a href="#project">Proyectos</a></li>
+                        <!-- <li class="px-2"><a href="#contact">Contacto</a></li> -->
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="mt-28">
+            <p class="font-bold text-lg leading-none">¡Hola! Soy</p>
+            <div class="font-extrabold pt-1 pb-1">
+                <span class="text-4xl"><span class="pr-2 text-action">{"{"}</span>Jhon Acevedo<span class="pl-2 text-action">{"}"}</span></span>
+                <div class="font-light text-pretty pt-2">
+                    Ingeniero de sistemas con más de 8 años de experiencia como <span class="text-action">Desarrollador Full Stack</span>, ubicado en <span class="text-green-500/80">Medellin, Colombia</span>. Diseño y codifico cosas
+                    maravillosamente simples, y me encanta lo que hago.
+                </div>
+            </div>           
+
+            <div class="mt-4 md:flex hidden">
+                <Social/>
+            </div>
+
+            <div class="pt-16" id="experience">
+                <h3 class="flex items-center mb-6 text-2xl font-semibold gap-x-3">
+                    <!-- <BriefCaseIcon class="size-7" /> -->
+                    Experiencia
+                </h3>
+                <Experiences />
+            </div>
+
+            <div class="pt-16">
+                <h3 id="project" class="flex items-center mb-6 text-2xl font-semibold gap-x-3">
+                    <!-- <CodeIcon class="size-7" /> -->                
+                    Proyectos
+                </h3>
+                <Projects/>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        main {
+            margin: auto;
+            padding: 1rem;
+            /* width: 800px; */
+            max-width: calc(100% - 2rem);
+            color: white;
+            font-size: 20px;
+            line-height: 1.6;
+        }
+    </style>
+</Layout>

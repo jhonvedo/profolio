@@ -1,0 +1,68 @@
+---
+import generateGuid from '../utils/generateGuid';
+import NodeIcon from './icons/nodejs.astro';
+import CSharpIcon from './icons/c-sharp.astro';
+import TerraformIcon from './icons/terraform.astro';
+import AzureIcon from './icons/azure.astro';
+import AngularSingleIcon from './icons/angular-single.astro';
+import CSharpColorIcon from './icons/c-sharp-color.astro';
+import NodeNameIcon from './icons/nodejs-name.astro';
+import ReactIcon from './icons/react.astro';
+import KubernetesIcon from './icons/kubernetes.astro';
+import DockerIcon from './icons/docker.astro';
+import DevOpsIcon from './icons/azure-devops.astro';
+import AwsIcon from './icons/aws.astro';
+import PrismaIcon from './icons/prisma.astro';
+import GraphqlIcon from './icons/graphql.astro';
+import XamarinIcon from './icons/xamarin.astro';
+
+export type IconType = "nodejs" | "react" | "docker" | "csharp" | "azure" | "terraform" | "kubernetes" | "angular" | "devops" | "aws" | "prisma" | "graphql" | "xamarin";
+
+interface Props {
+    type: IconType   
+}
+
+const { type } = Astro.props;
+let id = generateGuid();
+
+const iconDetail: {[id: string]:{name:string, tooltip: string}} = {
+    "nodejs" : {name:"NodeJs" , tooltip:"nodejs" },
+    "react" : {name:"React" , tooltip:"react" },
+    "docker" : {name:"Docker" , tooltip:"docker" },
+    "csharp" : {name:"C#" , tooltip:"csharp" },
+    "azure" : {name:"Azure" , tooltip:"azure" },
+    "terraform" : {name:"Terraform" , tooltip:"terraform" },
+    "kubernetes" : {name:"Kubernetes" , tooltip:"kubernetes" },
+    "angular" : {name:"Angular" , tooltip:"angular" },
+    "devops": {name:"Azure DevOps", tooltip:"devops"},
+    "aws": {name:"AWS", tooltip:"amazon Web Services"},
+    "prisma": {name:"Prisma", tooltip:"prisma"},
+    "graphql": {name:"Graphql", tooltip:"graphql"},
+    "xamarin": {name:"Xamarin", tooltip:"xamarin"},
+}
+
+
+---
+
+
+<span class="bg-white/20 py-2 rounded-lg px-2 flex items-center space-x-2" data-tooltip-target={`tooltip-${id}`}>
+    { type === "azure" && <AzureIcon class="size-5"/>}
+    { type === "angular" && <AngularSingleIcon class="size-5 text-angular"/>}
+    { type === "csharp" && <CSharpColorIcon class="size-5"/>}
+    { type === "nodejs" && <NodeIcon class="size-5 text-node"/>}
+    { type === "terraform" && <TerraformIcon class="size-5"/>}
+    { type === "react" && <ReactIcon class="size-5"/>}
+    { type === "docker" && <DockerIcon class="size-5"/>}
+    { type === "kubernetes" && <KubernetesIcon class="size-5"/>}
+    { type === "devops" && <DevOpsIcon class="size-5"/>}
+    { type === "aws" && <AwsIcon class="size-5"/>}
+    { type === "prisma" && <PrismaIcon class="size-5"/>}
+    { type === "graphql" && <GraphqlIcon class="size-5"/>}
+    { type === "xamarin" && <XamarinIcon class="size-5"/>}
+    <span class="text-sm">{iconDetail[type].name}</span>
+</span>
+
+<div id={`tooltip-${id}`} role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+    {iconDetail[type].tooltip}
+    <div class="tooltip-arrow" data-popper-arrow></div>
+</div>
