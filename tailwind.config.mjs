@@ -6,7 +6,7 @@ export default {
             colors: {
                 'node': '#539E43',
                 'angular': '#E23237',
-                'action': '#c27803',
+                'action': '#ff9c00',
                 'second-action': '#c27803'
             }
         },
