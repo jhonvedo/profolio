@@ -8,34 +8,34 @@ import CheckIcon from "./icons/check.astro";
 let email = "contacto@jhonacevedo.com";
 ---
 
-<div class="flex items-center space-x-1">
+<div class="flex space-x-1">
     <div class="flex items-center space-x-0">
-        <p id="emal-text" class="second-font py-2 px-4 bg-white/20 text-white sm:w-auto truncate">{email}</p>
-        <span id="copy-btn" class="inline-block bg-white/20 px-2 py-2 cursor-pointer" 
+        <p id="emal-text" class="second-font text-sm md:text-2xl py-1 px-2 md:px-4 md:py-2 bg-white/20 text-white md:w-auto truncate">{email}</p>
+        <span id="copy-btn" class="inline-block bg-white/20 px-1 py-1 md:px-2 md:py-2 cursor-pointer" 
             data-copy-to-clipboard-target="npm-install-copy-button"
             data-tooltip-target="tooltip-copy-npm-install-copy-button">
-            <CopyIcon id="default-icon" class="size-8" />
-            <CheckIcon id="success-icon" class="size-8 text-green-500 hidden" />
+            <CopyIcon id="default-icon" class="size-5 md:size-8" />
+            <CheckIcon id="success-icon" class="size-5 md:size-8 text-green-500 hidden" />
             <div
                 id="tooltip-copy-npm-install-copy-button"
                 role="tooltip"
-                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"            >
+                class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
                 <span id="default-tooltip-message">Copiar al portapapeles</span>
                 <span id="success-tooltip-message" class="hidden">¡Copiado!</span>
                 <div class="tooltip-arrow" data-popper-arrow></div>
             </div>
 
         </span>
-        <a href={`mailto:${email}`} target="_blank" class="inline-block bg-white/20 px-2 py-2">
-            <SendIcon class="size-8" />
+        <a href={`mailto:${email}`} target="_blank" class="inline-block bg-white/20 px-1 py-1 md:px-2 md:py-2">
+            <SendIcon class="size-5 md:size-8" />
         </a>
     </div>
 
-    <a href="https://www.linkedin.com/in/jhonvedo/" target="_blank" class="inline-block bg-white/20 px-2 py-2">
-        <LinkedinIcon class="size-8" />
+    <a href="https://www.linkedin.com/in/jhonvedo/" target="_blank" class="inline-block bg-white/20 px-1 py-1 md:px-2 md:py-2">
+        <LinkedinIcon class="size-5 md:size-8" />
     </a> 
-    <a href="https://github.com/jhonvedo" target="_blank" class="inline-block bg-white/20 px-2 py-2">
-        <GithubIcon class="size-8" />
+    <a href="https://github.com/jhonvedo" target="_blank" class="inline-block bg-white/20 px-1 py-1 md:px-2 md:py-2">
+        <GithubIcon class="size-5 md:size-8" />
     </a>   
 </div>
 

@@ -19,7 +19,7 @@ import XamarinIcon from './icons/xamarin.astro';
 export type IconType = "nodejs" | "react" | "docker" | "csharp" | "azure" | "terraform" | "kubernetes" | "angular" | "devops" | "aws" | "prisma" | "graphql" | "xamarin";
 
 interface Props {
-    type: IconType   
+    type: IconType
 }
 
 const { type } = Astro.props;
@@ -45,7 +45,7 @@ const iconDetail: {[id: string]:{name:string, tooltip: string}} = {
 ---
 
 
-<span class="bg-white/20 py-2 rounded-lg px-2 flex items-center space-x-2" data-tooltip-target={`tooltip-${id}`}>
+<span class="bg-white/20 py-2 rounded-lg px-2 my-2 mx-1 flex items-center space-x-2" data-tooltip-target={`tooltip-${id}`}>
     { type === "azure" && <AzureIcon class="size-5"/>}
     { type === "angular" && <AngularSingleIcon class="size-5 text-angular"/>}
     { type === "csharp" && <CSharpColorIcon class="size-5"/>}

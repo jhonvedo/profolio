@@ -1,61 +1,79 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Experiences from "../components/Experiences.astro";
-import BriefCaseIcon from "../components/icons/briefcase.astro";
-import CodeIcon from "../components/icons/code.astro";
 import Social from "../components/Social.astro";
-import Projects from "../components/Projects.astro";
+import AboutMe from "../components/AboutMe.astro";
+import Profile from "../components/Profile.astro";
 ---
 
 <Layout title="Jhon Acevedo">
-    <main class="px-4 md:w-3/5 w-full" id="aboutme">
+    <main class="px-4 lg:w-3/5 mx-auto w-full" id="home">
         
         <nav class="fixed w-full z-20 top-0 start-0 bg-[#182838]">
             <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <a class="flex items-center space-x-3 rtl:space-x-reverse"></a>
-                <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse"> </div>
+                <div class="flex lg:order-2 space-x-3 lg:space-x-0 rtl:space-x-reverse"> </div>
                 
-                <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
-                    <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
-                        <li class="px-2"><a href="#aboutme">Sobre mi</a></li>
+                <div class="items-center justify-between hidden w-full lg:flex lg:w-auto lg:order-1" id="navbar-sticky">
+                    <ul class="flex flex-col p-4 lg:p-0 mt-4 font-medium border rounded-lg lg:space-x-8 rtl:space-x-reverse lg:flex-row lg:mt-0 lg:border-0">
+                        <li class="px-2"><a href="#home">Inicio</a></li>
+                        <li class="px-2"><a href="#aboutme">Sobre Mi</a></li>
                         <li class="px-2"><a href="#experience">Experiencia</a></li>
-                        <li class="px-2"><a href="#project">Proyectos</a></li>
-                        <!-- <li class="px-2"><a href="#contact">Contacto</a></li> -->
+                        <!-- <li class="px-2"><a href="#project">Proyectos</a></li> -->        
                     </ul>
                 </div>
             </div>
         </nav>
 
-        <div class="h-screen flex flex-col justify-center">
-            <p class="font-bold text-lg leading-none">¡Hola! Soy</p>
-            <div class="font-extrabold pt-1 pb-1">
-                <span class="text-4xl"><span class="pr-2 text-action">{"{"}</span>Jhon Acevedo<span class="pl-2 text-action">{"}"}</span></span>
-                <div class="font-light text-pretty pt-2">
-                    Ingeniero de sistemas con más de 8 años de experiencia como <span class="text-action">Desarrollador Full Stack</span>, ubicado en <span class="text-green-500/80">Medellin, Colombia</span>. Diseño y codifico cosas
-                    maravillosamente simples, y me encanta lo que hago.
+        <div class="mx-auto h-screen lg:w-9/12 min-w-min flex flex-col lg:items-center justify-center">
+            <Profile />
+            <!-- <div class="mb-4 flex items-center">
+                <div class="flex-shrink-0 hidden md:block lg:block xl:block">             
+                    <img src="public/img/picture.webp" alt="Profile image" class="w-40 h-40">
                 </div>
-            </div>           
-
-            <div class="mt-4">
-                <Social/>
+                <div class="font-bold pt-1 pb-1 ml-5">
+                    <img src="public/img/picture.webp" alt="Profile image" class="w-40 h-40 block md:hidden lg:hidden xl:hidden">
+                    <p class="lg:text-4xl text-2xl text-white second-font pb-3">Yo soy Jhon Acevedo.</p>
+                    <p class="lg:text-4xl text-2xl text-white second-font pb-3">Desarrollador Full stack</p>
+                    <p class="lg:text-4xl text-2xl text-white/60 second-font">Ubicado en Colombia</p>                
+                </div>
             </div>
+            <div class="font-extralight text-start mt-5">
+                <p class="text-start mt-5 text-pretty">
+                    Apasionado desarrollador con más de 8 años de experiencia creando servicios y aplicaciones web usando tecnologias en la nube.                
+                </p>
+                <p class="text-white/60 text-pretty">
+                    ¡Diseño y codifico cosas maravillosamente simples, y me encanta lo que hago.!
+                </p>
+            </div>
+
+            <div class="flex-shrink-0 mr-auto mt-7">
+                <Social/>
+            </div> -->
         </div>
 
-        <div class="pt-5" id="experience">
-            <h3 class="flex items-center mb-6 text-2xl font-semibold gap-x-3">
+        <div class="md:pt-16 mt-10 min-w-min lg:min-w-full mx-auto md:h-screen" id="aboutme">
+            <h3 class="flex items-center mb-6 text-2xl font-semibold gap-x-3 border-b-2 border-action md:border-b-0">              
+                Sobre Mi
+            </h3>
+            <AboutMe/>
+        </div>
+
+        <div class="md:pt-16 mt-10 min-w-min lg:min-w-full mx-auto" id="experience">
+            <h3 class="flex items-center mb-6 text-2xl font-semibold gap-x-3  border-b-2 border-action md:border-b-0">
                 <!-- <BriefCaseIcon class="size-7" /> -->
                 Experiencia
             </h3>
             <Experiences />
         </div>
 
-        <div class="pt-16">
-            <h3 id="project" class="flex items-center mb-6 text-2xl font-semibold gap-x-3">
-                <!-- <CodeIcon class="size-7" /> -->                
+        <!-- <div class="md:pt-16 mt-10">
+            <h3 id="project" class="flex items-center mb-6 text-2xl font-semibold gap-x-3  border-b-2 border-action md:border-b-0">
+                      
                 Proyectos
             </h3>
             <Projects/>
-        </div>
+        </div> -->
         
     </main>
 

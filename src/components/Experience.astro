@@ -17,18 +17,18 @@ const { title, description, time, company, tecnologies } = Astro.props;
 ---
 
 
-<li class="mb-10 ms-6">
-    <span class="absolute flex items-center justify-center w-6 h-6 bg-white rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
+<li class="mb-10 md:ms-6">
+    <span class="absolute hidden md:flex items-center justify-center w-6 h-6 bg-white rounded-full -start-3 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900">
        { tecnologies.includes("nodejs") && <NodeIcon class="size-5 text-black"/>}
        { tecnologies.includes("csharp") && <CSharpIcon class="size-5 text-black"/>}
           
     </span>
-    <h3 class="flex items-center mb-1 text-lg font-semibold text-action"> {title} </h3>
-    <time class="block mb-2 text-sm font-normal leading-none text-gray-400 dark:text-gray-500"><span class="text-white">{company}</span>  {time}</time>
+    <h3 class="flex items-center mb-1 text-xl lg:text-lg font-semibold text-action"> {title} </h3>
+    <time class="block mb-2 text-lg lg:text-sm font-normal leading-none text-gray-400 dark:text-gray-500"><span class="text-white">{company}</span>  {time}</time>
     <p class="my-4 text-base font-normal text-white text-pretty" set:html={description}></p>   
 
-    <div class="flex items-center space-x-4">
-        { tecnologies.map(x=> <TecnologyBox type={x}></TecnologyBox>)}  
+    <div class="flex flex-wrap items-center">
+        { tecnologies.map(x=> <TecnologyBox type={x}></TecnologyBox>)}        
     </div>    
     
 </li>

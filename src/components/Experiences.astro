@@ -42,7 +42,7 @@ const EXPERIENCES: {time?: string
     }];
 ---
 
-<ol class="relative border-s border-gray-200 dark:border-gray-700">
+<ol class="relative md:border-s md:border-gray-200 dark:border-gray-700">
     {EXPERIENCES.map(x=> (
         <ExperienceComponent company={x.company} description={x.description} title={x.title} time={x.time} tecnologies={x.tecnologies}></ExperienceComponent>
     ))}
