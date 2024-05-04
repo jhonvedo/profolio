@@ -1,10 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Experiences from "../components/Experiences.astro";
-import BriefCaseIcon from "../components/icons/briefcase.astro";
-import CodeIcon from "../components/icons/code.astro";
 import Social from "../components/Social.astro";
-import Projects from "../components/Projects.astro";
 ---
 
 <Layout title="Jhon Acevedo">
@@ -33,9 +30,9 @@ import Projects from "../components/Projects.astro";
                 </div>
                 <div class="font-bold pt-1 pb-1 ml-5">
                     <img src="public/img/picture.webp" alt="Profile image" class="w-40 h-40 block md:hidden lg:hidden xl:hidden">
-                    <p class="lg:text-4xl text-3xl text-white second-font pb-3">Yo soy Jhon Acevedo.</p>
-                    <p class="lg:text-4xl text-3xl text-white second-font pb-3">Desarrollador Full stack</p>
-                    <p class="lg:text-4xl text-3xl text-white/60 second-font">Ubicado en Colombia</p>                
+                    <p class="lg:text-4xl text-2xl text-white second-font pb-3">Yo soy Jhon Acevedo.</p>
+                    <p class="lg:text-4xl text-2xl text-white second-font pb-3">Desarrollador Full stack</p>
+                    <p class="lg:text-4xl text-2xl text-white/60 second-font">Ubicado en Colombia</p>                
                 </div>
             </div>
             <div class="font-extralight text-start mt-5">
@@ -52,7 +49,7 @@ import Projects from "../components/Projects.astro";
             </div>
         </div>
 
-        <div class="pt-5" id="experience">
+        <div class="pt-5 min-w-min lg:min-w-full mx-auto" id="experience">
             <h3 class="flex items-center mb-6 text-2xl font-semibold gap-x-3">
                 <!-- <BriefCaseIcon class="size-7" /> -->
                 Experiencia
@@ -60,13 +57,13 @@ import Projects from "../components/Projects.astro";
             <Experiences />
         </div>
 
-        <div class="pt-16">
+        <!-- <div class="pt-16">
             <h3 id="project" class="flex items-center mb-6 text-2xl font-semibold gap-x-3">
-                <!-- <CodeIcon class="size-7" /> -->                
+                      
                 Proyectos
             </h3>
             <Projects/>
-        </div>
+        </div> -->
         
     </main>
 
