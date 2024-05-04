@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import Experiences from "../components/Experiences.astro";
 import Social from "../components/Social.astro";
+import AboutMe from "../components/AboutMe.astro";
+import Profile from "../components/Profile.astro";
 ---
 
 <Layout title="Jhon Acevedo">
@@ -15,16 +17,17 @@ import Social from "../components/Social.astro";
                 <div class="items-center justify-between hidden w-full lg:flex lg:w-auto lg:order-1" id="navbar-sticky">
                     <ul class="flex flex-col p-4 lg:p-0 mt-4 font-medium border rounded-lg lg:space-x-8 rtl:space-x-reverse lg:flex-row lg:mt-0 lg:border-0">
                         <li class="px-2"><a href="#home">Inicio</a></li>
+                        <li class="px-2"><a href="#aboutme">Sobre Mi</a></li>
                         <li class="px-2"><a href="#experience">Experiencia</a></li>
-                        <li class="px-2"><a href="#project">Proyectos</a></li>
-                        <!-- <li class="px-2"><a href="#contact">Contacto</a></li> -->
+                        <!-- <li class="px-2"><a href="#project">Proyectos</a></li> -->        
                     </ul>
                 </div>
             </div>
         </nav>
 
-        <div class="flex flex-col lg:items-center justify-center mx-auto h-screen lg:w-9/12 min-w-min">
-            <div class="mb-4 flex items-center">
+        <div class="mx-auto h-screen lg:w-9/12 min-w-min flex flex-col lg:items-center justify-center">
+            <Profile />
+            <!-- <div class="mb-4 flex items-center">
                 <div class="flex-shrink-0 hidden md:block lg:block xl:block">             
                     <img src="public/img/picture.webp" alt="Profile image" class="w-40 h-40">
                 </div>
@@ -46,19 +49,26 @@ import Social from "../components/Social.astro";
 
             <div class="flex-shrink-0 mr-auto mt-7">
                 <Social/>
-            </div>
+            </div> -->
         </div>
 
-        <div class="pt-5 min-w-min lg:min-w-full mx-auto" id="experience">
-            <h3 class="flex items-center mb-6 text-2xl font-semibold gap-x-3">
+        <div class="md:pt-16 mt-10 min-w-min lg:min-w-full mx-auto md:h-screen" id="aboutme">
+            <h3 class="flex items-center mb-6 text-2xl font-semibold gap-x-3 border-b-2 border-action md:border-b-0">              
+                Sobre Mi
+            </h3>
+            <AboutMe/>
+        </div>
+
+        <div class="md:pt-16 mt-10 min-w-min lg:min-w-full mx-auto" id="experience">
+            <h3 class="flex items-center mb-6 text-2xl font-semibold gap-x-3  border-b-2 border-action md:border-b-0">
                 <!-- <BriefCaseIcon class="size-7" /> -->
                 Experiencia
             </h3>
             <Experiences />
         </div>
 
-        <!-- <div class="pt-16">
-            <h3 id="project" class="flex items-center mb-6 text-2xl font-semibold gap-x-3">
+        <!-- <div class="md:pt-16 mt-10">
+            <h3 id="project" class="flex items-center mb-6 text-2xl font-semibold gap-x-3  border-b-2 border-action md:border-b-0">
                       
                 Proyectos
             </h3>
