@@ -1,15 +1,15 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Experiences from "../components/Experiences.astro";
-import Social from "../components/Social.astro";
 import AboutMe from "../components/AboutMe.astro";
 import Profile from "../components/Profile.astro";
+import Projects from "../components/Projects.astro";
 ---
 
 <Layout title="Jhon Acevedo">
     <main class="px-4 lg:w-3/5 mx-auto w-full" id="home">
         
-        <nav class="fixed w-full z-20 top-0 start-0 bg-[#182838]">
+        <nav class="fixed w-full z-20 top-0 start-0 bg-[#182838] hidden md:block">
             <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <a class="flex items-center space-x-3 rtl:space-x-reverse"></a>
                 <div class="flex lg:order-2 space-x-3 lg:space-x-0 rtl:space-x-reverse"> </div>
@@ -25,41 +25,18 @@ import Profile from "../components/Profile.astro";
             </div>
         </nav>
 
-        <div class="mx-auto h-screen lg:w-9/12 min-w-min flex flex-col lg:items-center justify-center">
-            <Profile />
-            <!-- <div class="mb-4 flex items-center">
-                <div class="flex-shrink-0 hidden md:block lg:block xl:block">             
-                    <img src="public/img/picture.webp" alt="Profile image" class="w-40 h-40">
-                </div>
-                <div class="font-bold pt-1 pb-1 ml-5">
-                    <img src="public/img/picture.webp" alt="Profile image" class="w-40 h-40 block md:hidden lg:hidden xl:hidden">
-                    <p class="lg:text-4xl text-2xl text-white second-font pb-3">Yo soy Jhon Acevedo.</p>
-                    <p class="lg:text-4xl text-2xl text-white second-font pb-3">Desarrollador Full stack</p>
-                    <p class="lg:text-4xl text-2xl text-white/60 second-font">Ubicado en Colombia</p>                
-                </div>
-            </div>
-            <div class="font-extralight text-start mt-5">
-                <p class="text-start mt-5 text-pretty">
-                    Apasionado desarrollador con más de 8 años de experiencia creando servicios y aplicaciones web usando tecnologias en la nube.                
-                </p>
-                <p class="text-white/60 text-pretty">
-                    ¡Diseño y codifico cosas maravillosamente simples, y me encanta lo que hago.!
-                </p>
-            </div>
-
-            <div class="flex-shrink-0 mr-auto mt-7">
-                <Social/>
-            </div> -->
+        <div class="mx-auto h-screen lg:w-9/12 flex flex-col lg:items-center justify-center">
+            <Profile />           
         </div>
 
-        <div class="md:pt-16 mt-10 min-w-min lg:min-w-full mx-auto md:h-screen" id="aboutme">
+        <div class="md:pt-16 mt-10 lg:min-w-full mx-auto md:h-screen" id="aboutme">
             <h3 class="flex items-center mb-6 text-2xl font-semibold gap-x-3 border-b-2 border-action md:border-b-0">              
                 Sobre Mi
             </h3>
             <AboutMe/>
         </div>
 
-        <div class="md:pt-16 mt-10 min-w-min lg:min-w-full mx-auto" id="experience">
+        <div class="md:pt-16 mt-10 lg:min-w-full mx-auto" id="experience">
             <h3 class="flex items-center mb-6 text-2xl font-semibold gap-x-3  border-b-2 border-action md:border-b-0">
                 <!-- <BriefCaseIcon class="size-7" /> -->
                 Experiencia
@@ -68,8 +45,7 @@ import Profile from "../components/Profile.astro";
         </div>
 
         <!-- <div class="md:pt-16 mt-10">
-            <h3 id="project" class="flex items-center mb-6 text-2xl font-semibold gap-x-3  border-b-2 border-action md:border-b-0">
-                      
+            <h3 id="project" class="flex items-center mb-6 text-2xl font-semibold gap-x-3  border-b-2 border-action md:border-b-0">                      
                 Proyectos
             </h3>
             <Projects/>

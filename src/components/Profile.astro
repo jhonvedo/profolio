@@ -3,12 +3,14 @@ import Social from "./Social.astro";
 ---
 
 <div>
-    <div class="mb-4 flex items-center">
-        <div class="flex-shrink-0 hidden md:block lg:block xl:block">             
+    <div class="mb-4 md:flex md:items-center">
+        <div class="flex-shrink-0 hidden md:block">             
             <img src="./img/picture.webp" alt="Profile image" class="w-40 h-40">
         </div>
-        <div class="font-bold pt-1 pb-1 ml-5">
-            <img src="./img/picture.webp" alt="Profile image" class="w-40 h-40 block md:hidden lg:hidden xl:hidden">
+        <div class="font-bold pt-1 pb-1 md:ml-5">
+            <div class="w-40 h-40 mx-auto mb-3 md:hidden">
+                <img src="./img/picture.webp" alt="Profile image" class="w-full h-full">
+            </div>
             <p class="lg:text-4xl text-2xl text-white second-font pb-3">Yo soy Jhon Acevedo.</p>
             <p class="lg:text-4xl text-2xl text-white second-font pb-3">Desarrollador Full stack</p>
             <p class="lg:text-4xl text-2xl text-white/60 second-font">Ubicado en Colombia</p>                
