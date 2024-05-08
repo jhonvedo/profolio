@@ -4,11 +4,15 @@ interface Props {
 }
 import '@fontsource-variable/onest';
 import '@fontsource-variable/source-code-pro';
+import moment from 'moment';
+moment.locale('es');
+
 const { title } = Astro.props;
+
 ---
 
 <!doctype html>
-<html lang="en" class="bg-jhon-bg">
+<html lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content="Jhon Acevedo" />
@@ -25,35 +29,16 @@ const { title } = Astro.props;
 </html>
 <style is:global>
 	:root {
-		--accent: 136, 58, 234;
-		--accent-light: 224, 204, 250;
-		--accent-dark: 49, 10, 101;
-		--accent-gradient: linear-gradient(
-			45deg,
-			rgb(var(--accent)),
-			rgb(var(--accent-light)) 30%,
-			white 60%
-		);
-
-		--principal-font: "Onest Variable";
-		--second-font: "Source Code Pro Variable";
-	}
-	html {
-		font-family: var(--principal-font), system-ui, sans-serif;
-		background-size: 224px;
-	}
-	.second-font {
-		font-family: var(--second-font), system-ui, sans-serif;
+		--principal-font: "Onest Variable";		
 	}
 
 	main {
             margin: auto;
-            padding: 1rem;
-            /* width: 800px; */
-            max-width: calc(100% - 2rem);
-            color: white;
+            padding: 1rem;           
+            max-width: calc(100% - 2rem);           
             font-size: 20px;
             line-height: 1.6;
         }
+
 
 </style>

@@ -7,7 +7,8 @@ export default {
                 'node': '#539E43',
                 'angular': '#E23237',
                 'action': '#ff9c00',
-                'second-action': '#c27803'
+                'second-action': '#c27803',
+                'jhon-bg' : '#182838'
             }
         },
         screens: {

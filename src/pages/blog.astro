@@ -1,0 +1,12 @@
+---
+import BlogLayout from "../layouts/BlogLayout.astro";
+import BlogPost from "../components/BlogPost.astro";
+
+const allPosts = await Astro.glob("../pages/posts/*.md");
+---
+
+<BlogLayout title="Mi Blog . Jhon Acevedo">
+    <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto" id="home">        
+        {allPosts.filter(post=>!post.frontmatter.ignore).map((post) => <BlogPost url={post.url} post={post.frontmatter} />)}        
+    </main>
+</BlogLayout>
