@@ -1,0 +1,24 @@
+---
+import moment  from "moment";
+const { post, url } = Astro.props
+---
+
+  <article class="flex flex-col shadow my-4">                   
+    <a href={url} class="hover:opacity-75">
+        <img src={post.image.url} alt={post.image.alt}>
+    </a>
+    <div class="bg-white flex flex-col justify-start p-6">
+        <div class="flex flex-wrap mt-4 space-x-2 pb-4">
+            {post.tags.map(x=> (<span class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">{x}</span>  ))}
+                     
+        </div>
+        <a href={url} class="text-3xl font-bold hover:text-gray-700 pb-4 capitalize">{post.title}</a>
+        <a href={url}>
+            <p class="text-sm pb-3">
+                Por <a href=url class="font-semibold hover:text-gray-800">{post.author}</a>, Publicado el {moment(post.pubDate).format('LL')}
+            </p>
+        </a>
+        <a href={url} class="pb-6">{post.description}</a>
+        <a href={url} class="uppercase text-gray-800 hover:text-black">continuar leyendo<i class="fas fa-arrow-right"></i></a>
+    </div>
+</article>
