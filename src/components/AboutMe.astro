@@ -1,61 +1,53 @@
 ---
-import TecnologyBox from "./TecnologyBox.astro"
----
-<div class="text-base">
-    <p class="text-pretty">Desde que comencé mi viaje como desarrollador, he trabajado para múltiples agencias y he colaborado con 
-        personas talentosas para crear productos digitales para uso comercial y de consumo. Estoy tranquilamente confiado, 
-        naturalmente curioso y trabajando constantemente para mejorar mis habilidades.</p>
-    <p class="mt-5 border-b-2 border-action inline-block">¡Una línea de código a la vez!</p>
+import { getTranslations } from "../utils/i18n";
+import TecnologyBox from "./TecnologyBox.astro";
 
+const { lang } = Astro.props;
+const translations = getTranslations(lang);
+---
+
+<div class="text-base">
+    <p class="text-pretty">{translations.i_about_me}</p>
+    <p class="mt-5 border-b-2 border-action inline-block">{translations.i_slogan}</p>
 
     <div class="mt-10">
         <p class="font-extrabold mb-3">DevOps</p>
         <p class="text-pretty">
-            He realizado transformaciones tecnológicas en diferentes empresas, 
-            implementando planes DevOps y creación de infraestructura con código, 
-            aumentando la facilidad, seguridad y eficiencia en los despliegues de aplicaciones. 
-            Esto se resume en reducir los problemas en los despliegues y tener la seguridad de actualizar los 
-            aplicativos en cualquier momento.
+            {translations.devops_description}
         </p>
-        <p class="mt-4 text-white/80 font-bold">Tecnologías usadas: </p>
-        <div class="flex items-center flex-wrap space-x-3">            
-            <TecnologyBox type="devops"></TecnologyBox>
-            <TecnologyBox type="terraform"></TecnologyBox>           
+        <p class="mt-4 text-white/80 font-bold">{translations.tech_used}:</p>
+        <div class="flex items-center flex-wrap space-x-3">
+            <TecnologyBox type="devops" />
+            <TecnologyBox type="terraform" />
         </div>
     </div>
 
     <div class="mt-10">
-        <p class="font-extrabold mb-3">Servicios Web</p>
+        <p class="font-extrabold mb-3">{translations.web_service}</p>
         <p class="text-pretty">
-            Desarrollo una variedad de servicios web, utilizando tanto arquitecturas REST como GraphQL, 
-            siguiendo principios fundamentales como SOLID, KISS y DRY. Implemento estas soluciones en entornos de nube como Azure y AWS, 
-            asegurando la protección de datos mediante diversos protocolos y tecnologías de seguridad
+            {translations.web_service_description}
         </p>
-        <p class="mt-4 text-white/80 font-bold">Tecnologías usadas: </p>
-        <div class="flex items-center flex-wrap space-x-3">           
-            <TecnologyBox type="csharp"></TecnologyBox>
-            <TecnologyBox type="nodejs"></TecnologyBox>
-            <TecnologyBox type="azure"></TecnologyBox>
-            <TecnologyBox type="aws"></TecnologyBox>
-            <TecnologyBox type="docker"></TecnologyBox>
-            <TecnologyBox type="kubernetes"></TecnologyBox>
-            <TecnologyBox type="graphql"></TecnologyBox>
+        <p class="mt-4 text-white/80 font-bold">{translations.tech_used}:</p>
+        <div class="flex items-center flex-wrap space-x-3">
+            <TecnologyBox type="csharp" />
+            <TecnologyBox type="nodejs" />
+            <TecnologyBox type="azure" />
+            <TecnologyBox type="aws" />
+            <TecnologyBox type="docker" />
+            <TecnologyBox type="kubernetes" />
+            <TecnologyBox type="graphql" />
         </div>
     </div>
 
     <div class="mt-10">
-        <p class="font-extrabold mb-3">Aplicaciones Web:</p>
+        <p class="font-extrabold mb-3">{translations.web_app}</p>
         <p class="text-pretty">
-            Desarrollo aplicaciones web modernas que abarcan desde aplicaciones de una sola página (SPA) 
-            hasta páginas estáticas, enfocándome en la adaptabilidad y el diseño responsive. Utilizo una variedad de frameworks y 
-            librerías según las necesidades del proyecto, asegurando un rendimiento óptimo y una experiencia de usuario intuitiva. 
-            La seguridad es una prioridad, por lo que implemento diferentes protocolos y tecnologías para proteger los datos de manera 
-            eficaz en entornos de nube flexibles y seguros.
+            {translations.web_app_description}
         </p>
-        <p class="mt-4 text-white/80 font-bold">Tecnologías usadas: </p>
-        <div class="flex items-center flex-wrap space-x-3">           
-            <TecnologyBox type="angular"></TecnologyBox>
-            <TecnologyBox type="react"></TecnologyBox>         
+        <p class="mt-4 text-white/80 font-bold">{translations.tech_used}:</p>
+        <div class="flex items-center flex-wrap space-x-3">
+            <TecnologyBox type="angular" />
+            <TecnologyBox type="react" />
         </div>
     </div>
 </div>

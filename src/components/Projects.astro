@@ -3,6 +3,10 @@ import NodeIcon from './icons/nodejs.astro';
 import CsharpIcon from './icons/c-sharp.astro';
 import AngularSingleIcon from './icons/angular-single.astro';
 import PrismaIcon from './icons/prisma.astro';
+import { getTranslations } from '../utils/i18n';
+
+const { lang } = Astro.props;
+const translations = getTranslations(lang);
 ---
 
 <div class="flex flex-col md:flex-row md:items-start space-x-6">
@@ -42,7 +46,7 @@ import PrismaIcon from './icons/prisma.astro';
         <span class="pb-5 font-semibold text-action text-2xl">
             <a href="https://www.sectorial.co/lanzamiento_oda/" target="_blank">ODA Organization Data Assistant</a>
         </span>
-        <span class="text-sm">Plataforma que implementa instrumentos de analítica avanzada y visualización de datos, que te permitirá interactuar con tu sector de forma dinámica, oportuna y ordenada.</span>
+        <span class="text-sm">{translations.oda_description}</span>
         <div class="flex items-center flex-wrap space-x-3  pt-4">
             <span class="bg-slate-500 rounded-lg py-1 px-2 text-sm flex space-x-1  my-2 mx-1">
                 <NodeIcon class="size-5 text-green-400"/>
