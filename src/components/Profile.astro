@@ -4,16 +4,18 @@ import Social from "./Social.astro";
 
 const { lang } = Astro.props;
 const translations = getTranslations(lang);
+
+const currentPath = Astro.url.pathname.replace(`/${lang}`, "");
 ---
 
 <div>
     <div class="mb-4 md:flex md:items-center">
         <div class="flex-shrink-0 hidden md:block">
-            <img src="./img/picture.webp" alt="Profile image" class="w-40 h-40" />
+            <img src={`${currentPath}/img/picture.webp`} alt="Profile image" class="w-40 h-40" />
         </div>
         <div class="font-bold pt-1 pb-1 md:ml-5">
             <div class="w-40 h-40 mx-auto mb-3 md:hidden">
-                <img src="./img/picture.webp" alt="Profile image" class="w-full h-full" />
+                <img src={`${currentPath}/img/picture.webp`} alt="Profile image" class="w-full h-full" />
             </div>
             <p class="lg:text-4xl text-2xl text-white second-font pb-3">{translations.i_am} Jhon Acevedo.</p>
             <p class="lg:text-4xl text-2xl text-white second-font pb-3">{translations.i_role}</p>
