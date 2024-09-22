@@ -1,8 +1,17 @@
 ---
-import BlogLayout from "../../layouts/BlogLayout.astro";
-import BlogPost from "../../components/BlogPost.astro";
+import BlogLayout from "../layouts/BlogLayout.astro";
+import BlogPost from "../components/BlogPost.astro";
 
-const allPosts = await Astro.glob("../pages/posts/*.md");
+// export async function getStaticPaths() {
+//     return ["es"].map((lang) => ({
+//         params: { lang },
+//     }));
+// }
+
+// const { lang } = Astro.params;
+
+// const allPosts = await Astro.glob(`../pages/posts/${lang}/*.md`);
+const allPosts: any[] = [];
 ---
 
 <BlogLayout title="Mi Blog . Jhon Acevedo">

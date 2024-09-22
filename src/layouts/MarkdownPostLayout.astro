@@ -1,274 +1,288 @@
 ---
 import BlogLayout from "./BlogLayout.astro";
-import moment  from "moment";
+import moment from "moment";
 
-const { frontmatter } = Astro.props;
+
+export async function getStaticPaths() {
+    return ["es"].map((lang) => ({
+        params: { lang },
+    }));
+}
+
+const frontmatter: any = Astro.props && (Astro.props as any).frontmatter;
+
 
 ---
 
 <BlogLayout title={frontmatter.title}>
     <div class="max-w-screen-xl mx-auto">
-        <main class="mt-10">    
-          <div class="mb-4 md:mb-0 w-full max-w-screen-md mx-auto relative" style="height: 24em;">
-            <div class="absolute left-0 bottom-0 w-full h-full z-10"
-              style="background-image: linear-gradient(180deg,transparent,rgba(0,0,0,.7));"></div>
-            <img src={frontmatter.image.url} alt={frontmatter.image.alt} class="absolute left-0 top-0 w-full h-full z-0 object-cover" />
-            <div class="p-4 absolute bottom-0 left-0 z-20">
-              {frontmatter.tags.map(tag=>  <a href="#"
-              class="px-4 py-1 bg-black text-gray-200 inline-flex items-center justify-center mb-2">{tag}</a>)}
-             
-              <h2 class="text-4xl font-semibold text-gray-100 leading-tight">
-                {frontmatter.title}
-              </h2>
-              <div class="flex mt-3">
-                <img src="/img/picture.webp" alt="Profile image" class="h-10 w-10 rounded-full mr-2 object-cover" />
-                <div>
-                  <p class="font-semibold text-gray-200 text-sm"> {frontmatter.author} </p>
-                  <p class="font-semibold text-gray-400 text-xs"> {moment(frontmatter.pubDate).format('LL')} </p>
+        <main class="mt-10">
+            <div class="mb-4 md:mb-0 w-full max-w-screen-md mx-auto relative" style="height: 24em;">
+                <div class="absolute left-0 bottom-0 w-full h-full z-10" style="background-image: linear-gradient(180deg,transparent,rgba(0,0,0,.7));"></div>
+                <img src={frontmatter.image.url} alt={frontmatter.image.alt} class="absolute left-0 top-0 w-full h-full z-0 object-cover" />
+                <div class="p-4 absolute bottom-0 left-0 z-20">
+                    {
+                        frontmatter.tags.map((tag) => (
+                            <a href="#" class="px-4 py-1 bg-black text-gray-200 inline-flex items-center justify-center mb-2">
+                                {tag}
+                            </a>
+                        ))
+                    }
+
+                    <h2 class="text-4xl font-semibold text-gray-100 leading-tight">
+                        {frontmatter.title}
+                    </h2>
+                    <div class="flex mt-3">
+                        <img src="/img/picture.webp" alt="Profile image" class="h-10 w-10 rounded-full mr-2 object-cover" />
+                        <div>
+                            <p class="font-semibold text-gray-200 text-sm">{frontmatter.author}</p>
+                            <p class="font-semibold text-gray-400 text-xs">{moment(frontmatter.pubDate).format("LL")}</p>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>    
-          <div class="px-4 lg:px-0 mt-12 max-w-screen-md mx-auto text-lg leading-relaxed post-body text-start">
-            <slot />    
-          </div>
+            <div class="px-4 lg:px-0 mt-12 max-w-screen-md mx-auto text-lg leading-relaxed post-body text-start">
+                <slot />
+            </div>
         </main>
-      </div>
+    </div>
 </BlogLayout>
 
 <style>
-  	.post-body {
-		@media print {
-			*,
-			*:before,
-			*:after {
-			background: transparent !important;
-			color: #000 !important;
-			box-shadow: none !important;
-			text-shadow: none !important;
-			}
+    .post-body {
+        @media print {
+            *,
+            *:before,
+            *:after {
+                background: transparent !important;
+                color: #000 !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
 
-			table {
-			border-collapse: collapse;
-			}
-			table > :is(thead, tbody) > tr > :is(th, td) {
-			padding: 3px;
-			text-align: left;
-			}
-			table > thead > tr > :is(th, td) {
-			border-top: 2px solid;
-			border-bottom: 1px solid;
-			}
-			table > tbody > tr:last-child > :is(th, td) {
-			border-bottom: 2px solid;
-			}
-		
-			a,
-			a:visited {
-			text-decoration: underline;
-			}
-		
-			a[href]:after {
-			content: " (" attr(href) ")";
-			}
-		
-			abbr[title]:after {
-			content: " (" attr(title) ")";
-			}
-		
-			a[href^="#"]:after,
-			a[href^="javascript:"]:after {
-			content: "";
-			}
-		
-			pre,
-			blockquote {
-			border: 1px solid #999;
-			page-break-inside: avoid;
-			}
-		
-			thead {
-				display: table-header-group;
-			}
-		
-			tr,
-			img {
-			page-break-inside: avoid;
-			}
-		
-			img {
-			max-width: 100% !important;
-			}
-		
-			p,
-			h2,
-			h3 {
-			orphans: 3;
-			widows: 3;
-			}
-		
-			h2,
-			h3 {
-			page-break-after: avoid;
-			}
-		}
-		
-		html {
-			font-size: 12px;
-		}
-		
-		@media screen and (min-width: 32rem) and (max-width: 48rem) {
-			html {
-			font-size: 15px;
-			}
-		}
-		
-		@media screen and (min-width: 48rem) {
-			html {
-			font-size: 16px;
-			}
-		}
-		
-		body {
-			line-height: 1.85;
-		}
-		
-		p,
-		.air-p {
-			font-size: 1rem;
-			margin-bottom: 1.3rem;
-		}
-		
-		h1,
-		.air-h1,
-		h2,
-		.air-h2,
-		h3,
-		.air-h3,
-		h4,
-		.air-h4 {
-			margin: 1.414rem 0 .5rem;
-			font-weight: inherit;
-			line-height: 1.42;
-		}
-		
-		h1,
-		.air-h1 {
-			margin-top: 0;
-			font-size: 3.998rem;
-		}
-		
-		h2,
-		.air-h2 {
-			font-size: 2.827rem;
-		}
-		
-		h3,
-		.air-h3 {
-			font-size: 1.999rem;
-		}
-		
-		h4,
-		.air-h4 {
-			font-size: 1.414rem;
-		}
-		
-		h5,
-		.air-h5 {
-			font-size: 1.121rem;
-		}
-		
-		h6,
-		.air-h6 {
-			font-size: .88rem;
-		}
-		
-		small,
-		.air-small {
-			font-size: .707em;
-		}
-		
-		/* https://github.com/mrmrs/fluidity */
-		
-		img,
-		canvas,
-		iframe,
-		video,
-		svg,
-		select,
-		textarea {
-			max-width: 100%;
-		}
-		
-		/* img {
+            table {
+                border-collapse: collapse;
+            }
+            table > :is(thead, tbody) > tr > :is(th, td) {
+                padding: 3px;
+                text-align: left;
+            }
+            table > thead > tr > :is(th, td) {
+                border-top: 2px solid;
+                border-bottom: 1px solid;
+            }
+            table > tbody > tr:last-child > :is(th, td) {
+                border-bottom: 2px solid;
+            }
+
+            a,
+            a:visited {
+                text-decoration: underline;
+            }
+
+            a[href]:after {
+                content: " (" attr(href) ")";
+            }
+
+            abbr[title]:after {
+                content: " (" attr(title) ")";
+            }
+
+            a[href^="#"]:after,
+            a[href^="javascript:"]:after {
+                content: "";
+            }
+
+            pre,
+            blockquote {
+                border: 1px solid #999;
+                page-break-inside: avoid;
+            }
+
+            thead {
+                display: table-header-group;
+            }
+
+            tr,
+            img {
+                page-break-inside: avoid;
+            }
+
+            img {
+                max-width: 100% !important;
+            }
+
+            p,
+            h2,
+            h3 {
+                orphans: 3;
+                widows: 3;
+            }
+
+            h2,
+            h3 {
+                page-break-after: avoid;
+            }
+        }
+
+        html {
+            font-size: 12px;
+        }
+
+        @media screen and (min-width: 32rem) and (max-width: 48rem) {
+            html {
+                font-size: 15px;
+            }
+        }
+
+        @media screen and (min-width: 48rem) {
+            html {
+                font-size: 16px;
+            }
+        }
+
+        body {
+            line-height: 1.85;
+        }
+
+        p,
+        .air-p {
+            font-size: 1rem;
+            margin-bottom: 1.3rem;
+        }
+
+        h1,
+        .air-h1,
+        h2,
+        .air-h2,
+        h3,
+        .air-h3,
+        h4,
+        .air-h4 {
+            margin: 1.414rem 0 0.5rem;
+            font-weight: inherit;
+            line-height: 1.42;
+        }
+
+        h1,
+        .air-h1 {
+            margin-top: 0;
+            font-size: 3.998rem;
+        }
+
+        h2,
+        .air-h2 {
+            font-size: 2.827rem;
+        }
+
+        h3,
+        .air-h3 {
+            font-size: 1.999rem;
+        }
+
+        h4,
+        .air-h4 {
+            font-size: 1.414rem;
+        }
+
+        h5,
+        .air-h5 {
+            font-size: 1.121rem;
+        }
+
+        h6,
+        .air-h6 {
+            font-size: 0.88rem;
+        }
+
+        small,
+        .air-small {
+            font-size: 0.707em;
+        }
+
+        /* https://github.com/mrmrs/fluidity */
+
+        img,
+        canvas,
+        iframe,
+        video,
+        svg,
+        select,
+        textarea {
+            max-width: 100%;
+        }
+
+        /* img {
 			border-radius: 50%;
 			height: 200px;
 			margin: 0 auto;
 			width: 200px;
 		} */
-		ul > li {
-			list-style: disc;
-		}
+        ul > li {
+            list-style: disc;
+        }
 
-		ol > li{
-			list-style: auto;
-		}
+        ol > li {
+            list-style: auto;
+        }
 
-		:not(pre) > code {		
-			padding: 2px 4px;
-			font-size: 90%;
-			color: #333; 
-			background-color: #eceaea;
-			border-radius: 4px;
-		}
+        :not(pre) > code {
+            padding: 2px 4px;
+            font-size: 90%;
+            color: #333;
+            background-color: #eceaea;
+            border-radius: 4px;
+        }
 
-		ul,ol {
-			list-style-type: none;			
-			margin-left: 20px;
-		}
+        ul,
+        ol {
+            list-style-type: none;
+            margin-left: 20px;
+        }
 
-		b, strong {
-			font-weight: bold;
-		}
+        b,
+        strong {
+            font-weight: bold;
+        }
 
-		ul ul, ol ol {
-			margin-left: 20px; 
-		}
-		
-		a,
-		a:visited {
-			color: #3498db;
-		}
-		
-		a:hover,
-		a:focus,
-		a:active {
-			color: #2980b9;
-		}
-		
-		pre {
-			background-color: #fafafa;
-			padding: 1rem;
-			text-align: left;
-		}
-		
-		blockquote {
-			margin: 0;
-			border-left: 5px solid #7a7a7a;
-			font-style: italic;
-			padding: 1.33em;
-			text-align: left;
-		}
-		
-		ul,
-		ol,
-		li {
-			text-align: left;
-		}
-		
-		p {
-			color: #777;
-		}
-	}
+        ul ul,
+        ol ol {
+            margin-left: 20px;
+        }
 
+        a,
+        a:visited {
+            color: #3498db;
+        }
+
+        a:hover,
+        a:focus,
+        a:active {
+            color: #2980b9;
+        }
+
+        pre {
+            background-color: #fafafa;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        blockquote {
+            margin: 0;
+            border-left: 5px solid #7a7a7a;
+            font-style: italic;
+            padding: 1.33em;
+            text-align: left;
+        }
+
+        ul,
+        ol,
+        li {
+            text-align: left;
+        }
+
+        p {
+            color: #777;
+        }
+    }
 </style>
