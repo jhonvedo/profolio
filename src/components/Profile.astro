@@ -1,31 +1,35 @@
 ---
+import { getTranslations } from "../utils/i18n";
 import Social from "./Social.astro";
+
+const { lang } = Astro.props;
+const translations = getTranslations(lang);
 ---
 
 <div>
     <div class="mb-4 md:flex md:items-center">
-        <div class="flex-shrink-0 hidden md:block">             
-            <img src="./img/picture.webp" alt="Profile image" class="w-40 h-40">
+        <div class="flex-shrink-0 hidden md:block">
+            <img src="./img/picture.webp" alt="Profile image" class="w-40 h-40" />
         </div>
         <div class="font-bold pt-1 pb-1 md:ml-5">
             <div class="w-40 h-40 mx-auto mb-3 md:hidden">
-                <img src="./img/picture.webp" alt="Profile image" class="w-full h-full">
+                <img src="./img/picture.webp" alt="Profile image" class="w-full h-full" />
             </div>
-            <p class="lg:text-4xl text-2xl text-white second-font pb-3">Yo soy Jhon Acevedo.</p>
-            <p class="lg:text-4xl text-2xl text-white second-font pb-3">Desarrollador Full stack</p>
-            <p class="lg:text-4xl text-2xl text-white/60 second-font">Ubicado en Colombia</p>                
+            <p class="lg:text-4xl text-2xl text-white second-font pb-3">{translations.i_am} Jhon Acevedo.</p>
+            <p class="lg:text-4xl text-2xl text-white second-font pb-3">{translations.i_role}</p>
+            <p class="lg:text-4xl text-2xl text-white/60 second-font">{translations.i_location}</p>
         </div>
     </div>
     <div class="font-extralight text-start mt-5">
         <p class="text-start mt-5 text-pretty">
-            Apasionado desarrollador con más de 8 años de experiencia creando servicios y aplicaciones web usando tecnologias en la nube.                
+            {translations.i_description}.
         </p>
         <p class="text-white/60 text-pretty">
-            ¡Diseño y codifico cosas maravillosamente simples, y me encanta lo que hago.!
+            {translations.i_description2}
         </p>
     </div>
 
     <div class="flex-shrink-0 mr-auto mt-7">
-        <Social/>
+        <Social lang={lang} />
     </div>
 </div>

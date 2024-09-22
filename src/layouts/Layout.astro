@@ -5,10 +5,12 @@ interface Props {
 import '@fontsource-variable/onest';
 import '@fontsource-variable/source-code-pro';
 const { title } = Astro.props;
+const { lang } = Astro.params;
+
 ---
 
 <!doctype html>
-<html lang="en" class="bg-jhon-bg">
+<html lang={lang} class="bg-jhon-bg">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content="Jhon Acevedo" />

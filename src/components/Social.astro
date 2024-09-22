@@ -4,8 +4,12 @@ import GithubIcon from "./icons/github.astro";
 import SendIcon from "./icons/send-email.astro";
 import CopyIcon from "./icons/copy.astro";
 import CheckIcon from "./icons/check.astro";
+import { getTranslations } from "../utils/i18n";
 
 let email = "contacto@jhonacevedo.com";
+
+const { lang } = Astro.props;
+const translations = getTranslations(lang);
 ---
 
 <div class="flex space-x-1">
@@ -20,8 +24,8 @@ let email = "contacto@jhonacevedo.com";
                 id="tooltip-copy-npm-install-copy-button"
                 role="tooltip"
                 class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                <span id="default-tooltip-message">Copiar al portapapeles</span>
-                <span id="success-tooltip-message" class="hidden">¡Copiado!</span>
+                <span id="default-tooltip-message">{translations.copy_clipboard}</span>
+                <span id="success-tooltip-message" class="hidden">{translations.clipboard_copied}</span>
                 <div class="tooltip-arrow" data-popper-arrow></div>
             </div>
 
