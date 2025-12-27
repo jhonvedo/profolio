@@ -1,0 +1,20 @@
+---
+const {
+    title = "Jhon Acevedo · Arquitecto / Full‑Stack",
+    description = "Portafolio profesional de Jhon Acevedo: Arquitectura de software, Full‑Stack, DevOps en Azure, Node.js, .NET, React, Angular.",
+    lang = "es",
+} = Astro.props;
+---
+
+<html lang={lang}>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <link rel="icon" href="/favicon.svg" />
+    </head>
+    <body class="radial-bg text-slate-100 antialiased">
+        <slot />
+    </body>
+</html>
