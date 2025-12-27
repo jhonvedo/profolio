@@ -22,7 +22,6 @@ const t = await getDictionary(lang);
                     <a href={`/${lang}#proyectos`} class="hover:text-white/90 text-white/70">{t.nav.cases}</a>
                     <a href={`/${lang}#skills`} class="hover:text-white/90 text-white/70">{t.nav.skills}</a>
                     <a href={`/${lang}#experiencia`} class="hover:text-white/90 text-white/70">{t.nav.experience}</a>
-                    <a href={`/${lang}#testimonios`} class="hover:text-white/90 text-white/70">{t.nav.testimonials}</a>
                     <a href={`/${lang}#contacto`} class="hover:text-white/90 text-white/70">{t.nav.contact}</a>
                 </nav>
                 <div class="flex items-center gap-3">
@@ -51,11 +50,6 @@ const t = await getDictionary(lang);
                     <div class="mt-8 flex flex-wrap gap-3">
                         <a href={`/${lang}#contacto`} class="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-semibold shadow-lg shadow-blue-600/20">{t.cta.book}</a>
                         <a href={`/${lang}#proyectos`} class="rounded-xl border border-white/10 px-5 py-3 text-sm font-semibold text-white/90">{t.cta.cases}</a>
-                    </div>
-                    <div class="mt-10 grid grid-cols-3 gap-6 text-center text-white/80">
-                        <div class="glass rounded-2xl p-4"><div class="text-2xl font-extrabold">10+ {t.hero.years}</div><div class="text-xs">{t.hero.exp}</div></div>
-                        <div class="glass rounded-2xl p-4"><div class="text-2xl font-extrabold">20+</div><div class="text-xs">{t.hero.projects}</div></div>
-                        <div class="glass rounded-2xl p-4"><div class="text-2xl font-extrabold">99.9%</div><div class="text-xs">{t.hero.uptime}</div></div>
                     </div>
                 </div>
                 <div class="relative">
@@ -113,40 +107,73 @@ const t = await getDictionary(lang);
                 </div>
                 <div class="mt-10 grid gap-6 lg:grid-cols-3">
                     <article class="group rounded-3xl border border-white/10 bg-white/5 p-4 ring-1 ring-white/10">
-                        <img class="aspect-[16/10] w-full rounded-2xl object-cover" src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1400&auto=format&fit=crop" alt="Case 1" />
+                        <a href={t.cases.card1.url} target="_blank" rel="noopener noreferrer" class="block">
+                            <div
+                                class="aspect-[16/10] w-full rounded-2xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 flex items-center justify-center group-hover:from-blue-600/30 group-hover:to-indigo-600/30 transition-colors"
+                            >
+                                <span class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">{t.cases.card1.title}</span>
+                            </div>
+                        </a>
                         <div class="p-4">
-                            <h3 class="text-lg font-semibold">{t.cases.card1.title}</h3>
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">{t.cases.card1.title}</h3>
+                                <a href={t.cases.card1.url} target="_blank" rel="noopener noreferrer" class="text-white/50 hover:text-white/80 transition-colors" aria-label="Visitar sitio">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                    </svg>
+                                </a>
+                            </div>
                             <p class="mt-1 text-sm text-white/75">{t.cases.card1.text}</p>
                             <ul class="mt-3 flex flex-wrap gap-2 text-xs text-white/70">
-                                <li class="rounded-md border border-white/10 px-2 py-1">Azure Functions</li>
-                                <li class="rounded-md border border-white/10 px-2 py-1">SQL Server</li>
-                                <li class="rounded-md border border-white/10 px-2 py-1">iText</li>
+                                {t.cases.card1.tech.map((tech) => <li class="rounded-md border border-white/10 px-2 py-1">{tech}</li>)}
                             </ul>
                             <div class="mt-4 text-xs text-white/60">{t.cases.card1.impact}</div>
                         </div>
                     </article>
                     <article class="group rounded-3xl border border-white/10 bg-white/5 p-4 ring-1 ring-white/10">
-                        <img class="aspect-[16/10] w-full rounded-2xl object-cover" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1400&auto=format&fit=crop" alt="Case 2" />
+                        <a href={t.cases.card2.url} target="_blank" rel="noopener noreferrer" class="block">
+                            <div
+                                class="aspect-[16/10] w-full rounded-2xl bg-gradient-to-br from-emerald-600/20 to-teal-600/20 flex items-center justify-center group-hover:from-emerald-600/30 group-hover:to-teal-600/30 transition-colors"
+                            >
+                                <span class="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">{t.cases.card2.title}</span>
+                            </div>
+                        </a>
                         <div class="p-4">
-                            <h3 class="text-lg font-semibold">{t.cases.card2.title}</h3>
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">{t.cases.card2.title}</h3>
+                                <a href={t.cases.card2.url} target="_blank" rel="noopener noreferrer" class="text-white/50 hover:text-white/80 transition-colors" aria-label="Visitar sitio">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                    </svg>
+                                </a>
+                            </div>
                             <p class="mt-1 text-sm text-white/75">{t.cases.card2.text}</p>
                             <ul class="mt-3 flex flex-wrap gap-2 text-xs text-white/70">
-                                <li class="rounded-md border border-white/10 px-2 py-1">Astro</li>
-                                <li class="rounded-md border border-white/10 px-2 py-1">Front Door/CDN</li>
-                                <li class="rounded-md border border-white/10 px-2 py-1">Auth0</li>
+                                {t.cases.card2.tech.map((tech) => <li class="rounded-md border border-white/10 px-2 py-1">{tech}</li>)}
                             </ul>
                             <div class="mt-4 text-xs text-white/60">{t.cases.card2.impact}</div>
                         </div>
                     </article>
                     <article class="group rounded-3xl border border-white/10 bg-white/5 p-4 ring-1 ring-white/10">
-                        <img class="aspect-[16/10] w-full rounded-2xl object-cover" src="https://images.unsplash.com/photo-1454165205744-3b78555e5572?q=80&w=1400&auto=format&fit=crop" alt="Case 3" />
+                        <a href={t.cases.card3.url} target="_blank" rel="noopener noreferrer" class="block">
+                            <div
+                                class="aspect-[16/10] w-full rounded-2xl bg-gradient-to-br from-fuchsia-600/20 to-pink-600/20 flex items-center justify-center group-hover:from-fuchsia-600/30 group-hover:to-pink-600/30 transition-colors"
+                            >
+                                <span class="text-3xl font-bold bg-gradient-to-r from-fuchsia-400 to-pink-400 bg-clip-text text-transparent">{t.cases.card3.title}</span>
+                            </div>
+                        </a>
                         <div class="p-4">
-                            <h3 class="text-lg font-semibold">{t.cases.card3.title}</h3>
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold">{t.cases.card3.title}</h3>
+                                <a href={t.cases.card3.url} target="_blank" rel="noopener noreferrer" class="text-white/50 hover:text-white/80 transition-colors" aria-label="Visitar sitio">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                    </svg>
+                                </a>
+                            </div>
                             <p class="mt-1 text-sm text-white/75">{t.cases.card3.text}</p>
                             <ul class="mt-3 flex flex-wrap gap-2 text-xs text-white/70">
-                                <li class="rounded-md border border-white/10 px-2 py-1">Next.js</li>
-                                <li class="rounded-md border border-white/10 px-2 py-1">MongoDB</li>
-                                <li class="rounded-md border border-white/10 px-2 py-1">Tailwind</li>
+                                {t.cases.card3.tech.map((tech) => <li class="rounded-md border border-white/10 px-2 py-1">{tech}</li>)}
                             </ul>
                             <div class="mt-4 text-xs text-white/60">{t.cases.card3.impact}</div>
                         </div>
@@ -246,26 +273,6 @@ const t = await getDictionary(lang);
             </div>
         </section>
 
-        <section id="testimonios" class="border-t border-white/5 py-20">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold">{t.testimonials.title}</h2>
-                <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <figure class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <blockquote class="text-white/90">{t.testimonials.f1.q}</blockquote>
-                        <figcaption class="mt-4 text-sm text-white/60">{t.testimonials.f1.by}</figcaption>
-                    </figure>
-                    <figure class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <blockquote class="text-white/90">{t.testimonials.f2.q}</blockquote>
-                        <figcaption class="mt-4 text-sm text-white/60">{t.testimonials.f2.by}</figcaption>
-                    </figure>
-                    <figure class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <blockquote class="text-white/90">{t.testimonials.f3.q}</blockquote>
-                        <figcaption class="mt-4 text-sm text-white/60">{t.testimonials.f3.by}</figcaption>
-                    </figure>
-                </div>
-            </div>
-        </section>
-
         <section class="border-t border-white/5 py-20">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="rounded-3xl bg-gradient-to-r from-blue-600/20 to-fuchsia-600/20 p-8 ring-1 ring-white/10 md:p-12">
@@ -282,61 +289,22 @@ const t = await getDictionary(lang);
                 <h2 class="text-3xl font-bold">{t.contact.title}</h2>
                 <p class="mt-3 max-w-2xl text-white/70">{t.contact.subtitle}</p>
 
-                <div id="form-alert" class="hidden mt-6 rounded-2xl border ring-1 ring-white/10 p-4"></div>
-
-                <div class="mt-6 grid gap-8 lg:grid-cols-2">
-                    <form id="contact-form" class="glass rounded-3xl p-6 ring-1 ring-white/10">
-                        <div class="grid gap-4 sm:grid-cols-2">
-                            <input
-                                class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder={t.contact.name}
-                                name="name"
-                                type="text"
-                                required
-                            />
-                            <input
-                                class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Email"
-                                name="_replyto"
-                                type="email"
-                                required
-                            />
-                        </div>
-                        <input
-                            class="mt-4 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder={t.contact.company}
-                            name="company"
-                            type="text"
-                        />
-                        <textarea
-                            class="mt-4 h-40 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder={t.contact.desc}
-                            name="message"
-                            required></textarea>
-                        <div class="mt-6 flex items-center justify-between">
-                            <label class="flex items-center gap-2 text-xs text-white/70">
-                                <input type="checkbox" name="allowContactEmail" class="h-4 w-4 rounded border-white/20 bg-white/10" />
-                                {t.contact.optin}
-                            </label>
-                            <button id="submit-btn" type="submit" class="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-semibold shadow-lg shadow-blue-600/20">
-                                {t.contact.send}
-                            </button>
-                        </div>
-                    </form>
-
-                    <div class="grid gap-6">
-                        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                            <div class="text-sm text-white/60">Email</div>
-                            <a class="mt-1 block text-lg font-semibold" href="mailto:contacto@jhonacevedo.dev">contacto@jhonacevedo.dev</a>
-                        </div>
-                        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                            <div class="text-sm text-white/60">LinkedIn</div>
-                            <a class="mt-1 block text-lg font-semibold" href="#">linkedin.com/in/jhonacevedo</a>
-                        </div>
-                        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                            <div class="text-sm text-white/60">GitHub</div>
-                            <a class="mt-1 block text-lg font-semibold" href="#">github.com/jhonacevedo</a>
-                        </div>
+                <div class="mt-10 grid gap-6 md:grid-cols-3 max-w-4xl mx-auto">
+                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+                        <div class="text-sm text-white/60">Email</div>
+                        <a class="mt-1 block text-lg font-semibold hover:text-blue-400 transition-colors" href="mailto:contact@jhonacevedo.com">contact@jhonacevedo.com</a>
+                    </div>
+                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+                        <div class="text-sm text-white/60">LinkedIn</div>
+                        <a class="mt-1 block text-lg font-semibold hover:text-blue-400 transition-colors" href="https://www.linkedin.com/in/jhonvedo/" target="_blank" rel="noopener noreferrer"
+                            >linkedin.com/in/jhonvedo</a
+                        >
+                    </div>
+                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+                        <div class="text-sm text-white/60">GitHub</div>
+                        <a class="mt-1 block text-lg font-semibold hover:text-blue-400 transition-colors" href="https://github.com/jhonvedo" target="_blank" rel="noopener noreferrer"
+                            >github.com/jhonvedo</a
+                        >
                     </div>
                 </div>
             </div>
@@ -347,68 +315,12 @@ const t = await getDictionary(lang);
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col items-center justify-between gap-6 md:flex-row">
                 <p class="text-sm text-white/60">© 2025 Jhon Acevedo</p>
-                <div class="flex gap-4 text-sm text-white/60">
+                <!--  <div class="flex gap-4 text-sm text-white/60">
                     <a href={`/${lang}`} class="hover:text-white/90">Blog</a>
                     <a href={`/${lang}`} class="hover:text-white/90">{t.footer.privacy}</a>
                     <a href={`/${lang}`} class="hover:text-white/90">{t.footer.terms}</a>
-                </div>
+                </div>-->
             </div>
         </div>
     </footer>
-
-    <script define:vars={{ t }}>
-        const form = document.querySelector("#contact-form");
-        const alertBox = document.querySelector("#form-alert");
-        const submitBtn = document.querySelector("#submit-btn");
-        const endpoint = "https://formspree.io/f/xovpedak";
-
-        function showAlert(type, message) {
-            alertBox.className = "mt-6 rounded-2xl border ring-1 ring-white/10 p-4";
-            if (type === "success") {
-                alertBox.classList.add("bg-emerald-500/10", "border-emerald-400/30", "text-emerald-200");
-                alertBox.innerHTML = `<div class="flex items-center gap-3">
-          <span class="inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
-          <span class="font-semibold">${t.contact.form.success.title}</span>
-        </div>
-        <p class="mt-1 text-sm">${message}</p>`;
-            } else {
-                alertBox.classList.add("bg-rose-500/10", "border-rose-400/30", "text-rose-200");
-                alertBox.innerHTML = `<div class="flex items-center gap-3">
-          <span class="inline-flex h-2 w-2 rounded-full bg-rose-400"></span>
-          <span class="font-semibold">${t.contact.form.error.title}</span>
-        </div>
-        <p class="mt-1 text-sm">${message}</p>`;
-            }
-            alertBox.classList.remove("hidden");
-        }
-
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            submitBtn.disabled = true;
-            submitBtn.classList.add("opacity-70", "cursor-not-allowed");
-            showAlert("success", t.contact.form.sending);
-
-            const data = new FormData(form);
-            try {
-                const res = await fetch(endpoint, {
-                    method: "POST",
-                    body: data,
-                    headers: { Accept: "application/json" },
-                });
-                if (res.ok) {
-                    form.reset();
-                    showAlert("success", t.contact.form.success.message);
-                } else {
-                    const json = await res.json().catch(() => ({}));
-                    const msg = json?.errors?.map((e) => e.message).join(", ") || t.contact.form.error.default;
-                    showAlert("error", `❌ ${msg}`);
-                }
-            } catch {
-                showAlert("error", t.contact.form.error.network);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.classList.remove("opacity-70", "cursor-not-allowed");
-            }
-        });
-    </script>
 </Base>
