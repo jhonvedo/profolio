@@ -5,8 +5,8 @@ const en = {
 	hero: {
 		badge: "Available for select consulting",
 		title: "Senior Software Engineer",
-		stack: "Full‑Stack · Architecture · Technical Leadership",
-		subtitle: "With over 10 years of experience, I design scalable architectures, lead teams, and execute end-to-end solutions focused on quality, productivity, and cloud efficiency. I turn ideas into measurable, maintainable products.",
+		stack: "Full‑Stack · AI Automation · Architecture",
+		subtitle: "With over 10 years of experience, I design scalable architectures, build AI-powered automation workflows with LangFlow and MCP, lead teams, and deliver end-to-end solutions focused on quality, productivity, and cloud efficiency.",
 		years: "years",
 		exp: "Experience",
 		projects: "Projects",
@@ -37,6 +37,13 @@ const en = {
 				b2: "Testing, coverage & quality",
 				b3: "Cost optimization",
 			},
+			ai: {
+				title: "AI Integration & Automation",
+				text: "Agentic pipelines, LLM integrations, and AI-powered process automation.",
+				b1: "LangFlow & MCP server development",
+				b2: "Claude / LLM API integrations",
+				b3: "E2E automated testing with AI",
+			},
 		},
 	},
 	cases: {
@@ -57,6 +64,7 @@ const en = {
 			arch: { title: "Architecture", text: "ADRs, evolutionary design, quality governance." },
 			lead: { title: "Leadership", text: "Mentoring, definition of done, agile rituals." },
 			data: { title: "Data", text: "Modeling, ETL and data‑driven decisions." },
+			ai: { title: "AI & Automation", text: "Agentic workflows, LLM integrations, MCP servers, and AI-powered process automation." },
 		},
 	},
 	exp: {

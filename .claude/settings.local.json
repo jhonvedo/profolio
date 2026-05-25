@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"P:\\\\Proyectos\\\\PERSONAL\\\\profolio\" -Force)",
+      "Bash(Select-Object Name, Mode)",
+      "mcp__filesystem__directory_tree",
+      "Bash(npm run *)"
+    ]
+  }
+}
