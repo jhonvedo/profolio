@@ -5,10 +5,13 @@ const { lang } = Astro.props as { lang: Lang };
 
 <div class="switch" role="group" aria-label="Language">
     {
-        supported.map((l) => (
-            <a href={`/${l}`} class:list={["opt", { on: l === lang }]} aria-current={l === lang ? "page" : undefined} hreflang={l}>
-                {l.toUpperCase()}
-            </a>
+        supported.map((l, i) => (
+            <>
+                {i > 0 && <span class="sep">/</span>}
+                <a href={`/${l}`} class:list={["opt", { on: l === lang }]} aria-current={l === lang ? "page" : undefined} hreflang={l}>
+                    {l.toUpperCase()}
+                </a>
+            </>
         ))
     }
 </div>
@@ -16,23 +19,21 @@ const { lang } = Astro.props as { lang: Lang };
 <style>
     .switch {
         display: flex;
-        background: var(--surface-2);
-        border-radius: 100px;
-        padding: 3px;
+        align-items: center;
+        gap: 14px;
+        font-family: var(--font-mono);
+        font-size: 12.5px;
+    }
+    .sep {
+        color: rgba(22, 21, 15, 0.3);
     }
     .opt {
-        padding: 5px 10px;
-        border-radius: 100px;
-        font-size: 11px;
-        font-weight: 800;
-        color: var(--ink-3);
+        color: var(--muted-3);
     }
     .opt:hover {
-        color: var(--ink-2);
+        color: var(--accent);
     }
     .opt.on {
-        background: var(--surface);
-        color: var(--primary);
-        box-shadow: var(--sh-sm);
+        color: var(--ink);
     }
 </style>

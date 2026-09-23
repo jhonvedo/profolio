@@ -4,12 +4,13 @@ import "@/styles/globals.css";
 ---
 
 <Base lang="es">
-    <main style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:96px 24px;background:var(--hero-gradient);">
+    <main style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:96px 24px;box-sizing:border-box;">
         <div style="text-align:center;">
-            <h1 style="font-family:var(--font-display);font-size:28px;font-weight:800;color:#fff;margin:0;">Elige tu idioma · Choose your language</h1>
-            <div style="margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-                <a href="/es" class="btn-light">Español</a>
-                <a href="/en" class="btn-ghost">English</a>
+            <h1 style="font-size:clamp(28px,4vw,44px);font-weight:600;letter-spacing:-0.035em;margin:0;">Elige tu idioma · Choose your language</h1>
+            <div style="margin-top:28px;display:flex;gap:14px;justify-content:center;font-family:var(--font-mono);font-size:14px;">
+                <a href="/es">Español</a>
+                <span style="color:rgba(22,21,15,0.3);">/</span>
+                <a href="/en">English</a>
             </div>
         </div>
     </main>
