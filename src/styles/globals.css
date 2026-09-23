@@ -1,28 +1,168 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@300..800&family=JetBrains+Mono:wght@400..600&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Cuotfy design system tokens */
 :root {
-    color-scheme: dark;
+    color-scheme: light;
+    --g900: #052e16;
+    --g800: #14532d;
+    --g700: #15803d;
+    --g600: #16a34a;
+    --g500: #22c55e;
+    --g400: #4ade80;
+    --g300: #86efac;
+    --g200: #bbf7d0;
+    --g50: #f0fdf4;
+    --n900: #111814;
+    --n800: #1c2b20;
+    --n700: #263d2b;
+    --n50: #f5f6f4;
+    --white: #fdfefc;
+    --ai: #5b21b6;
+    --ai-soft: #ede9fe;
+    --ai-mid: #7c3aed;
+    --gold: #b45309;
+    --gold-soft: #fef3c7;
+    --gold-mid: #d97706;
+    --bg: var(--white);
+    --surface: var(--white);
+    --surface-2: var(--n50);
+    --border: rgba(12, 15, 13, 0.08);
+    --ink: #0c1a10;
+    --ink-2: rgba(12, 26, 16, 0.55);
+    --ink-3: rgba(12, 26, 16, 0.32);
+    --primary: var(--g700);
+    --primary-s: var(--g50);
+    --primary-b: var(--g200);
+
+    --font-display: "Sora", system-ui, sans-serif;
+    --font-body: "Sora", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --sh-sm: 0 1px 4px rgba(5, 46, 22, 0.06), 0 2px 8px rgba(5, 46, 22, 0.04);
+    --sh-md: 0 4px 16px rgba(5, 46, 22, 0.1);
+    --sh-pri: 0 4px 20px rgba(21, 128, 61, 0.35), 0 1px 4px rgba(21, 128, 61, 0.2);
+    --sh-ai: 0 4px 16px rgba(124, 58, 237, 0.28);
+    --hero-gradient: linear-gradient(135deg, #14532d 0%, #052e16 65%, #020a04 100%);
 }
-html,
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+}
 body {
-    font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        Segoe UI,
-        Roboto,
-        Helvetica,
-        Arial,
-        sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
 }
-.radial-bg {
-    background:
-        radial-gradient(1000px 600px at 80% -10%, rgba(59, 130, 246, 0.25), transparent 60%), radial-gradient(900px 500px at -10% 20%, rgba(236, 72, 153, 0.18), transparent 60%),
-        linear-gradient(180deg, rgba(15, 23, 42, 1) 0%, rgba(2, 6, 23, 1) 100%);
+a {
+    color: var(--primary);
+    text-decoration: none;
 }
-.glass {
-    backdrop-filter: saturate(140%) blur(14px);
-    background: rgba(255, 255, 255, 0.06);
+a:hover {
+    color: var(--g600);
+}
+::selection {
+    background: var(--primary-b);
+}
+
+.wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+}
+.kicker {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+.h2 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0 0 10px;
+    color: var(--ink);
+    letter-spacing: -0.3px;
+}
+.lead {
+    font-size: 14.5px;
+    color: var(--ink-2);
+    line-height: 1.6;
+    margin: 0;
+}
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--sh-sm);
+}
+.tag {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 100px;
+    background: var(--primary-s);
+    color: var(--primary);
+}
+.stat {
+    flex: 1;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 12px;
+}
+.stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--ink-3);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+.stat-value {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+}
+.dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 100px;
+    background: var(--primary);
+    flex-shrink: 0;
+    transform: translateY(-2px);
+}
+.btn-light {
+    background: #fff;
+    color: var(--g800);
+    padding: 13px 22px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 700;
+    display: inline-block;
+    transition: transform 0.15s;
+}
+.btn-light:hover {
+    color: var(--g900);
+    transform: translateY(-1px);
+}
+.btn-ghost {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    padding: 13px 22px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 700;
+    display: inline-block;
+}
+.btn-ghost:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.14);
 }

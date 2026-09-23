@@ -7,338 +7,1214 @@ export const getStaticPaths = () => [{ params: { lang: "es" } }, { params: { lan
 const langParam = Astro.params.lang;
 const lang = isSupportedLang(langParam) ? langParam : "es";
 const t = await getDictionary(lang);
+
+const contact = {
+    email: "contact@jhonacevedo.com",
+    linkedin: "https://www.linkedin.com/in/jhonvedo/",
+    linkedinLabel: "linkedin.com/in/jhonvedo",
+    github: "https://github.com/jhonvedo",
+    githubLabel: "github.com/jhonvedo",
+};
+const f = t.cases.featured;
+const m = f.mock;
+
+const icon = (d: string) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const sparkle = icon('<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 3v4M17 5h4"/><circle cx="5" cy="19" r="1.5"/>');
+const navIcons = [
+    icon('<path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>'),
+    icon('<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 15h2"/>'),
+    sparkle,
+    icon('<path d="M4 4v16h16M8 16v-4M12 16V8M16 16v-6"/>'),
+    icon('<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>'),
+];
 ---
 
-<Base lang={lang} title={`${t.meta.title}`} description={t.meta.description}>
-    <header class="sticky top-0 z-40 border-b border-white/5 bg-slate-900/70 backdrop-blur">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="flex h-16 items-center justify-between">
-                <a href={`/${lang}`} class="flex items-center gap-3">
-                    <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-fuchsia-500"></div>
-                    <span class="text-sm font-semibold tracking-wide">JHON ACEVEDO</span>
-                </a>
-                <nav class="hidden gap-8 text-sm md:flex">
-                    <a href={`/${lang}#servicios`} class="hover:text-white/90 text-white/70">{t.nav.services}</a>
-                    <a href={`/${lang}#proyectos`} class="hover:text-white/90 text-white/70">{t.nav.cases}</a>
-                    <a href={`/${lang}#skills`} class="hover:text-white/90 text-white/70">{t.nav.skills}</a>
-                    <a href={`/${lang}#experiencia`} class="hover:text-white/90 text-white/70">{t.nav.experience}</a>
-                    <a href={`/${lang}#contacto`} class="hover:text-white/90 text-white/70">{t.nav.contact}</a>
-                </nav>
-                <div class="flex items-center gap-3">
-                    <a href={`/${lang}#contacto`} class="hidden md:inline-flex rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-semibold shadow-lg shadow-blue-600/20"
-                        >{t.cta.talk}</a
-                    >
-                    <LanguageSwitcher lang={lang} />
-                </div>
+<Base lang={lang} title={t.meta.title} description={t.meta.description}>
+    <!-- NAV -->
+    <header class="nav">
+        <div class="wrap nav-in">
+            <a href={`/${lang}`} class="brand">
+                <span class="brand-dot"></span>
+                jhon acevedo
+            </a>
+            <nav class="nav-links">
+                {t.nav.links.map((l) => <a href={l.href}>{l.label}</a>)}
+            </nav>
+            <div class="nav-right">
+                <LanguageSwitcher lang={lang} />
+                <a href="#contacto" class="nav-cta">{t.nav.cta}</a>
             </div>
         </div>
     </header>
 
     <main>
-        <section class="relative overflow-hidden">
-            <div class="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:py-28 lg:px-8">
+        <!-- HERO -->
+        <section class="hero">
+            <div class="wrap hero-grid">
                 <div>
-                    <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80">
-                        <span class="h-2 w-2 rounded-full bg-green-400"></span>
-                        {t.hero.badge}
+                    <div class="pill">
+                        <span class="pill-dot"></span>
+                        <span>{t.hero.kicker}</span>
                     </div>
-                    <h1 class="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl">
-                        {t.hero.title}
-                        <span class="block bg-gradient-to-r from-blue-400 to-fuchsia-400 bg-clip-text text-transparent">{t.hero.stack}</span>
-                    </h1>
-                    <p class="mt-5 max-w-xl text-white/80">{t.hero.subtitle}</p>
-                    <div class="mt-8 flex flex-wrap gap-3">
-                        <a href={`/${lang}#contacto`} class="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-3 text-sm font-semibold shadow-lg shadow-blue-600/20">{t.cta.book}</a>
-                        <a href={`/${lang}#proyectos`} class="rounded-xl border border-white/10 px-5 py-3 text-sm font-semibold text-white/90">{t.cta.cases}</a>
+                    <div class="whoami">$ whoami</div>
+                    <h1 class="hero-title">{t.hero.title}</h1>
+                    <p class="hero-sub">{t.hero.subtitle}</p>
+                    <div class="row" style="margin-bottom:32px;">
+                        <a href="#contacto" class="btn-light">{t.hero.ctaPrimary}</a>
+                        <a href="#proyectos" class="btn-ghost">{t.hero.ctaSecondary}</a>
+                    </div>
+                    <div class="row" style="gap:10px;">
+                        {t.hero.badges.map((b) => <span class="hero-badge">{b}</span>)}
                     </div>
                 </div>
-                <div class="relative">
-                    <div class="absolute -inset-6 -z-10 rounded-3xl bg-gradient-to-br from-blue-500/20 to-fuchsia-500/20 blur-2xl"></div>
-                    <div class="glass rounded-3xl p-6 ring-1 ring-white/10">
-                        <img src="/img/profile.avif" alt="Profile" class="aspect-[698/598] w-full rounded-2xl object-cover" />
-                        <div class="mt-6 grid grid-cols-3 gap-3 text-xs text-white/80">
-                            <div class="rounded-lg border border-white/10 bg-white/5 px-3 py-2">Azure DevOps</div>
-                            <div class="rounded-lg border border-white/10 bg-white/5 px-3 py-2">Clean Architecture</div>
-                            <div class="rounded-lg border border-white/10 bg-white/5 px-3 py-2">DDD</div>
-                            <div class="rounded-lg border border-white/10 bg-white/5 px-3 py-2">K8s</div>
-                            <div class="rounded-lg border border-white/10 bg-white/5 px-3 py-2">Terraform</div>
-                            <div class="rounded-lg border border-white/10 bg-white/5 px-3 py-2">Observability</div>
+                <div class="hero-photo">
+                    <img src="/img/profile.avif" alt={t.hero.photoAlt} width="220" height="220" />
+                    <span class="loc">📍 {t.hero.location}</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERVICIOS -->
+        <section id="servicios" class="wrap section">
+            <div class="head">
+                <div class="kicker">{t.services.kicker}</div>
+                <h2 class="h2">{t.services.heading}</h2>
+                <p class="lead">{t.services.subheading}</p>
+            </div>
+            <div class="grid" style="--min:240px;">
+                {
+                    t.services.items.map((svc) => (
+                        <div class="card" style="padding:22px;">
+                            <div class="card-title">{svc.title}</div>
+                            <div class="card-desc">{svc.desc}</div>
+                            {svc.bullets.map((b) => (
+                                <div class="bullet">
+                                    <span class="dot" />
+                                    <span>{b}</span>
+                                </div>
+                            ))}
+                        </div>
+                    ))
+                }
+            </div>
+        </section>
+
+        <!-- CASOS -->
+        <section id="proyectos" class="band">
+            <div class="wrap">
+                <div class="head">
+                    <div class="kicker">{t.cases.kicker}</div>
+                    <h2 class="h2">{t.cases.heading}</h2>
+                    <p class="lead">{t.cases.subheading}</p>
+                </div>
+
+                <div class="featured">
+                    <div class="featured-visual" role="img" aria-label={m.alt}>
+                        <div class="phones" aria-hidden="true">
+                            <!-- IA screen (back) -->
+                            <div class="phone phone-back">
+                                <div class="scr scr-ia">
+                                    <div class="ia-tabs">
+                                        <span class="on">{m.tab1}</span>
+                                        <span>{m.tab2}</span>
+                                    </div>
+                                    <div class="ia-hero">
+                                        <div class="ia-hero-top">
+                                            <b>{m.iaTitle}</b>
+                                            <span class="ia-chip">✦ Claude AI</span>
+                                        </div>
+                                        <p>{m.iaDesc}</p>
+                                    </div>
+                                    <div class="ia-box">
+                                        <div class="ia-input">{m.input}<span class="caret"></span></div>
+                                        {m.examples.map((ex) => <div class="ia-ex">{ex}</div>)}
+                                        <div class="ia-btn"><Fragment set:html={sparkle} /> {m.button}</div>
+                                    </div>
+                                    <div class="ia-result">
+                                        <div>
+                                            <div class="ia-result-cat">{m.resultCat}</div>
+                                            <div class="ia-result-name">{m.resultName}</div>
+                                        </div>
+                                        <div class="ia-result-amt">{m.resultAmt}</div>
+                                    </div>
+                                </div>
+                                <div class="tabbar">
+                                    {m.nav.map((n, i) => <span class:list={{ on: i === 2, ai: i === 2 }}><Fragment set:html={navIcons[i]} />{n}</span>)}
+                                </div>
+                            </div>
+
+                            <!-- Home screen (front) -->
+                            <div class="phone phone-front">
+                                <div class="scr">
+                                    <div class="home-head">
+                                        <div class="home-top">
+                                            <span class="home-logo"><i></i>cuotfy</span>
+                                            <span class="home-avatar">JA</span>
+                                        </div>
+                                        <div class="home-hi">{m.greeting}</div>
+                                        <div class="home-label">{m.totalLabel}</div>
+                                        <div class="home-total">{m.total}</div>
+                                        <div class="home-label" style="margin-top:8px;">{m.month}</div>
+                                        <div class="home-kpis">
+                                            <div><span class="k-dot" style="background:var(--g500);"></span>{m.income}<b>{m.incomeVal}</b></div>
+                                            <div><span class="k-dot" style="background:#ef4444;"></span>{m.expense}<b>{m.expenseVal}</b></div>
+                                        </div>
+                                    </div>
+                                    <div class="home-body">
+                                        <div class="home-ask">
+                                            <Fragment set:html={sparkle} />
+                                            <div><b>{m.askTitle}</b><span>{m.askSub}</span></div>
+                                            <em>›</em>
+                                        </div>
+                                        <div class="home-quick-label">{m.quick}</div>
+                                        <div class="home-quick">
+                                            <div><i></i><b>{m.quick1}</b><span>{m.quick1Sub}</span></div>
+                                            <div><i></i><b>{m.quick2}</b><span>{m.quick2Sub}</span></div>
+                                        </div>
+                                        <div class="home-input">
+                                            <Fragment set:html={sparkle} />
+                                            <span>{m.input}</span>
+                                            <em>➤</em>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tabbar">
+                                    {m.nav.map((n, i) => <span class:list={{ on: i === 0 }}><Fragment set:html={navIcons[i]} />{n}</span>)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="featured-body">
+                        <div class="row" style="gap:8px;">
+                            <span class="tag tag-ai">✦ Claude AI</span>
+                            <span class="tag">{f.role}</span>
+                        </div>
+                        <div class="featured-name">{f.name}</div>
+                        <div class="featured-desc">{f.desc}</div>
+                        <div class="flow">
+                            {
+                                f.flow.map((step, i) => (
+                                    <>
+                                        <span class="flow-step">{step}</span>
+                                        {i < f.flow.length - 1 && <span class="flow-arrow">→</span>}
+                                    </>
+                                ))
+                            }
+                        </div>
+                        <div class="row" style="gap:6px;">
+                            {f.tags.map((tag) => <span class="tag">{tag}</span>)}
+                        </div>
+                        <div class="row" style="gap:8px;flex-wrap:nowrap;">
+                            {
+                                f.stats.map((st) => (
+                                    <div class="stat">
+                                        <div class="stat-label">{st.label}</div>
+                                        <div class="stat-value">{st.value}</div>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid" style="--min:300px;gap:20px;">
+                    {
+                        t.cases.items.map((cs) => (
+                            <article class="card case">
+                                <a href={cs.url} target="_blank" rel="noopener noreferrer" class="case-img">
+                                    <img src={cs.img} alt={cs.name} loading="lazy" />
+                                </a>
+                                <div style="padding:20px;">
+                                    <a href={cs.url} target="_blank" rel="noopener noreferrer" class="case-name">
+                                        {cs.name} <span aria-hidden="true">↗</span>
+                                    </a>
+                                    <div class="card-desc" style="font-size:13px;">
+                                        {cs.desc}
+                                    </div>
+                                    <div class="row" style="gap:6px;margin-bottom:14px;">
+                                        {cs.tags.map((tag) => (
+                                            <span class="tag">{tag}</span>
+                                        ))}
+                                    </div>
+                                    {cs.stats.length > 0 && (
+                                        <div class="row" style="gap:8px;flex-wrap:nowrap;">
+                                            {cs.stats.map((st) => (
+                                                <div class="stat">
+                                                    <div class="stat-label">{st.label}</div>
+                                                    <div class="stat-value">{st.value}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </article>
+                        ))
+                    }
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPERIENCIA -->
+        <section id="experiencia" class="band" style="border-top:1px solid var(--border);">
+            <div class="wrap">
+                <div class="head" style="max-width:620px;">
+                    <div class="kicker">{t.experience.kicker}</div>
+                    <h2 class="h2" style="text-wrap:balance;">{t.experience.heading}</h2>
+                    <p class="lead" style="text-wrap:pretty;">{t.experience.subheading}</p>
+                </div>
+                <div class="grid" style="--min:200px;margin-bottom:16px;">
+                    {
+                        t.experience.stats.map((st) => (
+                            <div class="card" style="padding:22px;">
+                                <div class="big-num">{st.value}</div>
+                                <div class="card-desc" style="font-size:13px;line-height:1.5;margin:0;">
+                                    {st.label}
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+                <div class="grid" style="--min:300px;">
+                    <div class="card" style="padding:22px;">
+                        <div class="eyebrow">{t.experience.sectorsLabel}</div>
+                        <div class="row" style="gap:8px;">
+                            {t.experience.sectors.map((sec) => <span class="sector">{sec}</span>)}
+                        </div>
+                    </div>
+                    <div class="card" style="padding:22px;">
+                        <div class="eyebrow">{t.experience.companiesLabel}</div>
+                        <div class="row" style="gap:8px 18px;align-items:baseline;">
+                            {t.experience.companies.map((co) => <span class="company">{co}</span>)}
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="servicios" class="border-t border-white/5 py-20">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <h2 class="text-center text-3xl font-bold">{t.services.title}</h2>
-                <p class="mx-auto mt-3 max-w-2xl text-center text-white/70">{t.services.subtitle}</p>
-                <div class="mt-12 grid gap-6 sm:grid-cols-2">
-                    <div class="glass rounded-3xl p-6 ring-1 ring-white/10">
-                        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500"></div>
-                        <h3 class="mt-4 text-lg font-semibold">{t.services.cards.arch.title}</h3>
-                        <p class="mt-2 text-sm text-white/75">{t.services.cards.arch.text}</p>
-                        <ul class="mt-4 space-y-1 text-sm text-white/70"><li>{t.services.cards.arch.b1}</li><li>{t.services.cards.arch.b2}</li><li>{t.services.cards.arch.b3}</li></ul>
-                    </div>
-                    <div class="glass rounded-3xl p-6 ring-1 ring-white/10">
-                        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-fuchsia-500 to-pink-500"></div>
-                        <h3 class="mt-4 text-lg font-semibold">{t.services.cards.mod.title}</h3>
-                        <p class="mt-2 text-sm text-white/75">{t.services.cards.mod.text}</p>
-                        <ul class="mt-4 space-y-1 text-sm text-white/70"><li>{t.services.cards.mod.b1}</li><li>{t.services.cards.mod.b2}</li><li>{t.services.cards.mod.b3}</li></ul>
-                    </div>
-                    <div class="glass rounded-3xl p-6 ring-1 ring-white/10">
-                        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500"></div>
-                        <h3 class="mt-4 text-lg font-semibold">{t.services.cards.audit.title}</h3>
-                        <p class="mt-2 text-sm text-white/75">{t.services.cards.audit.text}</p>
-                        <ul class="mt-4 space-y-1 text-sm text-white/70"><li>{t.services.cards.audit.b1}</li><li>{t.services.cards.audit.b2}</li><li>{t.services.cards.audit.b3}</li></ul>
-                    </div>
-                    <div class="glass rounded-3xl p-6 ring-1 ring-white/10">
-                        <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500"></div>
-                        <h3 class="mt-4 text-lg font-semibold">{t.services.cards.ai.title}</h3>
-                        <p class="mt-2 text-sm text-white/75">{t.services.cards.ai.text}</p>
-                        <ul class="mt-4 space-y-1 text-sm text-white/70"><li>{t.services.cards.ai.b1}</li><li>{t.services.cards.ai.b2}</li><li>{t.services.cards.ai.b3}</li></ul>
+        <!-- SOBRE MÍ -->
+        <section id="sobre-mi" class="section">
+            <div class="wrap about">
+                <div class="about-photo">
+                    <img src="/img/profile.avif" alt={t.hero.photoAlt} loading="lazy" />
+                    <span class="coffee" aria-hidden="true">☕</span>
+                </div>
+                <div>
+                    <div class="kicker">{t.about.kicker}</div>
+                    <h2 class="h2" style="font-size:26px;margin-bottom:14px;">{t.about.heading}</h2>
+                    <p class="lead" style="line-height:1.7;margin-bottom:18px;max-width:640px;">{t.about.bio}</p>
+                    <div class="row" style="gap:8px;">
+                        {t.about.values.map((v) => <span class="value">{v}</span>)}
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="proyectos" class="border-t border-white/5 py-20">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="flex items-end justify-between gap-6">
+        <!-- BLOG -->
+        <section id="blog" class="band">
+            <div class="wrap">
+            <div class="head">
+                <div class="kicker">{t.blog.kicker}</div>
+                <h2 class="h2">{t.blog.heading}</h2>
+                <p class="lead">{t.blog.subheading}</p>
+            </div>
+            <div class="grid" style="--min:260px;">
+                {
+                    t.blog.items.map((post) => (
+                        <div class="card" style="padding:20px;">
+                            <span class="tag">{post.tag}</span>
+                            <div class="card-title" style="font-size:15px;margin:12px 0 8px;">
+                                {post.title}
+                            </div>
+                            <div class="card-desc" style="font-size:13px;margin:0;">
+                                {post.excerpt}
+                            </div>
+                        </div>
+                    ))
+                }
+            </div>
+            </div>
+        </section>
+
+        <!-- CONTACTO -->
+        <section id="contacto" class="wrap section">
+            <div class="contact">
+                <div>
+                    <h2 class="h2" style="font-size:26px;color:#fff;">{t.contact.heading}</h2>
+                    <p class="lead" style="color:rgba(255,255,255,0.75);margin-bottom:24px;max-width:440px;">{t.contact.subheading}</p>
+                    <a href={`mailto:${contact.email}`} class="btn-light">{t.contact.cta}</a>
+                </div>
+                <div class="contact-list">
                     <div>
-                        <h2 class="text-3xl font-bold">{t.cases.title}</h2>
-                        <p class="mt-3 max-w-2xl text-white/70">{t.cases.subtitle}</p>
+                        <div class="contact-label">{t.contact.emailLabel}</div>
+                        <a href={`mailto:${contact.email}`}>{contact.email}</a>
                     </div>
-                    <a href={`/${lang}#contacto`} class="hidden rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold md:inline-flex">{t.cases.cta}</a>
-                </div>
-                <div class="mt-10 grid gap-6 lg:grid-cols-3">
-                    <article class="group rounded-3xl border border-white/10 bg-white/5 p-4 ring-1 ring-white/10">
-                        <a href={t.cases.card1.url} target="_blank" rel="noopener noreferrer" class="block">
-                            <div
-                                class="aspect-[16/10] w-full rounded-2xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 flex items-center justify-center group-hover:from-blue-600/30 group-hover:to-indigo-600/30 transition-colors"
-                            >
-                                <span class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">{t.cases.card1.title}</span>
-                            </div>
-                        </a>
-                        <div class="p-4">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-semibold">{t.cases.card1.title}</h3>
-                                <a href={t.cases.card1.url} target="_blank" rel="noopener noreferrer" class="text-white/50 hover:text-white/80 transition-colors" aria-label="Visitar sitio">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                                    </svg>
-                                </a>
-                            </div>
-                            <p class="mt-1 text-sm text-white/75">{t.cases.card1.text}</p>
-                            <ul class="mt-3 flex flex-wrap gap-2 text-xs text-white/70">
-                                {t.cases.card1.tech.map((tech) => <li class="rounded-md border border-white/10 px-2 py-1">{tech}</li>)}
-                            </ul>
-                            <div class="mt-4 text-xs text-white/60">{t.cases.card1.impact}</div>
-                        </div>
-                    </article>
-                    <article class="group rounded-3xl border border-white/10 bg-white/5 p-4 ring-1 ring-white/10">
-                        <a href={t.cases.card2.url} target="_blank" rel="noopener noreferrer" class="block">
-                            <div
-                                class="aspect-[16/10] w-full rounded-2xl bg-gradient-to-br from-emerald-600/20 to-teal-600/20 flex items-center justify-center group-hover:from-emerald-600/30 group-hover:to-teal-600/30 transition-colors"
-                            >
-                                <span class="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">{t.cases.card2.title}</span>
-                            </div>
-                        </a>
-                        <div class="p-4">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-semibold">{t.cases.card2.title}</h3>
-                                <a href={t.cases.card2.url} target="_blank" rel="noopener noreferrer" class="text-white/50 hover:text-white/80 transition-colors" aria-label="Visitar sitio">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                                    </svg>
-                                </a>
-                            </div>
-                            <p class="mt-1 text-sm text-white/75">{t.cases.card2.text}</p>
-                            <ul class="mt-3 flex flex-wrap gap-2 text-xs text-white/70">
-                                {t.cases.card2.tech.map((tech) => <li class="rounded-md border border-white/10 px-2 py-1">{tech}</li>)}
-                            </ul>
-                            <div class="mt-4 text-xs text-white/60">{t.cases.card2.impact}</div>
-                        </div>
-                    </article>
-                    <article class="group rounded-3xl border border-white/10 bg-white/5 p-4 ring-1 ring-white/10">
-                        <a href={t.cases.card3.url} target="_blank" rel="noopener noreferrer" class="block">
-                            <div
-                                class="aspect-[16/10] w-full rounded-2xl bg-gradient-to-br from-fuchsia-600/20 to-pink-600/20 flex items-center justify-center group-hover:from-fuchsia-600/30 group-hover:to-pink-600/30 transition-colors"
-                            >
-                                <span class="text-3xl font-bold bg-gradient-to-r from-fuchsia-400 to-pink-400 bg-clip-text text-transparent">{t.cases.card3.title}</span>
-                            </div>
-                        </a>
-                        <div class="p-4">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-semibold">{t.cases.card3.title}</h3>
-                                <a href={t.cases.card3.url} target="_blank" rel="noopener noreferrer" class="text-white/50 hover:text-white/80 transition-colors" aria-label="Visitar sitio">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                                    </svg>
-                                </a>
-                            </div>
-                            <p class="mt-1 text-sm text-white/75">{t.cases.card3.text}</p>
-                            <ul class="mt-3 flex flex-wrap gap-2 text-xs text-white/70">
-                                {t.cases.card3.tech.map((tech) => <li class="rounded-md border border-white/10 px-2 py-1">{tech}</li>)}
-                            </ul>
-                            <div class="mt-4 text-xs text-white/60">{t.cases.card3.impact}</div>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <section id="skills" class="border-t border-white/5 py-20">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold">{t.skills.title}</h2>
-                <p class="mt-3 max-w-2xl text-white/70">{t.skills.subtitle}</p>
-                <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <h3 class="text-lg font-semibold">{t.skills.cards.backend.title}</h3>
-                        <p class="mt-2 text-sm text-white/70">{t.skills.cards.backend.text}</p>
-                        <div class="mt-4 flex flex-wrap gap-2 text-xs text-white/70">
-                            <span class="rounded-md border border-white/10 px-2 py-1">Express/Fastify</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">Azure Functions</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">EF Core/Dapper</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">RabbitMQ</span>
-                        </div>
+                    <div>
+                        <div class="contact-label">LinkedIn</div>
+                        <a href={contact.linkedin} target="_blank" rel="noopener noreferrer">{contact.linkedinLabel}</a>
                     </div>
-                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <h3 class="text-lg font-semibold">{t.skills.cards.frontend.title}</h3>
-                        <p class="mt-2 text-sm text-white/70">{t.skills.cards.frontend.text}</p>
-                        <div class="mt-4 flex flex-wrap gap-2 text-xs text-white/70">
-                            <span class="rounded-md border border-white/10 px-2 py-1">Tailwind</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">Astro Islands</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">A11y</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">Storybook</span>
-                        </div>
-                    </div>
-                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <h3 class="text-lg font-semibold">{t.skills.cards.devops.title}</h3>
-                        <p class="mt-2 text-sm text-white/70">{t.skills.cards.devops.text}</p>
-                        <div class="mt-4 flex flex-wrap gap-2 text-xs text-white/70">
-                            <span class="rounded-md border border-white/10 px-2 py-1">Azure</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">Terraform</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">Docker/K8s</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">Grafana/Prometheus</span>
-                        </div>
-                    </div>
-                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <h3 class="text-lg font-semibold">{t.skills.cards.arch.title}</h3>
-                        <p class="mt-2 text-sm text-white/70">{t.skills.cards.arch.text}</p>
-                        <div class="mt-4 flex flex-wrap gap-2 text-xs text-white/70">
-                            <span class="rounded-md border border-white/10 px-2 py-1">Clean/Hexagonal</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">CQRS/ES</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">Event-Driven</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">OWASP</span>
-                        </div>
-                    </div>
-                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <h3 class="text-lg font-semibold">{t.skills.cards.lead.title}</h3>
-                        <p class="mt-2 text-sm text-white/70">{t.skills.cards.lead.text}</p>
-                        <div class="mt-4 flex flex-wrap gap-2 text-xs text-white/70">
-                            <span class="rounded-md border border-white/10 px-2 py-1">1:1s</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">Tech Radar</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">OKRs</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">Playbooks</span>
-                        </div>
-                    </div>
-                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <h3 class="text-lg font-semibold">{t.skills.cards.data.title}</h3>
-                        <p class="mt-2 text-sm text-white/70">{t.skills.cards.data.text}</p>
-                        <div class="mt-4 flex flex-wrap gap-2 text-xs text-white/70">
-                            <span class="rounded-md border border-white/10 px-2 py-1">SQL Server</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">MongoDB</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">Power BI</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">Delta/Lake</span>
-                        </div>
-                    </div>
-                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6 md:col-span-2 lg:col-span-1 lg:col-start-2">
-                        <h3 class="text-lg font-semibold">{t.skills.cards.ai.title}</h3>
-                        <p class="mt-2 text-sm text-white/70">{t.skills.cards.ai.text}</p>
-                        <div class="mt-4 flex flex-wrap gap-2 text-xs text-white/70">
-                            <span class="rounded-md border border-white/10 px-2 py-1">LangFlow</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">MCP</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">Claude API</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">AI Agents</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">E2E Automation</span>
-                            <span class="rounded-md border border-white/10 px-2 py-1">Playwright</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="experiencia" class="border-t border-white/5 py-20">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold">{t.exp.title}</h2>
-                <div class="mt-10 grid gap-6 lg:grid-cols-2">
-                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <div class="flex items-start justify-between">
-                            <div><h3 class="text-lg font-semibold">{t.exp.card1.role}</h3><div class="text-sm text-white/70">{t.exp.card1.place}</div></div>
-                            <span class="rounded-full bg-emerald-500/20 px-3 py-1 text-xs text-emerald-300">{t.exp.card1.badge}</span>
-                        </div>
-                        <ul class="mt-4 list-disc space-y-2 pl-5 text-sm text-white/80"><li>{t.exp.card1.b1}</li><li>{t.exp.card1.b2}</li><li>{t.exp.card1.b3}</li></ul>
-                    </div>
-                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <div class="flex items-start justify-between">
-                            <div><h3 class="text-lg font-semibold">{t.exp.card2.role}</h3><div class="text-sm text-white/70">{t.exp.card2.place}</div></div>
-                            <span class="rounded-full bg-blue-500/20 px-3 py-1 text-xs text-blue-300">{t.exp.card2.badge}</span>
-                        </div>
-                        <ul class="mt-4 list-disc space-y-2 pl-5 text-sm text-white/80"><li>{t.exp.card2.b1}</li><li>{t.exp.card2.b2}</li><li>{t.exp.card2.b3}</li></ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="border-t border-white/5 py-20">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="rounded-3xl bg-gradient-to-r from-blue-600/20 to-fuchsia-600/20 p-8 ring-1 ring-white/10 md:p-12">
-                    <div class="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
-                        <div><h3 class="text-2xl font-bold">{t.review.title}</h3><p class="mt-2 text-white/80">{t.review.text}</p></div>
-                        <a href={`/${lang}#contacto`} class="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900">{t.review.cta}</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="contacto" class="border-t border-white/5 py-20">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold">{t.contact.title}</h2>
-                <p class="mt-3 max-w-2xl text-white/70">{t.contact.subtitle}</p>
-
-                <div class="mt-10 grid gap-6 md:grid-cols-3 max-w-4xl mx-auto">
-                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <div class="text-sm text-white/60">Email</div>
-                        <a class="mt-1 block text-lg font-semibold hover:text-blue-400 transition-colors" href="mailto:contact@jhonacevedo.com">contact@jhonacevedo.com</a>
-                    </div>
-                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <div class="text-sm text-white/60">LinkedIn</div>
-                        <a class="mt-1 block text-lg font-semibold hover:text-blue-400 transition-colors" href="https://www.linkedin.com/in/jhonvedo/" target="_blank" rel="noopener noreferrer"
-                            >linkedin.com/in/jhonvedo</a
-                        >
-                    </div>
-                    <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
-                        <div class="text-sm text-white/60">GitHub</div>
-                        <a class="mt-1 block text-lg font-semibold hover:text-blue-400 transition-colors" href="https://github.com/jhonvedo" target="_blank" rel="noopener noreferrer"
-                            >github.com/jhonvedo</a
-                        >
+                    <div>
+                        <div class="contact-label">GitHub</div>
+                        <a href={contact.github} target="_blank" rel="noopener noreferrer">{contact.githubLabel}</a>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="border-t border-white/5 py-10">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col items-center justify-between gap-6 md:flex-row">
-                <p class="text-sm text-white/60">© 2025 Jhon Acevedo</p>
-                <!--  <div class="flex gap-4 text-sm text-white/60">
-                    <a href={`/${lang}`} class="hover:text-white/90">Blog</a>
-                    <a href={`/${lang}`} class="hover:text-white/90">{t.footer.privacy}</a>
-                    <a href={`/${lang}`} class="hover:text-white/90">{t.footer.terms}</a>
-                </div>-->
-            </div>
-        </div>
-    </footer>
+    <footer class="footer">{t.footer.text}</footer>
 </Base>
+
+<style>
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .section {
+        padding: 72px 24px;
+    }
+    .band {
+        background: var(--surface-2);
+        padding: 72px 24px;
+    }
+    .head {
+        max-width: 560px;
+        margin-bottom: 36px;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(var(--min), 100%), 1fr));
+        gap: 16px;
+    }
+
+    /* nav */
+    .nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: color-mix(in srgb, var(--surface) 88%, transparent);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+    }
+    .nav-in {
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 16px;
+        color: var(--ink);
+    }
+    .brand:hover {
+        color: var(--ink);
+    }
+    .brand-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 100px;
+        background: var(--primary);
+    }
+    .nav-links {
+        display: flex;
+        gap: 22px;
+    }
+    .nav-links a {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--ink-2);
+    }
+    .nav-links a:hover {
+        color: var(--primary);
+    }
+    .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .nav-cta {
+        background: var(--primary);
+        color: #fff;
+        padding: 9px 16px;
+        border-radius: 100px;
+        font-size: 13px;
+        font-weight: 700;
+        box-shadow: var(--sh-pri);
+        white-space: nowrap;
+    }
+    .nav-cta:hover {
+        color: #fff;
+        background: var(--g600);
+    }
+
+    /* hero */
+    .hero {
+        background: var(--hero-gradient);
+        padding: 64px 24px 72px;
+    }
+    .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.3fr) minmax(220px, 0.7fr);
+        gap: 48px;
+        align-items: center;
+    }
+    .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 100px;
+        padding: 6px 14px;
+        margin-bottom: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.85);
+    }
+    .pill-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 100px;
+        background: var(--g400);
+        box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.2);
+    }
+    .whoami {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        color: var(--g300);
+        margin-bottom: 10px;
+    }
+    .hero-title {
+        font-family: var(--font-display);
+        font-size: 40px;
+        font-weight: 800;
+        line-height: 1.15;
+        color: #fff;
+        margin: 0 0 16px;
+        letter-spacing: -0.5px;
+    }
+    .hero-sub {
+        font-size: 16px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.75);
+        max-width: 560px;
+        margin: 0 0 28px;
+    }
+    .hero-badge {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 11.5px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 100px;
+    }
+    .hero-photo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+    .hero-photo img {
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+    .loc {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* cards */
+    .card-title {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 15.5px;
+        color: var(--ink);
+        margin-bottom: 8px;
+    }
+    .card-desc {
+        font-size: 13.5px;
+        color: var(--ink-2);
+        line-height: 1.55;
+        margin-bottom: 14px;
+    }
+    .bullet {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12.5px;
+        color: var(--ink-2);
+        margin-bottom: 6px;
+    }
+    .bullet .dot {
+        transform: none;
+    }
+
+    /* cases */
+    .featured {
+        background: var(--surface);
+        border: 1px solid var(--ai-soft);
+        border-radius: 20px;
+        box-shadow: var(--sh-ai);
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+        margin-bottom: 20px;
+    }
+    .featured-visual {
+        min-height: 440px;
+        background:
+            radial-gradient(420px 260px at 85% 10%, rgba(124, 58, 237, 0.4), transparent 70%),
+            var(--hero-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 36px 24px;
+        overflow: hidden;
+    }
+
+    /* phone mockups (based on the Cuotfy app screens) */
+    .phones {
+        position: relative;
+        width: 384px;
+        height: 420px;
+        flex-shrink: 0;
+    }
+    .phone {
+        position: absolute;
+        width: 196px;
+        height: 408px;
+        border-radius: 30px;
+        background: #0b120d;
+        padding: 6px;
+        box-shadow:
+            0 24px 60px rgba(0, 0, 0, 0.45),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        font-family: var(--font-body);
+        color: var(--ink);
+    }
+    .phone :global(svg) {
+        width: 1em;
+        height: 1em;
+        flex-shrink: 0;
+    }
+    .phone-back {
+        right: 0;
+        top: 12px;
+        transform: rotate(6deg);
+    }
+    .phone-front {
+        left: 0;
+        top: 0;
+        transform: rotate(-4deg);
+        z-index: 1;
+    }
+    .scr {
+        flex: 1;
+        background: #f6f8f5;
+        border-radius: 24px 24px 0 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    .tabbar {
+        background: #fff;
+        border-radius: 0 0 24px 24px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-around;
+        padding: 6px 4px 8px;
+    }
+    .tabbar span {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        font-size: 5.5px;
+        color: var(--ink-3);
+    }
+    .tabbar span :global(svg) {
+        font-size: 11px;
+    }
+    .tabbar .on {
+        color: var(--g700);
+        font-weight: 700;
+    }
+    .tabbar .ai {
+        color: var(--ai-mid);
+    }
+
+    /* home */
+    .home-head {
+        background: linear-gradient(160deg, #14532d 0%, #052e16 70%, #020a04 100%);
+        padding: 14px 12px 12px;
+        color: #fff;
+    }
+    .home-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .home-logo {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 800;
+        font-size: 13px;
+    }
+    .home-logo i {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--g500);
+    }
+    .home-avatar {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--g600);
+        font-size: 7px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .home-hi {
+        font-size: 7.5px;
+        color: var(--g400);
+        margin: 6px 0 8px;
+    }
+    .home-label {
+        font-size: 5.5px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: var(--g400);
+    }
+    .home-total {
+        font-family: var(--font-mono);
+        font-size: 19px;
+        font-weight: 600;
+        margin-top: 2px;
+    }
+    .home-kpis {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        margin-top: 5px;
+    }
+    .home-kpis div {
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        border-radius: 8px;
+        padding: 5px 6px;
+        font-size: 5.5px;
+        text-transform: uppercase;
+        color: var(--g300);
+    }
+    .home-kpis b {
+        display: block;
+        font-family: var(--font-mono);
+        font-size: 7.5px;
+        color: #fff;
+        margin-top: 2px;
+        text-transform: none;
+    }
+    .k-dot {
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        margin-right: 3px;
+    }
+    .home-body {
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        flex: 1;
+    }
+    .home-ask {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--ai-soft);
+        border: 1px solid var(--ai-mid);
+        border-radius: 10px;
+        padding: 7px 8px;
+        color: var(--ai-mid);
+        font-size: 12px;
+    }
+    .home-ask div {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .home-ask b {
+        font-size: 7.5px;
+    }
+    .home-ask span {
+        font-size: 6px;
+        color: var(--ink-2);
+    }
+    .home-ask em {
+        font-style: normal;
+        font-size: 12px;
+    }
+    .home-quick-label {
+        font-size: 5.5px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        color: var(--ink-2);
+        text-transform: uppercase;
+        margin-top: 2px;
+    }
+    .home-quick {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+    }
+    .home-quick div {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 7px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        box-shadow: var(--sh-sm);
+    }
+    .home-quick i {
+        width: 14px;
+        height: 14px;
+        border-radius: 5px;
+        border: 1px solid var(--border);
+        background: var(--g50);
+        margin-bottom: 4px;
+    }
+    .home-quick b {
+        font-size: 7px;
+    }
+    .home-quick span {
+        font-size: 6px;
+        color: var(--ink-2);
+    }
+    .home-input {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 6px 6px 6px 8px;
+        box-shadow: var(--sh-md);
+        color: var(--ai-mid);
+        font-size: 10px;
+    }
+    .home-input span {
+        flex: 1;
+        font-size: 7px;
+        color: var(--ink);
+        font-weight: 600;
+    }
+    .home-input em {
+        font-style: normal;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--g700);
+        color: #fff;
+        font-size: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* IA */
+    .scr-ia {
+        padding: 12px 10px;
+        gap: 8px;
+        background: linear-gradient(180deg, #f7f5ff 0%, #f6f8f5 100%);
+    }
+    .ia-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: rgba(12, 26, 16, 0.05);
+        border-radius: 100px;
+        padding: 2px;
+        font-size: 7px;
+        text-align: center;
+        color: var(--ink-2);
+    }
+    .ia-tabs span {
+        padding: 4px;
+        border-radius: 100px;
+    }
+    .ia-tabs .on {
+        background: var(--ai-mid);
+        color: #fff;
+        font-weight: 700;
+    }
+    .ia-hero {
+        background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+        border-radius: 12px;
+        padding: 10px;
+        color: #fff;
+    }
+    .ia-hero-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 4px;
+    }
+    .ia-hero b {
+        font-size: 10px;
+    }
+    .ia-chip {
+        font-size: 5.5px;
+        font-weight: 700;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 100px;
+        padding: 2px 5px;
+        white-space: nowrap;
+    }
+    .ia-hero p {
+        font-size: 6.5px;
+        line-height: 1.5;
+        margin: 5px 0 0;
+        color: rgba(255, 255, 255, 0.85);
+    }
+    .ia-box {
+        background: rgba(237, 233, 254, 0.7);
+        border: 1px solid #ddd6fe;
+        border-radius: 12px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .ia-input {
+        background: #fff;
+        border: 1px solid #ddd6fe;
+        border-radius: 8px;
+        padding: 7px;
+        font-size: 7px;
+        font-weight: 600;
+        min-height: 26px;
+        margin-bottom: 2px;
+    }
+    .caret {
+        display: inline-block;
+        width: 1px;
+        height: 8px;
+        background: var(--ai-mid);
+        margin-left: 1px;
+        vertical-align: middle;
+        animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink {
+        50% {
+            opacity: 0;
+        }
+    }
+    .ia-ex {
+        background: #fff;
+        border: 1px solid #ddd6fe;
+        border-radius: 100px;
+        padding: 3px 7px;
+        font-size: 5.5px;
+        color: var(--ai);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .ia-btn {
+        margin-top: 3px;
+        background: var(--ai);
+        color: #fff;
+        border-radius: 8px;
+        padding: 6px;
+        font-size: 7px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+    .ia-result {
+        background: #fff;
+        border-radius: 10px;
+        padding: 7px 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: var(--sh-md);
+        border-left: 3px solid var(--g500);
+    }
+    .ia-result-cat {
+        font-size: 5.5px;
+        font-weight: 800;
+        color: var(--g700);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .ia-result-name {
+        font-size: 7px;
+        font-weight: 600;
+    }
+    .ia-result-amt {
+        font-family: var(--font-mono);
+        font-size: 8px;
+        font-weight: 700;
+        color: #b91c1c;
+    }
+    @media (max-width: 420px) {
+        .phones {
+            transform: scale(0.8);
+            margin: -40px -38px;
+        }
+        .featured-visual {
+            min-height: 380px;
+        }
+    }
+    .featured-body {
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+    .tag-ai {
+        background: var(--ai-soft);
+        color: var(--ai-mid);
+    }
+    .featured-name {
+        font-family: var(--font-display);
+        font-weight: 800;
+        font-size: 24px;
+        color: var(--ink);
+    }
+    .featured-desc {
+        font-size: 14px;
+        color: var(--ink-2);
+        line-height: 1.6;
+    }
+    .flow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        font-family: var(--font-mono);
+        font-size: 12px;
+    }
+    .flow-step {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 100px;
+        padding: 5px 11px;
+        color: var(--ink);
+    }
+    .flow-arrow {
+        color: var(--ink-3);
+    }
+    .case {
+        border-radius: 18px;
+        overflow: hidden;
+        transition:
+            transform 0.2s,
+            box-shadow 0.2s;
+    }
+    .case:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--sh-md);
+    }
+    .case-img {
+        display: block;
+        height: 160px;
+        background: var(--surface-2);
+        border-bottom: 1px solid var(--border);
+    }
+    .case-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+    }
+    .case-name {
+        display: inline-block;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 15.5px;
+        color: var(--ink);
+        margin-bottom: 6px;
+    }
+    .case-name span {
+        color: var(--ink-3);
+        font-size: 13px;
+    }
+
+    /* experience */
+    .big-num {
+        font-family: var(--font-mono);
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: -1px;
+        color: var(--ink);
+        margin-bottom: 6px;
+    }
+    .eyebrow {
+        font-size: 10.5px;
+        font-weight: 800;
+        letter-spacing: 1.2px;
+        color: var(--ink-3);
+        text-transform: uppercase;
+        margin-bottom: 14px;
+    }
+    .sector {
+        background: var(--primary-s);
+        color: var(--primary);
+        font-size: 13.5px;
+        font-weight: 700;
+        padding: 8px 14px;
+        border-radius: 100px;
+    }
+    .company {
+        font-family: var(--font-display);
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--ink);
+    }
+
+    /* about */
+    .about {
+        display: grid;
+        grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
+        gap: 40px;
+        align-items: center;
+    }
+    .about-photo {
+        position: relative;
+    }
+    .about-photo img {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .coffee {
+        position: absolute;
+        bottom: 6px;
+        right: 6px;
+        background: var(--g400);
+        border: 3px solid var(--bg);
+        width: 32px;
+        height: 32px;
+        border-radius: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+    .value {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        color: var(--ink-2);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 100px;
+    }
+
+    /* contact */
+    .contact {
+        background: var(--hero-gradient);
+        border-radius: 24px;
+        padding: 48px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
+        gap: 32px;
+        align-items: center;
+    }
+    .contact-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+    .contact-list a {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    .contact-list a:hover {
+        color: var(--g300);
+    }
+    .contact-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .footer {
+        border-top: 1px solid var(--border);
+        padding: 24px;
+        text-align: center;
+        font-size: 12.5px;
+        color: var(--ink-3);
+    }
+
+    @media (max-width: 860px) {
+        .nav-links {
+            display: none;
+        }
+        .hero-grid,
+        .contact {
+            grid-template-columns: 1fr;
+        }
+        .hero-photo {
+            order: -1;
+            align-items: flex-start;
+        }
+        .hero-photo img {
+            width: 120px;
+            height: 120px;
+        }
+        .hero-title {
+            font-size: 30px;
+        }
+        .contact {
+            padding: 32px 24px;
+        }
+    }
+    @media (max-width: 640px) {
+        .about {
+            grid-template-columns: 1fr;
+        }
+        .about-photo {
+            width: 140px;
+        }
+        .section,
+        .band {
+            padding-block: 56px;
+        }
+    }
+    @media (max-width: 420px) {
+        .nav-cta {
+            display: none;
+        }
+    }
+</style>
