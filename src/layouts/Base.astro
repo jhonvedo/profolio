@@ -3,6 +3,7 @@ const {
     title = "Jhon Acevedo · Senior Software Engineer",
     description = "Portafolio de Jhon Acevedo: arquitectura de software, IA aplicada e ingeniería full-stack.",
     lang = "es",
+    noindex = false,
 } = Astro.props;
 ---
 
@@ -13,9 +14,11 @@ const {
         <meta name="theme-color" content="#F4F1EA" />
         <title>{title}</title>
         <meta name="description" content={description} />
+        {noindex && <meta name="robots" content="noindex, nofollow" />}
         <link rel="icon" href="/favicon.svg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <slot name="head" />
     </head>
     <body>
         <slot />

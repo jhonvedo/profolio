@@ -1,6 +1,7 @@
 ---
 import { supported, type Lang } from "./i18n";
-const { lang } = Astro.props as { lang: Lang };
+// hrefs permite enlazar a la página equivalente en el otro idioma (p. ej. un post con slug traducido).
+const { lang, hrefs } = Astro.props as { lang: Lang; hrefs?: Partial<Record<Lang, string>> };
 ---
 
 <div class="switch" role="group" aria-label="Language">
@@ -8,7 +9,7 @@ const { lang } = Astro.props as { lang: Lang };
         supported.map((l, i) => (
             <>
                 {i > 0 && <span class="sep">/</span>}
-                <a href={`/${l}`} class:list={["opt", { on: l === lang }]} aria-current={l === lang ? "page" : undefined} hreflang={l}>
+                <a href={hrefs?.[l] ?? `/${l}`} class:list={["opt", { on: l === lang }]} aria-current={l === lang ? "page" : undefined} hreflang={l}>
                     {l.toUpperCase()}
                 </a>
             </>

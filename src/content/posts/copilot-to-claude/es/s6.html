@@ -1,0 +1,165 @@
+<div class="goals"><h3>Al terminar, cada persona puede</h3><ul>
+    <li>Conectar herramientas por MCP en Claude Code y conectores en claude.ai.</li>
+    <li>Distribuir la configuración del equipo como plugin.</li>
+    <li>Usar Claude en GitHub Actions y en modo headless.</li>
+    <li>Explicar cómo el admin controla todo con managed settings.</li>
+  </ul></div>
+  <p class="course"><strong>Curso complementario:</strong> <a href="https://anthropic.skilljar.com/introduction-to-model-context-protocol">Introduction to Model Context Protocol</a> · <a href="https://anthropic.skilljar.com/model-context-protocol-advanced-topics">MCP: Advanced Topics</a></p>
+
+  <h2>MCP en Claude Code</h2>
+  <div class="code"><div class="fname"><span>Terminal</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="c"># Servidor remoto (HTTP) compartido con el equipo vía .mcp.json</span>
+claude mcp add --transport http --scope project notion https://mcp.notion.com/mcp
+<span class="c"># (se autentica con OAuth desde /mcp; si el servidor usa token, ponlo en .mcp.json con ${VAR}, ver abajo)</span>
+
+<span class="c"># Servidor local (stdio); todo después de -- se pasa al servidor</span>
+claude mcp add --transport stdio --env DB_URL=postgres://localhost/dev db -- npx -y &lt;paquete-mcp-de-postgres&gt;
+
+claude mcp list          <span class="c"># estado de todos</span>
+claude mcp remove db</code></pre></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Scope</th><th>Dónde se guarda</th><th>Compartido</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Scope"><code>local</code> (por defecto)</td><td data-label="Dónde se guarda"><code>~/.claude.json</code>, solo este proyecto</td><td data-label="Compartido">No</td></tr>
+      <tr><td data-label="Scope"><code>project</code></td><td data-label="Dónde se guarda"><code>.mcp.json</code> en la raíz del repo</td><td data-label="Compartido">Sí, por git</td></tr>
+      <tr><td data-label="Scope"><code>user</code></td><td data-label="Dónde se guarda"><code>~/.claude.json</code>, todos tus proyectos</td><td data-label="Compartido">No</td></tr>
+    </tbody>
+  </table></div>
+  <div class="code"><div class="fname"><span>.mcp.json</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"docs-internas"</span>: {
+      <span class="k">"type"</span>: <span class="s">"http"</span>,
+      <span class="k">"url"</span>: <span class="s">"${DOCS_MCP_URL:-https://mcp.interno.example.com}/mcp"</span>,
+      <span class="k">"headers"</span>: { <span class="k">"Authorization"</span>: <span class="s">"Bearer ${DOCS_MCP_TOKEN}"</span> }
+    }
+  }
+}</code></pre></div>
+  <div class="prose"><ul>
+    <li><code>${VAR}</code> y <code>${VAR:-valor}</code> se expanden desde el entorno: los secretos nunca van en el archivo.</li>
+    <li>Los servidores de <code>.mcp.json</code> piden aprobación la primera vez que abres el repo.</li>
+    <li>Los <strong>conectores de claude.ai</strong> (los que habilitó el admin) aparecen solos en Claude Code si inicias sesión con claude.ai. <code>/mcp</code> los muestra y permite autenticar.</li>
+    <li>Cada servidor MCP añade herramientas al contexto. Conecta los que el equipo usa, no todos los que existen.</li>
+  </ul></div>
+  <div class="note"><strong>Stack Azure:</strong> para equipos .NET suele valer la pena un servidor MCP de Azure DevOps o de Azure (work items, pipelines, recursos). Revisa que venga de una fuente confiable y dale el mínimo de permisos.</div>
+
+  <h2>Conectores en claude.ai</h2>
+  <div class="prose"><ul>
+    <li>El admin habilita cada conector y puede dejar sus acciones en solo lectura, con aprobación o bloqueadas.</li>
+    <li>Conectores propios (servidores MCP remotos): solo los Owners los agregan en Team/Enterprise. La conexión sale desde la nube de Anthropic, así que el servidor debe ser accesible desde internet o permitir las IPs de Anthropic.</li>
+    <li>Con autorización de toda la organización (Okta), el admin autoriza una vez y los miembros heredan el acceso.</li>
+  </ul></div>
+
+  <h2>Plugins: distribuir la configuración del equipo</h2>
+  <p class="prose">Un plugin empaqueta skills, subagentes, hooks y servidores MCP para instalarlos con un comando. Un <strong>marketplace</strong> es un repo con un catálogo de plugins. Así la configuración de la sesión 5 llega a todos los repos sin copiar archivos.</p>
+  <div class="code"><div class="fname"><span>Estructura de un plugin</span><button class="copy" type="button">Copiar</button></div><pre class="tree"><code>plataforma-tools/
+├── .claude-plugin/plugin.json   <span class="c"># { "name", "description", "version" }</span>
+├── skills/nueva-migracion/SKILL.md
+├── agents/revisor-seguridad.md
+├── hooks/hooks.json
+└── .mcp.json</code></pre></div>
+  <div class="code"><div class="fname"><span>.claude-plugin/marketplace.json (repo del marketplace)</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="k">"name"</span>: <span class="s">"empresa-tools"</span>,
+  <span class="k">"owner"</span>: { <span class="k">"name"</span>: <span class="s">"Equipo Plataforma"</span> },
+  <span class="k">"plugins"</span>: [
+    { <span class="k">"name"</span>: <span class="s">"plataforma-tools"</span>, <span class="k">"source"</span>: <span class="s">"./plugins/plataforma-tools"</span>,
+      <span class="k">"description"</span>: <span class="s">"Skills, hooks y agentes del equipo"</span> }
+  ]
+}</code></pre></div>
+  <div class="code"><div class="fname"><span>.claude/settings.json de cada repo</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="k">"extraKnownMarketplaces"</span>: {
+    <span class="k">"empresa-tools"</span>: { <span class="k">"source"</span>: { <span class="k">"source"</span>: <span class="s">"github"</span>, <span class="k">"repo"</span>: <span class="s">"mi-org/claude-plugins"</span> } }
+  },
+  <span class="k">"enabledPlugins"</span>: { <span class="k">"plataforma-tools@empresa-tools"</span>: <span class="k">true</span> }
+}</code></pre></div>
+  <p class="prose">Manualmente: <code>/plugin marketplace add mi-org/claude-plugins</code> y <code>/plugin install plataforma-tools@empresa-tools</code>. Las skills del plugin se invocan como <code>/plataforma-tools:nueva-migracion</code>. Si el repo del marketplace es privado, cada desarrollador necesita acceso de lectura a él en GitHub.</p>
+
+  <h2>GitHub: @claude en issues y PRs</h2>
+  <p class="prose">La forma rápida es <code>/install-github-app</code> dentro de Claude Code (requiere <code>gh</code> autenticado y ser admin del repo): instala la GitHub App, crea el secreto y abre un PR con el workflow. Después, cualquiera con permiso de escritura escribe <code>@claude</code> en un issue o PR.</p>
+  <div class="code"><div class="fname"><span>.github/workflows/claude.yml</span><button class="copy" type="button">Copiar</button></div><pre><code>name: Claude Code
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+jobs:
+  claude:
+    if: contains(github.event.comment.body, '@claude')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: "--max-turns 15"</code></pre></div>
+  <div class="prose"><ul>
+    <li>Con suscripción en vez de API key: <code>claude setup-token</code> genera un token; úsalo como <code>claude_code_oauth_token</code>. Para toda la organización, mejor una API key de Console o federación OIDC (el token queda atado a quien lo generó).</li>
+    <li>Con <code>prompt:</code> la acción corre sin mención (en cada PR, en un cron). Puede invocar skills del repo: <code>prompt: "/nombre-skill"</code>.</li>
+    <li>Si usan <strong>Azure DevOps o GitLab</strong>, usen Claude Code en modo headless dentro del pipeline (abajo).</li>
+  </ul></div>
+
+  <h2>Headless y scripts</h2>
+  <div class="code"><div class="fname"><span>Terminal / pipeline</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="c"># Una pregunta, salida en texto</span>
+claude -p "Resume los cambios de esta rama para el changelog"
+
+<span class="c"># Salida JSON con costo y session_id, herramientas acotadas</span>
+claude -p "Revisa el diff contra main y lista riesgos" \
+  --allowedTools "Read,Grep,Bash(git diff *)" \
+  --output-format json --max-turns 10</code></pre></div>
+  <p class="prose">Para construir agentes propios en código está el <strong>Claude Agent SDK</strong> (el mismo motor de Claude Code, en TypeScript y Python).</p>
+
+  <h2>Más superficies</h2>
+  <div class="grid3">
+    <div class="card"><h3>Claude en Slack</h3><p>@Claude en un hilo lee el contexto; puede convertir un reporte de bug en un PR borrador. Beta para Team y Enterprise.</p></div>
+    <div class="card"><h3>Claude en Chrome</h3><p>Extensión que navega, hace clic y lee la consola. Útil para verificar la UI que Claude Code acaba de construir.</p></div>
+    <div class="card"><h3>Code Review</h3><p>Revisión automática en cada PR sin mantener un workflow propio.</p></div>
+  </div>
+
+  <h2>Gobierno: managed settings</h2>
+  <p class="prose">Los <strong>managed settings</strong> tienen la máxima prioridad: ningún usuario ni repo puede anularlos. Se despliegan por MDM, archivo de sistema o desde la consola de administración. También existe un CLAUDE.md de política en <code>/Library/Application Support/ClaudeCode/</code> (macOS), <code>/etc/claude-code/</code> (Linux/WSL) o <code>C:\Program Files\ClaudeCode\</code> (Windows).</p>
+  <div class="code"><div class="fname"><span>managed-settings.json (ejemplo)</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="k">"permissions"</span>: {
+    <span class="k">"disableBypassPermissionsMode"</span>: <span class="s">"disable"</span>,
+    <span class="k">"deny"</span>: [
+      <span class="s">"Read(//**/.env)"</span>,
+      <span class="s">"Read(~/.ssh/**)"</span>,
+      <span class="s">"Read(~/.azure/**)"</span>,
+      <span class="s">"Bash(az keyvault secret show *)"</span>
+    ]
+  },
+  <span class="k">"forceLoginMethod"</span>: <span class="s">"claudeai"</span>
+}</code></pre></div>
+  <div class="prose"><ul>
+    <li><code>allowManagedPermissionRulesOnly</code> hace que solo cuenten las reglas del admin.</li>
+    <li><code>forceLoginOrgUUID</code> obliga a usar la cuenta de la organización.</li>
+    <li>Las skills, subagentes y hooks de managed settings tienen prioridad sobre los de usuario y repo.</li>
+  </ul></div>
+
+  <div class="practice">
+<h2 class="practice-h">Práctica</h2>
+<div class="lab">
+    <div class="lab-h"><h3>Proyecto final · Kit de Claude del equipo</h3><span class="pill">90 min + demo</span></div>
+    <ol>
+      <li>Crea el repo <code>claude-plugins</code> de la organización con un marketplace y un plugin que incluya las skills, hooks y subagentes de la sesión 5.</li>
+      <li>Actívalo en el <code>.claude/settings.json</code> de los dos repos de práctica y verifica que se instala solo.</li>
+      <li>Agrega un servidor MCP útil al <code>.mcp.json</code> (tracker de issues o documentación interna).</li>
+      <li>Instala la GitHub Action y resuelve un issue real con <code>@claude</code> de principio a fin.</li>
+      <li>Propón al admin un <code>managed-settings.json</code> con los deny de la organización.</li>
+      <li>Demo de 10 minutos: flujo completo desde Claude Design o un issue hasta el PR revisado.</li>
+    </ol>
+  </div>
+  <div class="check" data-check="s6">
+    <h3>Checklist · Sesión 6</h3>
+    <label><input type="checkbox" id="s6-1"><span>Configuré un servidor MCP con scope de proyecto y sin secretos en el archivo.</span></label>
+    <label><input type="checkbox" id="s6-2"><span>La configuración del equipo se distribuye como plugin.</span></label>
+    <label><input type="checkbox" id="s6-3"><span>@claude funciona en GitHub o Claude corre headless en el pipeline.</span></label>
+    <label><input type="checkbox" id="s6-4"><span>Entiendo qué controla el admin con managed settings.</span></label>
+  </div>
+  <div class="quiz" data-quiz="s6"></div>
+</div>

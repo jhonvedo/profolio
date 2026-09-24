@@ -1,0 +1,241 @@
+<div class="goals"><h3>Al terminar, cada persona puede</h3><ul>
+    <li>Instalar y autenticar Claude Code con la cuenta de la organización.</li>
+    <li>Ejecutar el ciclo explorar → planear → implementar → verificar → commit.</li>
+    <li>Elegir el modo de permisos adecuado y administrar el contexto.</li>
+  </ul></div>
+  <p class="course"><strong>Curso complementario:</strong> <a href="https://anthropic.skilljar.com/claude-code-101">Claude Code 101</a> · <a href="https://anthropic.skilljar.com/claude-code-in-action">Claude Code in Action</a></p>
+
+  <h2>Instalación</h2>
+  <div class="code"><div class="fname"><span>macOS · Linux · WSL</span><button class="copy" type="button">Copiar</button></div><pre><code>curl -fsSL https://claude.ai/install.sh | bash</code></pre></div>
+  <div class="code"><div class="fname"><span>Windows · PowerShell</span><button class="copy" type="button">Copiar</button></div><pre><code>irm https://claude.ai/install.ps1 | iex
+<span class="c"># alternativa</span>
+winget install Anthropic.ClaudeCode</code></pre></div>
+  <div class="prose">
+    <p>El instalador nativo se actualiza solo. También existen Homebrew (<code>brew install --cask claude-code</code>) y npm (<code>npm install -g @anthropic-ai/claude-code</code>, requiere Node 22+).</p>
+    <p>Luego, en la carpeta del repo: <code>claude</code> → inicia sesión con la cuenta de claude.ai de la organización. Para el IDE instala la extensión de <strong>VS Code</strong> (también funciona en Cursor) o el plugin de <strong>JetBrains</strong> (Rider para .NET, WebStorm para Node). Ambos muestran los diffs en el visor del IDE y comparten la selección actual con Claude.</p>
+  </div>
+  <div class="note warn"><strong>Windows y .NET:</strong> Claude Code funciona nativo en Windows. Si tu tooling vive en WSL, instala dentro de WSL y abre el repo desde ahí. Para que los hooks de ejemplo de este curso funcionen en Windows nativo necesitas Git Bash (que Claude Code usa para los hooks) y <code>jq</code>.</div>
+
+  <h2>El ciclo de trabajo</h2>
+  <div class="grid2">
+    <div class="card"><h3>1 · Explorar</h3><p>"Lee el módulo de pagos y explícame cómo se procesa un reembolso. No cambies nada todavía." Claude busca, lee y resume.</p></div>
+    <div class="card"><h3>2 · Planear</h3><p>Shift+Tab hasta <strong>Plan</strong> (o <code>/plan</code>). Claude investiga en solo lectura y presenta un plan. Corrígelo antes de aprobarlo.</p></div>
+    <div class="card"><h3>3 · Implementar</h3><p>Aprueba el plan. Claude edita, ejecuta el build y los tests, y corrige hasta que pasan.</p></div>
+    <div class="card"><h3>4 · Verificar y cerrar</h3><p><code>/diff</code> para revisar, <code>/code-review</code> para una segunda mirada, y pide el commit con un mensaje convencional.</p></div>
+  </div>
+
+  <h2>Cómo pedir bien</h2>
+  <div class="grid2">
+    <div class="card"><h3>Vago</h3><p>"Arregla el bug de los reembolsos."</p></div>
+    <div class="card"><h3>Específico</h3><p>"El reembolso parcial falla cuando el pedido tiene descuento (issue #482). Reproduce el error con un test que falle en <span data-stack="dotnet"><code>RefundServiceTests</code></span><span data-stack="node"><code>refund.service.spec.ts</code></span>, arréglalo sin cambiar la API pública y corre toda la suite."</p></div>
+  </div>
+  <div class="prose"><ul>
+    <li><strong>Da el criterio de éxito:</strong> un test, un comando que debe pasar, una salida esperada.</li>
+    <li><strong>Referencia archivos con <code>@</code>:</strong> <code>@src/Payments/RefundService.cs</code> (con autocompletado).</li>
+    <li><strong>Pega imágenes</strong> con Ctrl+V: pantallazos de errores, diseños, diagramas.</li>
+    <li><strong>Corrige temprano:</strong> Esc interrumpe; escribe mientras Claude trabaja y el mensaje se encola.</li>
+  </ul></div>
+
+  <h2>Modos de permisos</h2>
+  <div class="prose">
+    <p>Antes de editar un archivo o ejecutar un comando, Claude Code puede pedirte permiso. El <strong>modo</strong> decide cuánto pregunta. No es una configuración que pones una vez y olvidas: lo normal es cambiar de modo varias veces en la misma tarea, según la fase en la que estés.</p>
+  </div>
+
+  <h3>Cómo cambiar de modo</h3>
+  <div class="code"><div class="fname"><span>Tres formas de elegir el modo</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="c"># 1. Durante la sesión: Shift+Tab rota entre los modos.</span>
+<span class="c">#    El modo activo aparece debajo del prompt.</span>
+
+<span class="c"># 2. Al arrancar, desde la terminal</span>
+claude --permission-mode plan
+
+<span class="c"># 3. Por defecto para el repo, en .claude/settings.json</span>
+{ <span class="k">"permissions"</span>: { <span class="k">"defaultMode"</span>: <span class="s">"plan"</span> } }</code></pre></div>
+  <p class="prose">También puedes escribir <code>/plan</code> seguido de la tarea para entrar directo a modo Plan con esa petición.</p>
+
+  <h3><code>default</code>: pregunta la primera vez</h3>
+  <div class="prose">
+    <p>Claude te pide permiso la primera vez que quiere usar cada herramienta o comando. Cuando pregunta, tienes tres opciones: aprobar solo esta vez, aprobar y <strong>no volver a preguntar</strong> por ese comando en este proyecto, o rechazar y decirle qué hacer distinto.</p>
+    <p><strong>Ejemplo.</strong> Le pides <em>"corre los tests del módulo de pagos"</em>. Claude propone <span data-stack="dotnet"><code>dotnet test tests/Payments.Tests</code></span><span data-stack="node"><code>pnpm --filter api test payments</code></span> y espera. Si eliges "no volver a preguntar", queda guardado como regla <code>allow</code> y la próxima vez corre sin interrumpirte.</p>
+    <p><strong>Úsalo</strong> en un repo que no conoces o mientras aprendes. En pocos días habrás aprobado los comandos habituales y casi no te preguntará.</p>
+  </div>
+
+  <h3><code>plan</code>: pensar antes de tocar</h3>
+  <div class="prose">
+    <p>Claude puede leer, buscar y analizar, pero <strong>no edita archivos ni ejecuta comandos que cambien algo</strong>. Al final presenta un plan y te pregunta cómo seguir.</p>
+  </div>
+  <div class="code"><div class="fname"><span>Ejemplo · modo Plan</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="c"># Shift+Tab hasta ver "plan mode on"</span>
+&gt; Los reembolsos parciales fallan cuando el pedido tiene descuento (#482).
+  Encuentra la causa y propón cómo arreglarlo.
+
+<span class="c"># Claude lee RefundService, los tests y el cálculo de descuentos.</span>
+<span class="c"># Luego muestra un plan numerado:</span>
+<span class="c">#   1. El descuento se resta dos veces en CalculateRefund…</span>
+<span class="c">#   2. Agregar un test que reproduzca #482…</span>
+<span class="c">#   3. Corregir el cálculo y correr la suite…</span>
+
+<span class="c"># Y pregunta cómo continuar:</span>
+<span class="c">#   · Sí, y aceptar ediciones automáticamente</span>
+<span class="c">#   · Sí, y aprobar cada edición</span>
+<span class="c">#   · No, seguir planeando</span></code></pre></div>
+  <div class="prose">
+    <p>Si algo del plan no te convence, elige seguir planeando y corrígelo: <em>"no cambies la firma de CalculateRefund, otros servicios la usan"</em>. Corregir un plan cuesta segundos; deshacer código cuesta mucho más.</p>
+    <p><strong>Úsalo</strong> en cualquier cambio de más de un archivo, en código que no conoces y siempre que la tarea sea ambigua.</p>
+  </div>
+
+  <h3><code>acceptEdits</code>: implementar sin interrupciones</h3>
+  <div class="prose">
+    <p>Claude edita archivos y usa comandos básicos de archivos (crear carpetas, mover) <strong>sin preguntar</strong>. Los demás comandos, como tests, git o instalar paquetes, siguen las reglas de permisos: si no están aprobados, pregunta.</p>
+    <p><strong>Ejemplo.</strong> Aprobaste el plan de #482 eligiendo "aceptar ediciones automáticamente". Claude escribe el test, corrige el cálculo y actualiza dos archivos más sin detenerse. Tú ves cada diff pasar en la terminal o en el IDE. Si ves algo que no te gusta, presionas <strong>Esc</strong>, le dices qué cambiar y sigue.</p>
+    <p><strong>Úsalo</strong> después de aprobar un plan. <strong>Cuidado:</strong> que no pregunte no significa que no debas mirar. Revisa con <code>/diff</code> al terminar.</p>
+  </div>
+
+  <h3><code>auto</code>: tareas largas con supervisión ligera</h3>
+  <div class="prose">
+    <p>Claude decide solo qué aprobar, con un clasificador de seguridad que revisa cada acción en segundo plano y frena las riesgosas.</p>
+    <p><strong>Ejemplo.</strong> <em>"Migra los 40 endpoints de controllers a Minimal APIs siguiendo el patrón de OrdersEndpoints"</em>. Es largo y repetitivo; no quieres aprobar 200 acciones. En <code>auto</code> avanza mientras tú haces otra cosa, y revisas el resultado al final.</p>
+    <p><strong>Úsalo</strong> para trabajo largo y bien definido, idealmente en una rama aparte. Si no aparece al rotar con Shift+Tab, consulta con el administrador del plan.</p>
+  </div>
+
+  <h3><code>dontAsk</code>: sin nadie mirando</h3>
+  <div class="prose">
+    <p>Todo lo que requeriría preguntar se <strong>rechaza</strong> automáticamente. Solo corre lo que ya está aprobado en las reglas o en la línea de comandos. Es el modo para scripts y pipelines, donde no hay nadie para responder.</p>
+  </div>
+  <div class="code"><div class="fname"><span>Ejemplo · revisión en un pipeline</span><button class="copy" type="button">Copiar</button></div><pre><code>claude -p <span class="s">"Revisa el diff contra main y lista riesgos"</span> \
+  --permission-mode dontAsk \
+  --allowedTools <span class="s">"Read,Grep,Bash(git diff *)"</span></code></pre></div>
+  <p class="prose">Aquí Claude puede leer, buscar y ver el diff. Si intenta cualquier otra cosa, se le niega y sigue con lo que tiene.</p>
+
+  <h3><code>bypassPermissions</code>: nunca pregunta</h3>
+  <div class="prose">
+    <p>Claude hace todo sin pedir permiso. Equivale a arrancar con <code>claude --dangerously-skip-permissions</code>.</p>
+    <p><strong>Úsalo solo</strong> dentro de un contenedor o una VM desechable, sin credenciales reales ni acceso a producción, por ejemplo un devcontainer para un experimento.</p>
+  </div>
+  <div class="note danger"><strong>No lo uses en tu máquina de trabajo.</strong> Un comando equivocado puede borrar archivos o publicar algo. Los administradores suelen bloquearlo en managed settings (sesión 6).</div>
+
+  <h3>¿Qué modo uso?</h3>
+  <ul class="kv">
+<li><strong>Llego a un repo que no conozco</strong><span><code>default</code> o <code>plan</code></span></li>
+<li><strong>Cambio de más de un archivo o tarea ambigua</strong><span><code>plan</code>, y al aprobar, <code>acceptEdits</code></span></li>
+<li><strong>Bug con reproducción clara y un solo archivo</strong><span><code>default</code> o directo <code>acceptEdits</code></span></li>
+<li><strong>Refactor largo y repetitivo en una rama</strong><span><code>auto</code></span></li>
+<li><strong>Script o pipeline de CI</strong><span><code>dontAsk</code> con <code>--allowedTools</code></span></li>
+<li><strong>Contenedor desechable para experimentar</strong><span><code>bypassPermissions</code></span></li>
+</ul>
+
+  <h2>Los comandos con /</h2>
+  <div class="prose">
+    <p>Escribe <code>/</code> al inicio del prompt y aparece un menú con todos los comandos y una descripción corta; sigue escribiendo para filtrar. Muchos aceptan texto después del nombre. Las skills de tu equipo también aparecen en este menú (sesión 5).</p>
+    <p>No hace falta aprenderlos todos. Estos son los que se usan en una tarea normal, agrupados por el momento en que los necesitas.</p>
+  </div>
+
+  <h3>Antes de empezar</h3>
+  <ul class="kv">
+<li><strong><code>/init</code></strong><span>Analiza el repo y genera un <code>CLAUDE.md</code> inicial. Se usa una vez por repo (sesión 4).</span></li>
+<li><strong><code>/model</code></strong><span>Abre el selector de modelo; con ← → ajustas el esfuerzo. Directo: <code>/model sonnet</code>.</span></li>
+<li><strong><code>/effort</code></strong><span>Cambia solo el esfuerzo: <code>/effort low</code> para algo mecánico, <code>/effort xhigh</code> para un bug difícil.</span></li>
+<li><strong><code>/plan</code></strong><span>Entra a modo Plan con la tarea: <code>/plan agrega paginación al endpoint de reembolsos</code>.</span></li>
+<li><strong><code>/add-dir</code></strong><span>Da acceso a otra carpeta: <code>/add-dir ../shared-contracts</code> si la tarea toca otro repo.</span></li>
+</ul>
+
+  <h3>Mientras trabajas: cuidar el contexto</h3>
+  <p class="prose">El contexto es todo lo que Claude tiene en la cabeza: tu conversación, los archivos que leyó, las salidas de comandos. Cuando se llena o se mezcla con temas viejos, las respuestas empeoran. Una sesión larga con temas mezclados rinde peor que dos sesiones enfocadas.</p>
+  <ul class="kv">
+<li><strong><code>/context</code></strong><span>Muestra qué ocupa el contexto: CLAUDE.md, herramientas MCP, archivos, historial. Mira aquí si Claude empieza a olvidar cosas.</span></li>
+<li><strong><code>/compact</code></strong><span>Resume la conversación para liberar espacio y seguir con la misma tarea. Puedes guiarlo: <code>/compact conserva las decisiones sobre la API y los tests pendientes</code>.</span></li>
+<li><strong><code>/clear</code></strong><span>Borra la conversación y empieza de cero. Úsalo entre tareas no relacionadas.</span></li>
+<li><strong><code>/btw</code></strong><span>Pregunta lateral que no queda en el historial: <code>/btw ¿qué versión de EF Core usa este repo?</code></span></li>
+<li><strong><code>/rewind</code></strong><span>Vuelve código y conversación a un punto anterior. Atajo: Esc Esc. Úsalo cuando Claude tomó un mal camino.</span></li>
+<li><strong><code>/branch</code></strong><span>Crea una rama de la conversación para probar otra idea sin perder la actual.</span></li>
+<li><strong><code>/permissions</code></strong><span>Ver y editar las reglas allow / ask / deny sin abrir el archivo.</span></li>
+</ul>
+
+  <h3>Al terminar</h3>
+  <ul class="kv">
+<li><strong><code>/diff</code></strong><span>Muestra todos los cambios de la sesión. Léelo como si lo hubiera escrito otra persona.</span></li>
+<li><strong><code>/code-review</code></strong><span>Segunda revisión del cambio: bugs, casos límite, código que se puede simplificar.</span></li>
+<li><strong><code>/security-review</code></strong><span>Revisión enfocada en seguridad. Úsalo si tocaste autenticación, pagos o datos personales.</span></li>
+<li><strong><code>/usage</code></strong><span>Tokens y costo de la sesión. Útil para calibrar modelo y esfuerzo.</span></li>
+</ul>
+
+  <h3>Sesiones</h3>
+  <ul class="kv">
+<li><strong><code>/rename</code></strong><span>Pone nombre a la sesión: <code>/rename PAY-482-reembolso-descuento</code>. Así la encuentras mañana.</span></li>
+<li><strong><code>/resume</code></strong><span>Abre la lista de sesiones anteriores para retomar una.</span></li>
+<li><strong><code>/export</code></strong><span>Guarda la conversación en un archivo de texto, por ejemplo para documentar una decisión.</span></li>
+</ul>
+
+  <h3>Configuración y diagnóstico</h3>
+  <ul class="kv">
+<li><strong><code>/config</code></strong><span>Todos los ajustes en un panel.</span></li>
+<li><strong><code>/memory</code></strong><span>Edita CLAUDE.md y la memoria automática (sesión 4).</span></li>
+<li><strong><code>/status</code></strong><span>Modelo, cuenta, versión y modo de permisos actuales.</span></li>
+<li><strong><code>/doctor</code></strong><span>Diagnostica problemas de instalación o configuración. Primer paso si algo no funciona.</span></li>
+</ul>
+
+  <h3>Sin barra, pero igual de útiles</h3>
+  <ul class="kv">
+<li><strong>Shift+Tab</strong><span>Rota entre modos de permisos.</span></li>
+<li><strong>Esc</strong><span>Interrumpe a Claude sin perder lo que lleva. Luego escribes la corrección.</span></li>
+<li><strong>Esc Esc</strong><span>Abre el rebobinado (lo mismo que <code>/rewind</code>).</span></li>
+<li><strong><code>@</code></strong><span>Menciona un archivo con autocompletado: <code>@src/Payments/RefundService.cs</code>.</span></li>
+<li><strong><code>!</code></strong><span>Ejecuta un comando de shell y Claude ve la salida: <code>!git status</code>.</span></li>
+<li><strong>Ctrl+G</strong><span>Abre tu editor para escribir un prompt largo con calma.</span></li>
+<li><strong>Ctrl+R</strong><span>Busca en los prompts que escribiste antes.</span></li>
+</ul>
+
+  <h3>Una tarea completa, comando a comando</h3>
+  <p class="prose">Así se ve el issue #482 de principio a fin. Fíjate en cómo cambia el modo según la fase.</p>
+  <div class="code"><div class="fname"><span>Del issue al commit</span><button class="copy" type="button">Copiar</button></div><pre><code>claude -n <span class="s">"PAY-482-reembolso-descuento"</span>   <span class="c"># sesión con nombre</span>
+
+/model sonnet                                  <span class="c"># bug acotado: modelo rápido</span>
+/plan El reembolso parcial falla con descuento (#482).
+      Reprodúcelo con un test y propón el arreglo.
+<span class="c"># → revisas el plan, corriges un punto, eliges "aceptar ediciones"</span>
+
+<span class="c"># Claude implementa en acceptEdits; corre los tests.</span>
+<span class="c"># Ves que va a tocar un archivo que no debía → Esc</span>
+&gt; No toques DiscountPolicy, el bug está solo en RefundService.
+
+/btw ¿hay otros lugares que calculen reembolsos?  <span class="c"># duda sin ensuciar el historial</span>
+/context                                        <span class="c"># ¿cuánto contexto llevo?</span>
+/diff                                           <span class="c"># revisas todo el cambio</span>
+/code-review                                    <span class="c"># segunda mirada</span>
+&gt; Haz commit con un mensaje convencional que cierre #482.
+/usage                                          <span class="c"># cuánto costó</span>
+/clear                                          <span class="c"># siguiente tarea, contexto limpio</span></code></pre></div>
+
+  <h2>Superficies</h2>
+  <div class="grid3">
+    <div class="card"><h3>Terminal e IDE</h3><p>Sesión local sobre tu copia del repo. Máximo control.</p></div>
+    <div class="card"><h3>Web y móvil</h3><p><code>claude.ai/code</code>: sesiones en la nube conectadas a GitHub. Varias tareas en paralelo; <code>--teleport</code> trae la sesión a tu terminal.</p></div>
+    <div class="card"><h3>Escritorio</h3><p>App de Claude con interfaz gráfica, local o nube. <code>/desktop</code> continúa ahí la sesión actual.</p></div>
+  </div>
+
+  <div class="note"><strong>Para el día a día</strong> (nombrar y retomar sesiones, trabajo en paralelo, plugins, costos) ver <a href="/es/blog/de-copilot-a-claude/dia-a-dia">Administrar Claude en el día a día</a>.</div>
+
+  <div class="practice">
+<h2 class="practice-h">Práctica</h2>
+<div class="lab">
+    <div class="lab-h"><h3>Laboratorio 3 · Primera feature con Claude Code</h3><span class="pill">60 min</span></div>
+    <ol>
+      <li>En el repo de práctica, abre <code>claude</code> y pide: <em>"Explícame la arquitectura de este repo y cómo corro build y tests."</em></li>
+      <li>Activa modo Plan y pide una feature pequeña. Ejemplo:
+        <span data-stack="dotnet">"Agrega <code>GET /orders/{id}/refunds</code> con paginación, validación y tests de integración con WebApplicationFactory."</span>
+        <span data-stack="node">"Agrega <code>GET /orders/:id/refunds</code> en NestJS con paginación, DTO validado con class-validator y tests con Vitest + Supertest."</span></li>
+      <li>Corrige al menos un punto del plan antes de aprobarlo.</li>
+      <li>Cambia a <code>acceptEdits</code> y deja que implemente. Observa cómo corre <span data-stack="dotnet"><code>dotnet test</code></span><span data-stack="node"><code>pnpm test</code></span> y corrige fallos.</li>
+      <li>Revisa con <code>/diff</code>, corre <code>/code-review</code> y pide el commit.</li>
+      <li>Revisa <code>/usage</code> para ver cuánto costó la tarea.</li>
+    </ol>
+  </div>
+  <div class="check" data-check="s3">
+    <h3>Checklist · Sesión 3</h3>
+    <label><input type="checkbox" id="s3-1"><span>Claude Code instalado, autenticado y conectado a mi IDE.</span></label>
+    <label><input type="checkbox" id="s3-2"><span>Completé una feature usando Plan antes de implementar.</span></label>
+    <label><input type="checkbox" id="s3-3"><span>Sé usar /context, /clear, /compact y /rewind.</span></label>
+    <label><input type="checkbox" id="s3-4"><span>Escribo prompts con criterio de éxito verificable.</span></label>
+    <label><input type="checkbox" id="s3-5"><span>Cambio de modo según la fase: Plan para diseñar, acceptEdits para implementar.</span></label>
+    <label><input type="checkbox" id="s3-6"><span>Usé /plan, /btw, /diff y /code-review en una tarea real.</span></label>
+  </div>
+  <div class="quiz" data-quiz="s3"></div>
+</div>

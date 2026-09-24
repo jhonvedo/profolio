@@ -1,0 +1,52 @@
+<div class="goals"><h3>By the end, everyone can</h3><ul>
+    <li>Create an interactive prototype from a requirement.</li>
+    <li>Build a design system from the team's code or design files.</li>
+    <li>Hand a design to Claude Code without starting from a screenshot.</li>
+  </ul></div>
+  <p class="course"><strong>Companion tutorial:</strong> <a href="https://academy.claude.com/tutorials/using-claude-design-for-presentations-and-slide-decks">Using Claude Design for presentations (Anthropic Academy)</a></p>
+
+  <div class="prose">
+    <p>Claude Design (launched in April 2026 by Anthropic Labs) produces designs, interactive prototypes, wireframes, landing pages, one-pagers and visual material. It opens at <code>claude.ai/design</code>, from the desktop app's sidebar, inside any chat (<em>Output → Design</em>) or from Claude Code with <code>/design</code>.</p>
+    <p>For developers, the value isn't the drawing but the <strong>design ↔ code loop</strong>: the design system comes from the real components and the design goes back to code with all its information.</p>
+  </div>
+
+  <h2>Design systems</h2>
+  <div class="prose"><ul>
+    <li>Claude builds a design system from your GitHub repository, design files or uploads: tokens (color, typography, spacing, radii), components and guidelines.</li>
+    <li>New designs are checked against your components, so no one invents buttons that don't exist.</li>
+    <li>With the <strong>Claude Design Admin</strong> role, someone approves the official design systems and locks them against edits.</li>
+    <li>From Claude Code, <code>/design-sync</code> converts a React design system and uploads it to Claude Design (<code>/design-login</code> authorizes access).</li>
+  </ul></div>
+  <div class="note"><strong>.NET teams:</strong> <code>/design-sync</code> works with React design systems. If your front end is Blazor or Razor, build the design system from design files or screenshots of the component library, and document the tokens in the repository.</div>
+
+  <h2>Handoff to Claude Code</h2>
+  <div class="flow"><span>Requirement</span><b>→</b><span>Prototype in Design</span><b>→</b><span>Review and comments</span><b>→</b><span>Handoff package</span><b>→</b><span>Claude Code implements</span></div>
+  <p class="prose">Claude builds a handoff package so Claude Code continues from the real design work "instead of starting from a screenshot". The flow also works the other way: start in code and bring the components into Design.</p>
+
+  <h2>Sharing and exporting</h2>
+  <div class="prose"><ul>
+    <li>Private by default. Links with view, comment (the default within the organization) or edit permission. Several people can work with the agent on the same design.</li>
+    <li>Export to .zip, PDF, PPTX or standalone HTML; send to Canva; and integrate with Vercel, Netlify and others.</li>
+    <li>Usage counts against the plan's normal limits (shared with Claude Code).</li>
+  </ul></div>
+
+  <div class="practice">
+<h2 class="practice-h">Practice</h2>
+<div class="lab">
+    <div class="lab-h"><h3>Lab 2 · From user story to screen</h3><span class="pill">50 min</span></div>
+    <ol>
+      <li>Pick a real user story from the backlog that has a UI (for example, "customer refund history").</li>
+      <li>Create or import the team's design system (from the front-end repo or design files).</li>
+      <li>Ask for a prototype with real states: loading, empty, error, populated list and detail.</li>
+      <li>Share it with the team in comment mode and collect two rounds of feedback.</li>
+      <li>Generate the handoff package and open it in Claude Code. Ask for a <strong>plan</strong> first (Shift+Tab to Plan mode) before implementing.</li>
+    </ol>
+  </div>
+  <div class="check" data-check="s2">
+    <h3>Checklist · Session 2</h3>
+    <label><input type="checkbox" id="s2-1"><span>I have a team design system in Claude Design.</span></label>
+    <label><input type="checkbox" id="s2-2"><span>I created a prototype with all its states.</span></label>
+    <label><input type="checkbox" id="s2-3"><span>I handed a design to Claude Code with the handoff package.</span></label>
+  </div>
+  <div class="quiz" data-quiz="s2"></div>
+</div>

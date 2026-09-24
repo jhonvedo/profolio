@@ -1,0 +1,375 @@
+<div class="goals"><h3>Al terminar, cada persona puede</h3><ul>
+    <li>Decidir dónde vive cada tipo de conocimiento.</li>
+    <li>Escribir un CLAUDE.md efectivo y reglas por ruta.</li>
+    <li>Configurar permisos compartidos y personales en <code>settings.json</code>.</li>
+    <li>Configurar avisos, barra de estado y autenticación en su <code>settings.json</code> personal.</li>
+    <li>Migrar las instrucciones de Copilot.</li>
+  </ul></div>
+  <p class="course"><strong>Curso complementario:</strong> <a href="https://anthropic.skilljar.com/claude-code-in-action">Claude Code in Action</a></p>
+
+  <h2>¿Dónde va cada cosa?</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Tipo de conocimiento</th><th>Dónde</th><th>Quién lo ve</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Tipo de conocimiento">Comandos de build/test, arquitectura, convenciones del repo</td><td data-label="Dónde"><code>CLAUDE.md</code> (commit)</td><td data-label="Quién lo ve">Todo el equipo</td></tr>
+      <tr><td data-label="Tipo de conocimiento">Reglas para ciertos archivos (endpoints, tests, migraciones)</td><td data-label="Dónde"><code>.claude/rules/*.md</code> con <code>paths</code></td><td data-label="Quién lo ve">Todo el equipo, solo cuando aplica</td></tr>
+      <tr><td data-label="Tipo de conocimiento">Tus URLs de sandbox, datos de prueba, preferencias en este repo</td><td data-label="Dónde"><code>CLAUDE.local.md</code> (en .gitignore)</td><td data-label="Quién lo ve">Solo tú</td></tr>
+      <tr><td data-label="Tipo de conocimiento">Tus preferencias en todos los repos</td><td data-label="Dónde"><code>~/.claude/CLAUDE.md</code> y <code>~/.claude/rules/</code></td><td data-label="Quién lo ve">Solo tú</td></tr>
+      <tr><td data-label="Tipo de conocimiento">Estándares de la empresa, seguridad, compliance</td><td data-label="Dónde">CLAUDE.md de managed policy</td><td data-label="Quién lo ve">Toda la organización (no se puede excluir)</td></tr>
+      <tr><td data-label="Tipo de conocimiento">Procedimientos repetibles (release, migración, revisión)</td><td data-label="Dónde">Skills</td><td data-label="Quién lo ve">Según ubicación</td></tr>
+      <tr><td data-label="Tipo de conocimiento">Lo que Claude aprende de tus correcciones</td><td data-label="Dónde">Auto memory (<code>~/.claude/projects/…/memory/</code>)</td><td data-label="Quién lo ve">Solo tú</td></tr>
+      <tr><td data-label="Tipo de conocimiento">Documentos de negocio, ADRs para chat</td><td data-label="Dónde">Project en claude.ai</td><td data-label="Quién lo ve">Quien tenga acceso</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>La carpeta .claude</h2>
+  <div class="code"><div class="fname"><span>Estructura recomendada del repo</span><button class="copy" type="button">Copiar</button></div><pre class="tree"><code>mi-repo/
+├── CLAUDE.md                 <span class="c"># instrucciones del equipo (commit)</span>
+├── CLAUDE.local.md           <span class="c"># personales (gitignore)</span>
+├── .mcp.json                 <span class="c"># servidores MCP del equipo (commit)</span>
+└── .claude/
+    ├── settings.json         <span class="c"># permisos, hooks, env, modelo (commit)</span>
+    ├── settings.local.json   <span class="c"># overrides personales (gitignore)</span>
+    ├── rules/                <span class="c"># reglas por ruta</span>
+    │   ├── api.md
+    │   └── testing.md
+    ├── skills/               <span class="c"># /comandos y procedimientos</span>
+    │   └── nueva-migracion/SKILL.md
+    ├── agents/               <span class="c"># subagentes</span>
+    │   └── revisor-seguridad.md
+    └── hooks/                <span class="c"># scripts que llaman los hooks</span>
+        ├── proteger-archivos.sh
+        └── formatear.sh</code></pre></div>
+  <p class="prose">En tu máquina, <code>~/.claude/</code> tiene la misma estructura para lo personal (settings, CLAUDE.md, rules, skills, agents), además de la memoria automática por proyecto y el historial.</p>
+
+  <h2>CLAUDE.md que funciona</h2>
+  <div class="prose"><ul>
+    <li><strong>Menos de 200 líneas.</strong> Archivos largos consumen contexto y bajan la adherencia. Mueve el detalle a reglas por ruta.</li>
+    <li><strong>Lo que Claude no puede descubrir solo:</strong> comandos exactos, decisiones y su porqué, trampas conocidas. No copies lo que ya dice el código.</li>
+    <li><strong>Concreto y verificable:</strong> "Usa <code>Result&lt;T&gt;</code> para errores de negocio" es mejor que "maneja bien los errores".</li>
+    <li><strong>Sin contradicciones</strong>: si dos reglas chocan, Claude elige una al azar.</li>
+    <li><strong>Empieza con <code>/init</code>:</strong> analiza el repo y genera un borrador. Si ya existe <code>.github/copilot-instructions.md</code>, lo lee e incorpora lo relevante.</li>
+  </ul></div>
+
+  <div data-stack="dotnet">
+  <div class="code"><div class="fname"><span>CLAUDE.md · API .NET</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="k"># Orders API</span>
+
+<span class="k">## Stack</span>
+- .NET 8, ASP.NET Core Minimal APIs, EF Core 8 (SQL Server), MediatR
+- Tests: xUnit + FluentAssertions + Testcontainers
+
+<span class="k">## Comandos</span>
+- Build: `dotnet build Orders.sln`
+- Tests: `dotnet test Orders.sln --no-build`
+- Formato: `dotnet format Orders.sln --verify-no-changes`
+- Nueva migración: `dotnet ef migrations add &lt;Nombre&gt; -p src/Orders.Infrastructure -s src/Orders.Api`
+
+<span class="k">## Arquitectura</span>
+- Clean Architecture: Api → Application → Domain. Infrastructure implementa interfaces de Application.
+- Domain no referencia EF Core ni ASP.NET Core.
+
+<span class="k">## Convenciones</span>
+- Async de punta a punta; propaga `CancellationToken`.
+- Errores de negocio con `Result&lt;T&gt;`; excepciones solo para lo inesperado.
+- Nunca edites una migración ya aplicada: crea una nueva.
+- Configuración sensible solo por User Secrets o Key Vault; nunca en appsettings.
+
+<span class="k">## Antes de terminar una tarea</span>
+- Corre build, tests y formato. Si algo falla, arréglalo antes de reportar.
+
+@docs/adr/README.md</code></pre></div>
+  </div>
+  <div data-stack="node">
+  <div class="code"><div class="fname"><span>CLAUDE.md · monorepo Node/TS</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="k"># Web Portal (pnpm monorepo)</span>
+
+<span class="k">## Stack</span>
+- Node 22, TypeScript strict, pnpm workspaces
+- apps/api: NestJS + Prisma (PostgreSQL) · apps/web: Next.js App Router
+- Tests: Vitest (unit), Playwright (e2e)
+
+<span class="k">## Comandos</span>
+- Instalar: `pnpm install`
+- Tests: `pnpm -r test` · un paquete: `pnpm --filter api test`
+- Tipos: `pnpm -r typecheck` · Lint: `pnpm lint`
+- Migración: `pnpm --filter api prisma migrate dev --name &lt;nombre&gt;`
+
+<span class="k">## Convenciones</span>
+- Prohibido `any`; usa `unknown` y narrowing.
+- Validación de entrada con zod en los bordes (controllers, route handlers).
+- Server Components por defecto; `"use client"` solo si hay interactividad.
+- No edites `pnpm-lock.yaml` a mano.
+
+<span class="k">## Antes de terminar una tarea</span>
+- Corre typecheck, lint y los tests del paquete afectado.
+
+@docs/adr/README.md</code></pre></div>
+  </div>
+
+  <h3>Importar otros archivos</h3>
+  <p class="prose"><code>@ruta/archivo</code> dentro de un CLAUDE.md carga ese archivo al inicio (rutas relativas al archivo que importa, hasta 4 niveles de anidación). Para mencionar una ruta sin importarla, ponla entre backticks. Los imports fuera del repo piden aprobación la primera vez.</p>
+
+  <h3>Cómo se cargan</h3>
+  <p class="prose">Claude Code carga <code>CLAUDE.md</code> y <code>CLAUDE.local.md</code> del directorio actual y de todos los superiores; <strong>se concatenan, no se sobreescriben</strong>. Los de subdirectorios se cargan cuando Claude lee archivos ahí. En monorepos, <code>claudeMdExcludes</code> evita cargar los de otros equipos. Si el repo solo tiene <code>AGENTS.md</code>, Claude lo lee como instrucciones del proyecto.</p>
+
+  <h2>Reglas por ruta</h2>
+  <p class="prose">Equivalen a los <code>*.instructions.md</code> con <code>applyTo</code> de Copilot. Solo se cargan cuando Claude lee archivos que coinciden, así que no gastan contexto el resto del tiempo.</p>
+  <div data-stack="dotnet">
+  <div class="code"><div class="fname"><span>.claude/rules/endpoints.md</span><button class="copy" type="button">Copiar</button></div><pre><code>---
+paths:
+  - "src/Orders.Api/Endpoints/**/*.cs"
+---
+<span class="k"># Reglas para endpoints</span>
+- Cada endpoint en su propia clase estática con `MapXxx(this IEndpointRouteBuilder)`.
+- Valida con FluentValidation; responde errores con `Results.ValidationProblem`.
+- Devuelve `TypedResults` para que OpenAPI documente las respuestas.
+- Autorización explícita: `.RequireAuthorization("policy")`.</code></pre></div>
+  </div>
+  <div data-stack="node">
+  <div class="code"><div class="fname"><span>.claude/rules/testing.md</span><button class="copy" type="button">Copiar</button></div><pre><code>---
+paths:
+  - "**/*.{spec,test}.ts"
+  - "apps/web/e2e/**/*.ts"
+---
+<span class="k"># Reglas para tests</span>
+- Un `describe` por unidad; nombres en forma "debe … cuando …".
+- Nada de `setTimeout` en tests: usa fake timers de Vitest.
+- En e2e, selecciona por rol o `data-testid`, nunca por clases CSS.
+- Mockea solo en los bordes (HTTP, DB); no mockees el código propio.</code></pre></div>
+  </div>
+
+  <h2>Auto memory</h2>
+  <p class="prose">Claude guarda notas propias mientras trabaja: tus preferencias, correcciones que le das, decisiones del proyecto y dónde encontrar cosas fuera del repo. Viven en <code>~/.claude/projects/&lt;proyecto&gt;/memory/</code> y se cargan al inicio (primeras 200 líneas). Se administra con <code>/memory</code>, que también abre los CLAUDE.md para editarlos. Se puede apagar con <code>"autoMemoryEnabled": false</code>.</p>
+  <div class="note"><strong>Regla del equipo.</strong> Si le corriges algo a Claude dos veces, no confíes en la memoria automática: agrégalo al CLAUDE.md o a una regla para que todo el equipo lo tenga.</div>
+
+  <h2>settings.json: capas y permisos</h2>
+  <p class="prose">Orden de precedencia, de mayor a menor: <strong>managed settings</strong> (organización) → flags de CLI → <code>.claude/settings.local.json</code> → <code>.claude/settings.json</code> → <code>~/.claude/settings.json</code>.</p>
+  <div class="note warn"><strong>Cómo se evalúan los permisos:</strong> primero <code>deny</code>, luego <code>ask</code>, luego <code>allow</code>. La primera coincidencia gana y un <code>deny</code> en cualquier capa no se puede anular con un <code>allow</code>.</div>
+
+  <div data-stack="dotnet">
+  <div class="code"><div class="fname"><span>.claude/settings.json · .NET</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="k">"$schema"</span>: <span class="s">"https://json.schemastore.org/claude-code-settings.json"</span>,
+  <span class="k">"permissions"</span>: {
+    <span class="k">"allow"</span>: [
+      <span class="s">"Bash(dotnet build *)"</span>,
+      <span class="s">"Bash(dotnet test *)"</span>,
+      <span class="s">"Bash(dotnet format *)"</span>,
+      <span class="s">"Bash(dotnet ef migrations add *)"</span>,
+      <span class="s">"Bash(git diff *)"</span>,
+      <span class="s">"Bash(git log *)"</span>
+    ],
+    <span class="k">"ask"</span>: [
+      <span class="s">"Bash(git push *)"</span>,
+      <span class="s">"Bash(dotnet ef database update *)"</span>
+    ],
+    <span class="k">"deny"</span>: [
+      <span class="s">"Read(./.env)"</span>,
+      <span class="s">"Read(./.env.*)"</span>,
+      <span class="s">"Read(**/appsettings.Production.json)"</span>,
+      <span class="s">"Read(~/.microsoft/usersecrets/**)"</span>,
+      <span class="s">"Bash(dotnet nuget push *)"</span>
+    ]
+  },
+  <span class="k">"env"</span>: { <span class="k">"DOTNET_CLI_TELEMETRY_OPTOUT"</span>: <span class="s">"1"</span> }
+}</code></pre></div>
+  </div>
+  <div data-stack="node">
+  <div class="code"><div class="fname"><span>.claude/settings.json · Node</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="k">"$schema"</span>: <span class="s">"https://json.schemastore.org/claude-code-settings.json"</span>,
+  <span class="k">"permissions"</span>: {
+    <span class="k">"allow"</span>: [
+      <span class="s">"Bash(pnpm test *)"</span>,
+      <span class="s">"Bash(pnpm lint *)"</span>,
+      <span class="s">"Bash(pnpm -r typecheck)"</span>,
+      <span class="s">"Bash(pnpm --filter api test *)"</span>,
+      <span class="s">"Bash(git diff *)"</span>,
+      <span class="s">"Bash(git log *)"</span>
+    ],
+    <span class="k">"ask"</span>: [
+      <span class="s">"Bash(git push *)"</span>,
+      <span class="s">"Bash(pnpm add *)"</span>,
+      <span class="s">"Bash(pnpm --filter api prisma migrate *)"</span>
+    ],
+    <span class="k">"deny"</span>: [
+      <span class="s">"Read(./.env)"</span>,
+      <span class="s">"Read(./.env.*)"</span>,
+      <span class="s">"Read(**/secrets/**)"</span>,
+      <span class="s">"Bash(npm publish *)"</span>,
+      <span class="s">"Bash(pnpm publish *)"</span>
+    ]
+  }
+}</code></pre></div>
+  </div>
+  <div class="prose">
+    <h3>Sintaxis de reglas</h3>
+    <ul>
+      <li><code>Bash(git log *)</code>: el <code>*</code> va después del subcomando. <code>Bash(git *)</code> permitiría todo git, incluido <code>push</code>.</li>
+      <li><code>Read</code>/<code>Edit</code> usan patrones estilo gitignore: <code>./ruta</code> relativa al directorio actual, <code>/ruta</code> relativa al archivo de settings, <code>~/ruta</code> desde tu home, <code>//ruta</code> absoluta.</li>
+      <li><code>WebFetch(domain:learn.microsoft.com)</code>, <code>mcp__github__create_issue</code>, <code>Agent(nombre)</code>.</li>
+      <li>Las reglas de Bash que intentan restringir argumentos son frágiles (<code>curl</code> con distintas opciones). Para garantías reales usa hooks o el sandbox.</li>
+      <li><code>/permissions</code> las muestra y edita; <code>/fewer-permission-prompts</code> analiza tus sesiones y sugiere un allowlist.</li>
+    </ul>
+  </div>
+
+  <h2>Recetas de settings.json</h2>
+  <div class="prose">
+    <p>Hasta aquí vimos permisos. Pero <code>settings.json</code> sirve para mucho más: avisos, barra de estado, modelo por defecto, variables de entorno, cómo te autenticas. Estas recetas son las más útiles en el día a día.</p>
+    <p>Casi todas son <strong>personales</strong>: van en <code>~/.claude/settings.json</code> (tu carpeta de usuario) y aplican a todos tus repos. Cuando una receta tiene sentido para todo el equipo, lo indico.</p>
+  </div>
+
+  <h3>Aviso cuando Claude termina o necesita permiso</h3>
+  <div class="prose">
+    <p>El problema: le das una tarea a Claude, cambias de ventana y no te enteras de que lleva cinco minutos esperando tu aprobación. La solución son dos hooks:</p>
+    <ul>
+      <li><code>Notification</code> se dispara cuando Claude necesita tu atención: un permiso pendiente o una espera larga.</li>
+      <li><code>Stop</code> se dispara cada vez que Claude termina de responder.</li>
+    </ul>
+  </div>
+  <div class="code"><div class="fname"><span>~/.claude/settings.json · Windows (sonido, sin instalar nada)</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"Notification"</span>: [
+      { <span class="k">"matcher"</span>: <span class="s">"permission_prompt|idle_prompt"</span>,
+        <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>,
+          <span class="k">"command"</span>: <span class="s">"powershell.exe -NoProfile -Command \"[System.Media.SystemSounds]::Exclamation.Play()\""</span> }] }
+    ],
+    <span class="k">"Stop"</span>: [
+      { <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>,
+          <span class="k">"command"</span>: <span class="s">"powershell.exe -NoProfile -Command \"[System.Media.SystemSounds]::Asterisk.Play()\""</span> }] }
+    ]
+  }
+}</code></pre></div>
+  <p class="prose">Dos sonidos distintos: uno cuando espera permiso y otro cuando termina. Así sabes sin mirar si tienes que volver.</p>
+  <div class="code"><div class="fname"><span>Windows con notificación visual (módulo BurntToast)</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="c"># Una sola vez, en PowerShell:</span>
+Install-Module BurntToast -Scope CurrentUser
+
+<span class="c"># Luego, en el hook de settings.json:</span>
+<span class="k">"command"</span>: <span class="s">"powershell.exe -NoProfile -Command \"New-BurntToastNotification -Text 'Claude Code','Necesita tu atención'\""</span></code></pre></div>
+  <div class="code"><div class="fname"><span>macOS y Linux: la línea "command" del hook</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="c">// macOS</span>
+<span class="k">"command"</span>: <span class="s">"osascript -e 'display notification \"Necesita tu atención\" with title \"Claude Code\" sound name \"Glass\"'"</span>
+
+<span class="c">// Linux</span>
+<span class="k">"command"</span>: <span class="s">"notify-send 'Claude Code' 'Necesita tu atención'"</span></code></pre></div>
+  <div class="note"><strong>Va en tu configuración personal, no en el repo.</strong> El comando depende del sistema operativo y cada persona prefiere avisos distintos. Para probarlo, pide a Claude algo que requiera permiso y cambia de ventana.</div>
+
+  <h3>Barra de estado</h3>
+  <div class="prose">
+    <p>Una línea debajo del prompt que siempre muestra lo importante: modelo, carpeta, rama y cuánto contexto llevas. Claude Code ejecuta tu script cada vez que cambia algo y le pasa los datos de la sesión como JSON.</p>
+    <p>La forma rápida es pedírsela a Claude: <code>/statusline muestra modelo, rama de git y % de contexto</code>. Él genera el script y lo registra. Si prefieres hacerlo a mano:</p>
+  </div>
+  <div class="code"><div class="fname"><span>~/.claude/statusline.sh</span><button class="copy" type="button">Copiar</button></div><pre><code>#!/usr/bin/env bash
+<span class="c"># Claude Code envía los datos de la sesión por stdin, en JSON.</span>
+INPUT=$(cat)
+MODEL=$(echo "$INPUT" | jq -r '.model.display_name')
+DIR=$(echo "$INPUT" | jq -r '.workspace.current_dir' | xargs basename)
+CTX=$(echo "$INPUT" | jq -r '.context_window.used_percentage // 0')
+BRANCH=$(git -C "$(echo "$INPUT" | jq -r '.workspace.current_dir')" branch --show-current 2&gt;/dev/null)
+
+echo "[$MODEL] $DIR ${BRANCH:+on $BRANCH} · ${CTX}% contexto"</code></pre></div>
+  <div class="code"><div class="fname"><span>~/.claude/settings.json</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="k">"statusLine"</span>: {
+    <span class="k">"type"</span>: <span class="s">"command"</span>,
+    <span class="k">"command"</span>: <span class="s">"bash ~/.claude/statusline.sh"</span>
+  }
+}</code></pre></div>
+  <p class="prose">Resultado: <code>[Sonnet 5] orders-api on PAY-482 · 34% contexto</code>. Cuando el porcentaje pase de 70–80%, es buen momento para <code>/compact</code> o <code>/clear</code>. Necesita <code>jq</code> instalado.</p>
+
+  <h3>Usar una API key en vez de la suscripción</h3>
+  <div class="prose">
+    <p>Por defecto Claude Code usa tu cuenta de claude.ai y consume la cuota del plan. Puedes usar en cambio una <strong>API key de la Claude Console</strong>, que se cobra por tokens. Tiene sentido para pipelines de CI, scripts, o si tu empresa factura el uso por API.</p>
+  </div>
+  <div class="code"><div class="fname"><span>Opción 1 · variable de entorno</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="c"># PowerShell (solo esta terminal)</span>
+$env:ANTHROPIC_API_KEY = "sk-ant-..."
+
+<span class="c"># bash / zsh</span>
+export ANTHROPIC_API_KEY="sk-ant-..."
+
+claude   <span class="c"># usa la API key en vez de la cuenta</span></code></pre></div>
+  <div class="code"><div class="fname"><span>Opción 2 · apiKeyHelper en ~/.claude/settings.json</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="c">// Un script que imprime la key. Así no queda escrita en ningún archivo.</span>
+  <span class="k">"apiKeyHelper"</span>: <span class="s">"~/.claude/get-api-key.sh"</span>
+}</code></pre></div>
+  <p class="prose">El script puede leer la key de tu gestor de contraseñas o de un vault de la empresa. Es la opción más segura y la que conviene para equipos.</p>
+  <div class="code"><div class="fname"><span>Si la empresa usa Amazon Bedrock o Google Vertex</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="c"># Bedrock: usa tus credenciales de AWS</span>
+export CLAUDE_CODE_USE_BEDROCK=1
+export AWS_REGION=us-east-1
+
+<span class="c"># Vertex AI: usa tus credenciales de Google Cloud</span>
+export CLAUDE_CODE_USE_VERTEX=1
+export CLOUD_ML_REGION=us-east5
+export ANTHROPIC_VERTEX_PROJECT_ID=mi-proyecto</code></pre></div>
+  <div class="note danger"><strong>Nunca pongas una API key en <code>.claude/settings.json</code> del repo</strong> ni en ningún archivo que se suba a git. Si el admin fijó <code>forceLoginMethod</code> en managed settings, la API key puede no estar permitida: consulta antes.</div>
+
+  <h3>Modelo, entorno y carpetas por defecto</h3>
+  <div class="code"><div class="fname"><span>.claude/settings.json del repo (sirve para todo el equipo)</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="c">// Modelo con el que arranca cada sesión en este repo</span>
+  <span class="k">"model"</span>: <span class="s">"sonnet"</span>,
+
+  <span class="k">"permissions"</span>: {
+    <span class="c">// Arrancar siempre en modo Plan</span>
+    <span class="k">"defaultMode"</span>: <span class="s">"plan"</span>,
+    <span class="c">// Carpetas fuera del repo a las que Claude puede acceder</span>
+    <span class="k">"additionalDirectories"</span>: [<span class="s">"../shared-contracts"</span>]
+  },
+
+  <span class="c">// Variables de entorno para todos los comandos que corra Claude</span>
+  <span class="k">"env"</span>: {
+    <span data-stack="dotnet"><span class="k">"ASPNETCORE_ENVIRONMENT"</span>: <span class="s">"Development"</span>,
+    <span class="k">"DOTNET_CLI_TELEMETRY_OPTOUT"</span>: <span class="s">"1"</span></span><span data-stack="node"><span class="k">"NODE_ENV"</span>: <span class="s">"development"</span>,
+    <span class="k">"NEXT_TELEMETRY_DISABLED"</span>: <span class="s">"1"</span></span>
+  }
+}</code></pre></div>
+  <p class="prose">Los comentarios <code>//</code> son explicativos; bórralos en el archivo real. Para el modelo de los subagentes, agrega <code>"CLAUDE_CODE_SUBAGENT_MODEL": "haiku"</code> dentro de <code>env</code>.</p>
+
+  <h3>Interruptores útiles</h3>
+  <ul class="kv">
+<li><strong><code>"disableAllHooks": true</code></strong><span>Apaga todos los hooks temporalmente. Útil si un hook falla y te bloquea.</span></li>
+<li><strong><code>"autoMemoryEnabled": false</code></strong><span>Desactiva la memoria automática si prefieres que todo viva en CLAUDE.md.</span></li>
+<li><strong><code>"claudeMdExcludes"</code></strong><span>En monorepos, evita cargar los CLAUDE.md de otros equipos.</span></li>
+</ul>
+
+  <h3>Tu settings.json personal, todo junto</h3>
+  <div class="code"><div class="fname"><span>~/.claude/settings.json · ejemplo completo (Windows)</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="k">"$schema"</span>: <span class="s">"https://json.schemastore.org/claude-code-settings.json"</span>,
+  <span class="k">"statusLine"</span>: { <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>: <span class="s">"bash ~/.claude/statusline.sh"</span> },
+  <span class="k">"permissions"</span>: {
+    <span class="k">"allow"</span>: [<span class="s">"Bash(git status)"</span>, <span class="s">"Bash(git diff *)"</span>, <span class="s">"Bash(git log *)"</span>],
+    <span class="k">"deny"</span>: [<span class="s">"Read(~/.ssh/**)"</span>, <span class="s">"Read(~/.aws/**)"</span>, <span class="s">"Read(~/.azure/**)"</span>]
+  },
+  <span class="k">"hooks"</span>: {
+    <span class="k">"Notification"</span>: [
+      { <span class="k">"matcher"</span>: <span class="s">"permission_prompt|idle_prompt"</span>,
+        <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>,
+          <span class="k">"command"</span>: <span class="s">"powershell.exe -NoProfile -Command \"[System.Media.SystemSounds]::Exclamation.Play()\""</span> }] }
+    ],
+    <span class="k">"Stop"</span>: [
+      { <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>,
+          <span class="k">"command"</span>: <span class="s">"powershell.exe -NoProfile -Command \"[System.Media.SystemSounds]::Asterisk.Play()\""</span> }] }
+    ]
+  }
+}</code></pre></div>
+  <p class="prose">El <code>$schema</code> hace que VS Code y Rider te autocompleten las claves y marquen errores mientras editas. Después de cambiar el archivo, abre una sesión nueva o revisa con <code>/hooks</code> y <code>/status</code> que se cargó.</p>
+
+  <div class="practice">
+<h2 class="practice-h">Práctica</h2>
+<div class="lab">
+    <div class="lab-h"><h3>Laboratorio 4 · Configurar el repo del equipo</h3><span class="pill">60 min</span></div>
+    <ol>
+      <li>Si el repo tiene <code>.github/copilot-instructions.md</code>, corre <code>/init</code> y revisa qué incorporó. Si no, corre <code>/init</code> igual.</li>
+      <li>Recorta el CLAUDE.md a menos de 200 líneas. Mueve lo específico de endpoints y tests a <code>.claude/rules/</code>.</li>
+      <li>Crea <code>.claude/settings.json</code> con el allow/ask/deny del ejemplo, adaptado a tus comandos.</li>
+      <li>Crea tu <code>CLAUDE.local.md</code> y agrégalo a <code>.gitignore</code> junto con <code>.claude/settings.local.json</code>.</li>
+      <li>Abre una sesión nueva y corre <code>/context</code>: verifica que se cargan los archivos correctos.</li>
+      <li>Pide a Claude que lea <code>.env</code>: debe negarse por el <code>deny</code>.</li>
+      <li>Abre un PR con la carpeta <code>.claude/</code> para que el equipo la revise.</li>
+    </ol>
+  </div>
+  <div class="check" data-check="s4">
+    <h3>Checklist · Sesión 4</h3>
+    <label><input type="checkbox" id="s4-1"><span>El repo tiene un CLAUDE.md de menos de 200 líneas revisado por el equipo.</span></label>
+    <label><input type="checkbox" id="s4-2"><span>Hay al menos una regla con <code>paths</code>.</span></label>
+    <label><input type="checkbox" id="s4-3"><span>settings.json con allow/ask/deny en el repo; secretos denegados.</span></label>
+    <label><input type="checkbox" id="s4-4"><span>Sé qué va en CLAUDE.local.md, ~/.claude y managed policy.</span></label>
+    <label><input type="checkbox" id="s4-5"><span>Tengo avisos cuando Claude termina o pide permiso.</span></label>
+    <label><input type="checkbox" id="s4-6"><span>Tengo una barra de estado con modelo, rama y % de contexto.</span></label>
+  </div>
+  <div class="quiz" data-quiz="s4"></div>
+</div>
