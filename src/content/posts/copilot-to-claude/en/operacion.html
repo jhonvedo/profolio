@@ -1,0 +1,114 @@
+<p class="prose">The commands that separate someone who "uses Claude" from someone who handles it fluently: naming and resuming sessions, working in parallel, turning plugins on and off, controlling costs and keeping everything up to date.</p>
+
+  <h2>A recommended work routine</h2>
+  <div class="code"><div class="fname"><span>A normal day with Claude Code</span><button class="copy" type="button">Copy</button></div><pre><code><span class="c"># 1. Start with a name: you'll find it easily later</span>
+claude -n "PAY-482-partial-refund"
+
+<span class="c"># 2. Inside the session</span>
+/model            <span class="c"># model and effort suited to the task</span>
+/plan …           <span class="c"># plan before touching code</span>
+/context          <span class="c"># check how much context you're using</span>
+/diff             <span class="c"># review changes</span>
+/code-review      <span class="c"># a second look</span>
+/usage            <span class="c"># what it cost</span>
+
+<span class="c"># 3. The next day, pick up where you left off</span>
+claude -r "PAY-482-partial-refund"</code></pre></div>
+
+  <h2>Sessions: name, resume, branch</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Command</th><th>What it does</th><th>When</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Command"><code>claude -n "name"</code></td><td data-label="What it does">Starts a session with a name visible in <code>/resume</code> and the terminal title.</td><td data-label="When">Always: use the ticket ID.</td></tr>
+      <tr><td data-label="Command"><code>/rename name</code></td><td data-label="What it does">Renames the current session.</td><td data-label="When">When the task changed direction.</td></tr>
+      <tr><td data-label="Command"><code>claude -c</code></td><td data-label="What it does">Resumes the most recent conversation in this directory.</td><td data-label="When">You closed the terminal by mistake.</td></tr>
+      <tr><td data-label="Command"><code>claude -r</code> / <code>/resume</code></td><td data-label="What it does">Picker for previous sessions; <code>claude -r name</code> goes straight there.</td><td data-label="When">Going back to yesterday's task.</td></tr>
+      <tr><td data-label="Command"><code>claude --from-pr 123</code></td><td data-label="What it does">Shows the sessions linked to that PR.</td><td data-label="When">You're asked for changes on a PR Claude made.</td></tr>
+      <tr><td data-label="Command"><code>--fork-session</code></td><td data-label="What it does">With <code>-r</code> or <code>-c</code>: resumes in a new copy, leaving the original untouched.</td><td data-label="When">Trying another solution without losing the first.</td></tr>
+      <tr><td data-label="Command"><code>/branch</code></td><td data-label="What it does">Creates a branch of the conversation to explore another direction.</td><td data-label="When">"What if we use events instead of polling?"</td></tr>
+      <tr><td data-label="Command"><code>/rewind</code> (Esc Esc)</td><td data-label="What it does">Takes code and conversation back to a checkpoint.</td><td data-label="When">Claude went down the wrong path.</td></tr>
+      <tr><td data-label="Command"><code>/clear</code></td><td data-label="What it does">New conversation with empty context.</td><td data-label="When">Between unrelated tasks.</td></tr>
+      <tr><td data-label="Command"><code>/compact [focus]</code></td><td data-label="What it does">Summarizes the conversation to free up context.</td><td data-label="When">Same task, full context.</td></tr>
+      <tr><td data-label="Command"><code>/export file</code> · <code>/copy</code></td><td data-label="What it does">Exports the conversation to text · copies the last answer.</td><td data-label="When">Documenting a decision or sharing an analysis.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Working in parallel</h2>
+  <ul class="kv">
+<li><strong><code>claude --bg "investigate the flaky payments test"</code></strong><span>Launches a background session and gives you your terminal back.</span></li>
+<li><strong><code>/background [prompt]</code></strong><span>Sends the current session to the background.</span></li>
+<li><strong><code>/fork [prompt]</code></strong><span>Copies the conversation into a new background session.</span></li>
+<li><strong><code>/tasks</code> · <code>/list-agents</code></strong><span>See background work, subagents and other sessions.</span></li>
+<li><strong><code>isolation: worktree</code> (subagents)</strong><span>The subagent works in an isolated git worktree so it doesn't step on your files.</span></li>
+<li><strong><code>/desktop</code> · <code>/mobile</code></strong><span>Continue the session in the desktop app · QR code for the mobile app.</span></li>
+<li><strong><code>claude.ai/code</code></strong><span>Cloud sessions on GitHub; several at once from the browser or your phone.</span></li>
+</ul>
+  <div class="note warn"><strong>Parallel without conflicts:</strong> two sessions editing the same folder step on each other. For real parallel work use git worktrees (one folder per branch) or cloud sessions.</div>
+
+  <h2>Plugins: install, enable, disable</h2>
+  <div class="code"><div class="fname"><span>Inside Claude Code</span><button class="copy" type="button">Copy</button></div><pre><code>/plugin                                         <span class="c"># panel: Discover · Installed · Marketplaces · Errors · Stats</span>
+/plugin install csharp-lsp@claude-plugins-official
+/plugin list --enabled                          <span class="c"># or --disabled</span>
+/plugin disable csharp-lsp@claude-plugins-official
+/plugin enable  csharp-lsp@claude-plugins-official
+/plugin uninstall csharp-lsp@claude-plugins-official
+/reload-plugins                                 <span class="c"># applies changes made outside the panel</span>
+
+/plugin marketplace add my-org/claude-plugins
+/plugin marketplace update company-tools
+/plugin marketplace list</code></pre></div>
+  <div class="code"><div class="fname"><span>From the shell (scripts, onboarding)</span><button class="copy" type="button">Copy</button></div><pre><code>claude plugin install platform-tools@company-tools --scope project
+claude plugin uninstall platform-tools@company-tools --scope project
+claude plugin details platform-tools@company-tools   <span class="c"># which skills, agents, hooks and MCP it ships</span></code></pre></div>
+  <div class="prose"><ul>
+    <li><strong>Scopes:</strong> <em>user</em> (you, all repos), <em>project</em> (the whole team, written to <code>.claude/settings.json</code>), <em>local</em> (you, this repo only). <em>Managed</em>-scope plugins are set by the admin and can't be removed.</li>
+    <li>If you uninstall a plugin the project enables, Claude Code asks whether to disable it just for you (override in <code>settings.local.json</code>) or for everyone.</li>
+    <li>The <strong>Installed</strong> tab flags plugins as "Not used recently": disable them, because each one consumes context on every turn.</li>
+    <li>The panel shows a plugin's <strong>context cost</strong> before you install it.</li>
+    <li>Useful plugins from the official marketplace: <code>csharp-lsp</code> and <code>typescript-lsp</code> (Claude sees compile errors while editing; they require installing <code>csharp-ls</code> or <code>typescript-language-server</code>), <code>github</code>, <code>atlassian</code>, <code>commit-commands</code>, <code>pr-review-toolkit</code>, <code>security-guidance</code>.</li>
+  </ul></div>
+
+  <h2>Skills, subagents, MCP and hooks</h2>
+  <ul class="kv">
+<li><strong>Skills</strong><span><code>/skills</code> list and hide · <code>/skill-doctor</code> context cost and usage · disable the ones you don't use to save context</span></li>
+<li><strong>Subagents</strong><span><code>/agents</code> create and edit · <code>/list-agents</code> see active ones · <code>claude --agent name</code> the whole session as that agent</span></li>
+<li><strong>MCP</strong><span><code>/mcp</code> status and OAuth · <code>/mcp disable name</code> / <code>enable</code> / <code>reconnect</code> · <code>claude mcp list</code>, <code>get</code>, <code>remove</code></span></li>
+<li><strong>Hooks</strong><span><code>/hooks</code> see configured ones · <code>"disableAllHooks": true</code> temporarily disable all · <code>claude --debug</code> see runs</span></li>
+<li><strong>Permissions</strong><span><code>/permissions</code> · <code>/fewer-permission-prompts</code> suggests an allowlist based on your sessions</span></li>
+<li><strong>Memory</strong><span><code>/memory</code> edits CLAUDE.md and auto memory</span></li>
+</ul>
+
+  <h2>Customizing the environment</h2>
+  <ul class="kv">
+<li><strong><code>/config</code></strong><span>All settings in one panel, or <code>/config key=value</code>.</span></li>
+<li><strong><code>/statusline show model, branch and context %</code></strong><span>Claude generates a status line to your liking.</span></li>
+<li><strong><code>/output-style</code></strong><span>Changes the answer style (e.g. explanatory, for learning).</span></li>
+<li><strong><code>/theme</code> · <code>/keybindings</code> · <code>/color</code></strong><span>Theme, shortcuts and bar color (handy for telling sessions apart).</span></li>
+<li><strong><code>/add-dir ../other-repo</code> · <code>/cd path</code></strong><span>Give access to another folder · move the session.</span></li>
+<li><strong><code>/ide</code></strong><span>Connect to VS Code or JetBrains from an external terminal.</span></li>
+</ul>
+  <div class="code"><div class="fname"><span>~/.claude/settings.json · minimal status line</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  <span class="k">"statusLine"</span>: {
+    <span class="k">"type"</span>: <span class="s">"command"</span>,
+    <span class="k">"command"</span>: <span class="s">"jq -r '\"[\\(.model.display_name)] \\(.context_window.used_percentage // 0)% context\"'"</span>
+  }
+}</code></pre></div>
+
+  <h2>Health, costs and updates</h2>
+  <ul class="kv">
+<li><strong><code>/usage</code> (alias <code>/cost</code>)</strong><span>The session's tokens and cost.</span></li>
+<li><strong><code>/context</code></strong><span>What's taking up context: CLAUDE.md, MCP, skills, history.</span></li>
+<li><strong><code>/status</code></strong><span>Model, account, version, permission mode.</span></li>
+<li><strong><code>/doctor</code></strong><span>Diagnoses and fixes installation and configuration problems.</span></li>
+<li><strong><code>/insights</code></strong><span>HTML report analyzing your recent sessions.</span></li>
+<li><strong><code>claude update</code> · <code>/upgrade</code> · <code>claude --version</code></strong><span>Update and check the version.</span></li>
+</ul>
+
+  <h2>In claude.ai</h2>
+  <div class="prose"><ul>
+    <li><strong>Customize → Skills:</strong> turn skills on or off (organization skills come on; you can turn them off for yourself).</li>
+    <li><strong>Customize → Connectors:</strong> connect accounts. In each chat, the tools menu lets you turn off connectors you don't need to save context.</li>
+    <li><strong>Settings:</strong> pause or reset memory, incognito chats, default model and effort.</li>
+    <li><strong>Projects:</strong> rename, archive and change sharing permissions.</li>
+    <li>Skills and plugins enabled in claude.ai sync to Claude Code. Synced plugins show up in <code>/plugin</code> → Installed with origin <em>synced</em>; you disable them there, unless the organization marks them as required.</li>
+  </ul></div>

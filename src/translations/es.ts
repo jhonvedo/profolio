@@ -1,29 +1,136 @@
-const es = {
-	meta: { title: 'Jhon Acevedo · Ingeniero de Software Senior', description: 'Portafolio profesional de Jhon Acevedo: Full‑Stack, Arquitectura de software, Liderazgo técnico, DevOps en Azure, Node.js, .NET, React, Angular.' },
-	nav: { services: 'Servicios', cases: 'Casos', skills: 'Skills', experience: 'Experiencia', testimonials: 'Testimonios', contact: 'Contacto' },
-	cta: { talk: 'Hablemos', book: 'Agenda una llamada', cases: 'Ver casos reales' },
-	hero: { badge: 'Disponible para consultorías selectas', title: 'Ingeniero de Software Senior', stack: 'Full‑Stack · Automatización IA · Arquitectura', subtitle: 'Con más de 10 años de experiencia, diseño arquitecturas escalables, construyo flujos de automatización con IA usando LangFlow y MCP, lidero equipos y entrego soluciones end-to-end con foco en calidad, productividad y eficiencia en la nube.', years: 'años', exp: 'Experiencia', projects: 'Proyectos', stat3: 'Plataformas en producción' },
-	services: { title: 'Cómo te aporto valor', subtitle: 'Servicios pensados para acelerar resultados y reducir riesgo técnico.', cards: { arch: { title: 'Arquitectura y Roadmap', text: 'Definición de arquitectura, ADRs y plan por fases con métricas de éxito.', b1: 'Hexagonal, Clean, CQRS', b2: 'Cloud Azure, costos y escalabilidad', b3: 'Seguridad y cumplimiento' }, mod: { title: 'Modernización y DevOps', text: 'CI/CD, infraestructura como código y observabilidad desde el día uno.', b1: 'Azure Pipelines, GitHub Actions', b2: 'Terraform, Docker, K8s', b3: 'SLIs/SLOs, tracing y alertas' }, audit: { title: 'Auditoría y Performance', text: 'Revisión de código, seguridad y pruebas con quick wins accionables.', b1: 'Code review y refactors', b2: 'Pruebas, cobertura y calidad', b3: 'Optimización de costos' }, ai: { title: 'Integración IA y Automatización', text: 'Pipelines agénticos, integraciones LLM y automatización de procesos con IA.', b1: 'LangFlow y desarrollo de servidores MCP', b2: 'Integraciones con Claude / APIs LLM', b3: 'Pruebas E2E automatizadas con IA' } } },
-	cases: { title: 'Casos de estudio', subtitle: 'Del problema al impacto medido. Historias reales con resultados.', cta: 'Solicitar una revisión', card1: { title: 'Sectorial', text: 'Plataforma de estadísticas de mercado. Migración de entrega PDF a sistema de suscripciones donde los clientes acceden a indicadores personalizados.', impact: 'Impacto: Transformación digital, acceso 24/7, suscripciones personalizadas', tech: ['.NET', 'SQL Server', 'Azure', 'APIs REST'], url: 'https://www.sectorial.co/lanzamiento_oda/' }, card2: { title: 'Sure-Metrics', text: 'Plataforma de gestión ambiental. Cálculo de huella de carbono, huella de agua y otros indicadores de desempeño ambiental integrados a la estrategia de negocio.', impact: 'Impacto: Centralización de métricas ambientales, reporting integrado', tech: ['Node.js', 'APIs', 'Cálculos', 'Reporting'], url: 'https://sure-metrics.com/' }, card3: { title: 'NextechDS', text: 'E‑commerce de insumos médicos para diabetes. Portal con catálogo de productos, reorden de medicamentos y gestión de pacientes.', impact: 'Impacto: Plataforma de salud digital, optimización de procesos de pedidos', tech: ['Astro', 'CDN', 'E-commerce', 'Auth'], url: 'https://www.nextechds.com/en/#home' } },
-	skills: { title: 'Habilidades clave', subtitle: 'Stack y competencias que uso para entregar resultados.', cards: { backend: { title: 'Back‑End', text: 'Node.js, .NET 8, API First, mensajería y patrones.' }, frontend: { title: 'Front‑End', text: 'Angular, React/Next.js, Astro, diseño accesible.' }, devops: { title: 'Cloud y DevOps', text: 'Infra como código, CI/CD y observabilidad.' }, arch: { title: 'Arquitectura', text: 'ADRs, diseño evolutivo, governance de calidad.' }, lead: { title: 'Liderazgo', text: 'Mentoría, definition of done, rituales ágiles.' }, data: { title: 'Datos', text: 'Modelado, ETL y data‑driven decisions.' }, ai: { title: 'IA & Automatización', text: 'Flujos agénticos, integraciones LLM, servidores MCP y automatización de procesos con IA.' } } },
-	exp: { title: 'Experiencia', card1: { role: 'Ingeniero Senior · Arquitectura y Desarrollo', place: 'Arquitectura y liderazgo técnico', badge: 'Arquitectura', b1: 'Diseño y ejecución de arquitecturas escalables y mantenibles.', b2: 'Liderazgo de equipos pequeños y mentoría técnica.', b3: 'Definición de patrones, ADRs y gobernanza de código.' }, card2: { role: 'Full‑Stack · Implementación End-to-End', place: '10+ años de experiencia', badge: 'Ejecución', b1: 'Desarrollo completo desde backend hasta frontend.', b2: 'Integración de servicios, APIs y sistemas de terceros.', b3: 'DevOps, CI/CD y despliegues en Azure Cloud.' } },
-	testimonials: { title: 'Testimonios', f1: { q: 'Superó las metas del trimestre y ordenó nuestra arquitectura.', by: 'CTO · Fintech LATAM' }, f2: { q: 'Excelente criterio técnico y enfoque en negocio.', by: 'Head of Engineering · Retail' }, f3: { q: 'Implementó CI/CD y bajó costos de nube.', by: 'Gerente de TI · Salud' } },
-	review: { title: '¿Iniciando un proyecto nuevo o necesitas escalar uno existente?', text: 'Te ayudo a definir la arquitectura adecuada o a revisar y mejorar la de tu proyecto actual.', cta: 'Hablemos de tu proyecto' },
-	contact: {
-		title: 'Contacto', subtitle: 'Cuéntame sobre tu reto y coordinamos una llamada.', name: 'Nombre', company: 'Empresa', desc: 'Describe brevemente el proyecto', optin: 'Acepto recibir una propuesta por email', send: 'Enviar', form: {
-			success: {
-				title: "Listo",
-				message: "✅ Mensaje enviado correctamente. Te contactaré pronto."
-			},
-			error: {
-				title: "Error",
-				default: "No fue posible enviar el formulario.",
-				network: "❌ Error de conexión. Por favor intenta nuevamente."
-			},
-			sending: "Enviando..."
-		}
-	},
-	footer: { privacy: 'Privacidad', terms: 'Términos' }
+const companies = [
+	{ name: "CI&T", years: "2024 —" },
+	{ name: "Inexption", years: "2021 — 2024" },
+	{ name: "Wahio", years: "2021 — 2022" },
+	{ name: "Tech and Solve", years: "2019 — 2021" },
+	{ name: "Deloim", years: "2016 — 2019" },
+	{ name: "Aplisalud", years: "2015 — 2016" },
+]
 
+const es = {
+	meta: {
+		title: "Jhon Acevedo · Senior Software Engineer",
+		description: "Portafolio de Jhon Acevedo: arquitectura de software, IA aplicada (Claude, MCP, LangFlow) e ingeniería full-stack en Medellín, Colombia.",
+	},
+	nav: [
+		{ label: "Trabajo", href: "#trabajo" },
+		{ label: "Qué hago", href: "#hago" },
+		{ label: "Experiencia", href: "#experiencia" },
+		{ label: "Contacto", href: "#contacto" },
+	],
+	hero: {
+		status: "Disponible para nuevos proyectos",
+		statement: "Senior software engineer. Diseño arquitecturas que aguantan el crecimiento y construyo productos que usan IA de verdad.",
+		aiLabel: "✦ Algunas cosas que automatizo con IA",
+		examples: [
+			{ i: "requisito: exportar reporte mensual en PDF", o: "Historia de usuario + criterios de aceptación generados" },
+			{ i: "validar entregable contra requisitos del cliente", o: "12 criterios revisados · 2 ajustes sugeridos" },
+			{ i: "Rappi 38.500 almuerzo", o: "Comida · $38.500 · guardado (Cuotfy)" },
+		],
+		meta: [
+			{ k: "Ahora", v: "Senior Engineer en CI&T" },
+			{ k: "Foco", v: "Arquitectura e IA aplicada" },
+			{ k: "Base", v: "Medellín, Colombia · remoto" },
+		],
+		photoAlt: "Foto de Jhon Acevedo",
+	},
+	work: {
+		heading: "Trabajo seleccionado",
+		count: "04 proyectos",
+		items: [
+			{
+				n: "01",
+				name: "Cuotfy",
+				role: "Creador · producto propio",
+				url: "",
+				img: "",
+				desc: 'App de finanzas personales para Colombia. Escribes un gasto como lo dirías ("Rappi 38.500 almuerzo") y un asistente con Claude lo interpreta, lo categoriza y lo guarda. Diseñé el producto, la arquitectura y la integración con IA.',
+				stack: "Claude API / Agentes / Clean Architecture / App móvil",
+			},
+			{
+				n: "02",
+				name: "Sectorial",
+				role: "Plataforma de datos de mercado",
+				url: "https://www.sectorial.co/lanzamiento_oda/",
+				img: "/projects/sectorial_dashboard_screen.webp",
+				desc: "Creamos la plataforma para que los usuarios consulten su información del mercado actualizada, en lugar de recibirla por envío de documentos.",
+				stack: ".NET / SQL Server / Azure / REST APIs",
+			},
+			{
+				n: "03",
+				name: "Sure-Metrics",
+				role: "Gestión ambiental",
+				url: "https://sure-metrics.com/",
+				img: "/projects/suremetrics_dashboard.webp",
+				desc: "Plataforma para medir huella de carbono, huella hídrica y otros indicadores ambientales, integrados a la estrategia de negocio.",
+				stack: "Node.js / APIs / Motor de cálculo / Reportes",
+			},
+			{
+				n: "04",
+				name: "NextechDS",
+				role: "Salud · EE. UU.",
+				url: "https://www.nextechds.com/en/#home",
+				img: "/projects/nextechds.webp",
+				desc: "Página de inicio de NextechDS, la primera fase de un sistema de insumos médicos para personas con diabetes en EE. UU.",
+				stack: "Astro / CDN",
+			},
+		],
+		cuotfyMock: {
+			alt: "Pantallas de la app Cuotfy: inicio y registro de gastos con IA",
+			greeting: "Hola, Jhon 👋",
+			totalLabel: "Total en cuentas",
+			total: "$ 4.850.000",
+			month: "Septiembre de 2026",
+			income: "Ingresos",
+			incomeVal: "$ 5.200.000",
+			expense: "Gastos",
+			expenseVal: "$ 1.284.300",
+			askTitle: "Pregúntale a la IA",
+			askSub: "Analiza tus finanzas al instante",
+			quick: "Accesos rápidos",
+			quick1: "Cuentas y tarjetas",
+			quick1Sub: "Ver billetera",
+			quick2: "Créditos",
+			quick2Sub: "2 activos",
+			input: "Rappi 38.500 almuerzo",
+			nav: ["Inicio", "Finanzas", "IA", "Reportes", "Perfil"],
+			tab1: "Registrar",
+			tab2: "Preguntar",
+			iaTitle: "Análisis con IA",
+			iaDesc: "Describe tus gastos en lenguaje natural y la IA los clasificará automáticamente",
+			examples: ["Almorcé con Juan y pagué $45 mil…", "Recibí el sueldo y pagué el arriendo…", "Uber 25.000 al aeropuerto"],
+			resultCat: "Comida",
+			resultName: "Almuerzo · Rappi",
+			resultAmt: "-$38.500",
+			button: "Analizar con IA",
+		},
+	},
+	do: {
+		heading: "Me gusta la parte del software que no se ve hasta que falla.",
+		lead: "Trabajo en tres frentes, casi siempre al mismo tiempo.",
+		items: [
+			{ n: "01", title: "Arquitectura", desc: "Defino cómo se organiza un sistema para que pueda crecer sin reescribirse: Clean Architecture, DDD, CQRS cuando hace falta, integraciones y nube en Azure." },
+			{ n: "02", title: "IA aplicada", desc: "Agentes con MCP, flujos en LangFlow e integraciones con Claude para automatizar procesos reales, como generar historias de usuario o validar entregables." },
+			{ n: "03", title: "Ingeniería full-stack", desc: "Backend en .NET, Node.js y Python; frontend en React. CI/CD, infraestructura como código y un equipo que pueda mantener lo que construimos." },
+		],
+	},
+	exp: {
+		kicker: "Experiencia",
+		statement: "Más de 10 años en empresas de tecnología de Colombia y EE. UU., construyendo software para clientes de sectores muy distintos.",
+		companies,
+		sectors: "Salud · Financiero · Gran comercio · Educación",
+	},
+	about: {
+		kicker: "Sobre mí",
+		paragraphs: [
+			"Empecé haciendo sistemas de auditoría para hospitales en Medellín y desde entonces no he dejado de escribir código. Con los años me fui quedando con la parte que más disfruto: pensar cómo encaja todo antes de construirlo.",
+			"Hoy paso buena parte del tiempo poniendo a la IA a hacer trabajo repetitivo, en proyectos de clientes y en Cuotfy. Me interesa que funcione en producción, no en una demo.",
+		],
+	},
+	contact: {
+		kicker: "Contacto",
+		lead: "Si tienes un proyecto, un equipo que necesita arquitectura o una idea con IA, escríbeme.",
+	},
 }
+
 export default es
