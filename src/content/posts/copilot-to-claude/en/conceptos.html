@@ -1,0 +1,125 @@
+<p class="prose">Before configuring anything, the team needs a shared vocabulary. These are the pieces everything else is built from, explained with a dev-team analogy.</p>
+
+  <div class="tbl"><table>
+    <thead><tr><th>Piece</th><th>What it is</th><th>Analogy</th><th>Uses AI?</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Piece"><strong>Model</strong></td><td data-label="What it is">The "brain" that reasons: Fable, Opus, Sonnet, Haiku.</td><td data-label="Analogy">The seniority of whoever does the task.</td><td data-label="Uses AI?">Yes</td></tr>
+      <tr><td data-label="Piece"><strong>Effort</strong></td><td data-label="What it is">How much the model reasons before acting (low → max).</td><td data-label="Analogy">How much time you give someone to think before answering.</td><td data-label="Uses AI?">Yes</td></tr>
+      <tr><td data-label="Piece"><strong>Context</strong></td><td data-label="What it is">Everything the model has "in its head" in a turn: instructions, files read, history, tools. Measured in tokens.</td><td data-label="Analogy">A person's working memory during a meeting.</td><td data-label="Uses AI?">—</td></tr>
+      <tr><td data-label="Piece"><strong>CLAUDE.md</strong></td><td data-label="What it is">Project instructions loaded in every session.</td><td data-label="Analogy">The repo's onboarding doc.</td><td data-label="Uses AI?">No</td></tr>
+      <tr><td data-label="Piece"><strong>Skill</strong></td><td data-label="What it is">A packaged procedure (instructions + scripts + references) that loads only when needed.</td><td data-label="Analogy">A runbook or checklist you hand to the teammate doing the work.</td><td data-label="Uses AI?">Run by the same Claude</td></tr>
+      <tr><td data-label="Piece"><strong>Subagent</strong></td><td data-label="What it is">Another Claude instance with its own context, prompt, tools and model. It gets a task and returns only the result.</td><td data-label="Analogy">Delegating to a specialist colleague and getting their report.</td><td data-label="Uses AI?">Yes, separately</td></tr>
+      <tr><td data-label="Piece"><strong>Hook</strong></td><td data-label="What it is">A script Claude Code runs automatically on certain events.</td><td data-label="Analogy">A git hook or a CI step: it always runs.</td><td data-label="Uses AI?">No (except <code>prompt</code>/<code>agent</code> hooks)</td></tr>
+      <tr><td data-label="Piece"><strong>MCP</strong></td><td data-label="What it is">A protocol for connecting external tools and data (GitHub, Jira, DB, internal docs).</td><td data-label="Analogy">A USB port: plug in a system and Claude gains new tools.</td><td data-label="Uses AI?">No</td></tr>
+      <tr><td data-label="Piece"><strong>Plugin</strong></td><td data-label="What it is">An installable package bundling skills, subagents, hooks and MCP servers.</td><td data-label="Analogy">A NuGet / npm package of team configuration.</td><td data-label="Uses AI?">No</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Skill vs. agent: the most confusing difference</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Skill = "how it's done"</h3>
+      <p>It's procedural knowledge. While unused, Claude only sees its name and description (a few lines). When invoked, its instructions enter <strong>the current conversation's context</strong> and the same Claude follows them. You see every step.</p>
+      <p><strong>Examples:</strong> creating an EF Core migration, preparing a release, the changelog format, the checklist for a new endpoint.</p>
+    </div>
+    <div class="card">
+      <h3>Subagent = "who does it"</h3>
+      <p>It's a separate worker. It starts with a <strong>clean context</strong> (it doesn't see your conversation), uses only the tools you allow and can use another model. It can read 40 files and return a 20-line summary: your main session doesn't fill up.</p>
+      <p><strong>Examples:</strong> security reviewer, code researcher, test writer, log analyst.</p>
+    </div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>Skill</th><th>Subagent</th></tr></thead>
+    <tbody>
+      <tr><td>Where it lives</td><td data-label="Skill"><code>.claude/skills/&lt;name&gt;/SKILL.md</code></td><td data-label="Subagent"><code>.claude/agents/&lt;name&gt;.md</code></td></tr>
+      <tr><td>Context</td><td data-label="Skill">Added to the conversation's</td><td data-label="Subagent">Its own, isolated; returns a result</td></tr>
+      <tr><td>Who runs it</td><td data-label="Skill">The session's Claude</td><td data-label="Subagent">Another Claude instance</td></tr>
+      <tr><td>Model</td><td data-label="Skill">The session's (or <code>model:</code> for that turn)</td><td data-label="Subagent">Configurable: <code>haiku</code>, <code>sonnet</code>, <code>opus</code>, <code>fable</code>, <code>inherit</code></td></tr>
+      <tr><td>Tools</td><td data-label="Skill">The session's; <code>allowed-tools</code> pre-approves</td><td data-label="Subagent">Its own allow/deny list (<code>tools</code>, <code>disallowedTools</code>)</td></tr>
+      <tr><td>How it's invoked</td><td data-label="Skill"><code>/name args</code> or Claude picks it by description</td><td data-label="Subagent">"use agent X", <code>@"x (agent)"</code>, or Claude delegates on its own</td></tr>
+      <tr><td>Works in claude.ai</td><td data-label="Skill">Yes, same format</td><td data-label="Subagent">It's a Claude Code feature</td></tr>
+      <tr><td>Use it when…</td><td data-label="Skill">You want something done <em>the same way every time</em></td><td data-label="Subagent">There's a lot of intermediate work, it needs another perspective or fewer permissions</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>They combine.</strong> A skill can run inside a subagent (<code>context: fork</code> + <code>agent: Explore</code>) and a subagent can preload skills (<code>skills: [new-migration]</code>). The final demo uses a skill that orchestrates several subagents.</div>
+
+  <h3>Which piece do I need? Quick questions</h3>
+  <ul class="kv">
+<li><strong>"Claude should always know this about the repo"</strong><span>CLAUDE.md (or a rule with <code>paths</code> if it only applies to certain files)</span></li>
+<li><strong>"This takes 6 steps and is always done the same way"</strong><span>Skill</span></li>
+<li><strong>"This must happen no matter what, without relying on Claude remembering"</strong><span>Hook or <code>deny</code> rule</span></li>
+<li><strong>"I need someone to review/research without cluttering my session"</strong><span>Subagent</span></li>
+<li><strong>"Claude needs to see data from Jira, GitHub, the DB or internal docs"</strong><span>MCP / connector</span></li>
+<li><strong>"I want 12 repos to have the same setup"</strong><span>Plugin in a team marketplace</span></li>
+</ul>
+
+  <h2 id="modelo-esfuerzo">Model and effort: concrete examples</h2>
+  <div class="prose">
+    <p>Two independent knobs. The <strong>model</strong> sets how much capability there is; <strong>effort</strong> sets how much of that capability each response uses. More of either means slower answers and more of the plan's quota.</p>
+    <p>In Claude Code the default effort is <code>high</code>. Levels: <code>low</code>, <code>medium</code>, <code>high</code>, <code>xhigh</code>, <code>max</code>. The default model depends on the seat: Sonnet 5 on Team Standard and Opus 5 on Team Premium and Enterprise.</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Situation</th><th>Model</th><th>Effort</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Situation">"How do I do a <span data-stack="dotnet"><code>GroupBy</code> in LINQ</span><span data-stack="node">conditional type in TS</span>?", renaming, formatting</td><td data-label="Model">Sonnet 5 or Haiku 4.5</td><td data-label="Effort"><code>low</code></td><td data-label="Why">Known answer; thinking longer doesn't help.</td></tr>
+      <tr><td data-label="Situation">Generating the CHANGELOG or PR description from the diff</td><td data-label="Model">Sonnet 5</td><td data-label="Effort"><code>low</code>–<code>medium</code></td><td data-label="Why">Summarizing is easy; speed matters.</td></tr>
+      <tr><td data-label="Situation">Unit tests for an existing class</td><td data-label="Model">Sonnet 5</td><td data-label="Effort"><code>medium</code></td><td data-label="Why">Clear, well-bounded pattern.</td></tr>
+      <tr><td data-label="Situation">Typical sprint feature: endpoint + validation + tests</td><td data-label="Model">Sonnet 5 or Opus 5</td><td data-label="Effort"><code>high</code> (default)</td><td data-label="Why">Several files and small decisions.</td></tr>
+      <tr><td data-label="Situation">Intermittent bug, race condition, deadlock, memory leak</td><td data-label="Model">Opus 5 or Fable 5.1</td><td data-label="Effort"><code>xhigh</code></td><td data-label="Why">Hypotheses need to be formed and ruled out.</td></tr>
+      <tr><td data-label="Situation">Architecture design or migration (<span data-stack="dotnet">.NET Framework → .NET 8</span><span data-stack="node">Express → NestJS, CJS → ESM</span>)</td><td data-label="Model">Fable 5.1</td><td data-label="Effort"><code>xhigh</code>–<code>max</code> in Plan mode</td><td data-label="Why">Long-term trade-offs; a mistake costs weeks.</td></tr>
+      <tr><td data-label="Situation">Large but repetitive refactor (100 files, same pattern)</td><td data-label="Model"><code>opusplan</code></td><td data-label="Effort"><code>high</code></td><td data-label="Why">Opus designs the plan, Sonnet executes it more cheaply.</td></tr>
+      <tr><td data-label="Situation">Subagent that searches files or reads logs</td><td data-label="Model">Haiku 4.5</td><td data-label="Effort"><code>low</code></td><td data-label="Why">Mechanical work you run many times.</td></tr>
+      <tr><td data-label="Situation">Security review before the PR</td><td data-label="Model">Opus 5</td><td data-label="Effort"><code>high</code></td><td data-label="Why">A false negative is expensive.</td></tr>
+      <tr><td data-label="Situation">In claude.ai: summarize a document or draft an email</td><td data-label="Model">Sonnet 5</td><td data-label="Effort">Low or Medium</td><td data-label="Why">A language task, not a reasoning one.</td></tr>
+      <tr><td data-label="Situation">In claude.ai: compare 3 messaging providers with sources</td><td data-label="Model">Opus 5 + Research</td><td data-label="Effort">High</td><td data-label="Why">Many sources and synthesis.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="grid2">
+    <div class="card"><h3>How to change them in Claude Code</h3><p>
+      <code>/model</code> opens the picker (← → adjust effort).<br>
+      <code>/effort xhigh</code> changes only the effort.<br>
+      <code>claude --model sonnet --effort low</code> at startup.<br>
+      Type <code>ultrathink</code> in a prompt to reason more for that turn only.<br>
+      In subagents and skills: <code>model:</code> and <code>effort:</code> in the frontmatter.<br>
+      <code>CLAUDE_CODE_SUBAGENT_MODEL=haiku</code> sets the default subagent model.</p></div>
+    <div class="card"><h3>Common mistakes</h3><p>
+      Leaving <code>max</code> on for everything: burns quota and can "overthink" simple tasks.<br>
+      Using Haiku for design: you save tokens and lose hours fixing things.<br>
+      Switching models mid-way through a long task for no reason: the new model rereads the whole context.<br>
+      Blaming the model when context was missing: the problem is almost always the prompt or CLAUDE.md.</p></div>
+  </div>
+
+  <h2 id="idioma">Which language should you write to Claude in?</h2>
+  <div class="prose">
+    <p>Claude understands and answers very well in Spanish and many other languages. For non-English-speaking teams, the real question is about <strong>token cost</strong> and <strong>consistency</strong>.</p>
+    <h3>What the measurements say</h3>
+    <ul>
+      <li>The tokenizer splits text into chunks and is optimized for English. A measurement with the official <code>count_tokens</code> endpoint (Sonnet 4.6, June 2026) gave <strong>1.16 tokens per word in English and 1.72 in Spanish</strong>, about <strong>48% more</strong> for the same content.</li>
+      <li>Another analysis of ~2,000 real Claude Code sessions found Spanish prompts 44% to 63% more expensive (average ~54%)… but prompts were only ~10% of the total context. The rest is code, files read and tool output, which don't change with the language. The real overhead ended up around <strong>5%</strong>, with no noticeable quality difference on coding tasks.</li>
+      <li>The ratio varies between models because they don't all use the same tokenizer. Measure your own case with <code>/context</code> or <code>/usage</code>.</li>
+    </ul>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>What you write</th><th>Recommended language</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td data-label="What you write">Day-to-day prompts</td><td data-label="Recommended language"><strong>Whichever comes out clearest</strong> (your native language is fine)</td><td data-label="Why">A clear prompt in Spanish beats a confusing one in English. The overhead is small next to the rest of the context.</td></tr>
+      <tr><td data-label="What you write">CLAUDE.md, <code>.claude/rules/</code>, skill and subagent descriptions</td><td data-label="Recommended language"><strong>English</strong>, if the team reads it comfortably</td><td data-label="Why">They load in <em>every</em> session, every subagent and (descriptions) every turn. That's where the extra 50% gets paid thousands of times.</td></tr>
+      <tr><td data-label="What you write">Code, identifiers, comments, commits</td><td data-label="Recommended language">Whatever the existing code uses (usually English)</td><td data-label="Why">Consistency with the repo and libraries. Ask for it explicitly in CLAUDE.md.</td></tr>
+      <tr><td data-label="What you write">Business terms (installment, disbursement, local payroll terms…)</td><td data-label="Recommended language">Glossary in CLAUDE.md</td><td data-label="Why">Map the business term to the name in code: <code>desembolso → Disbursement</code>.</td></tr>
+      <tr><td data-label="What you write">Claude's answers</td><td data-label="Recommended language">The team's language if they prefer</td><td data-label="Why">Output is also billed in tokens (and costs more than input); ask for concise answers.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="code"><div class="fname"><span>CLAUDE.md snippet for a Spanish-speaking team</span><button class="copy" type="button">Copy</button></div><pre><code><span class="k">## Language</span>
+- Reply to the user in Spanish, concisely.
+- Code, identifiers, comments, commit messages and PR titles in English.
+
+<span class="k">## Domain glossary (Spanish business term → code name)</span>
+- reembolso → Refund
+- desembolso → Disbursement
+- cuota → Installment
+- pedido → Order</code></pre></div>
+  <div class="note warn"><strong>About this guide:</strong> this is the English edition; the original was written in Spanish for a Spanish-speaking team. All CLAUDE.md, rule, skill and agent examples here are in English, which is also what we recommend for files that load in every session.</div>
+  <div class="practice">
+<h2 class="practice-h">Practice</h2>
+<div class="quiz" data-quiz="c"></div>
+</div>

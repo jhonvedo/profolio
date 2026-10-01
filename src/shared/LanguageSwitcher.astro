@@ -1,7 +1,40 @@
 ---
-import type { Lang } from "./i18n";
-const { lang } = Astro.props as { lang: Lang };
-const target = lang === "es" ? "en" : "es";
+import { supported, type Lang } from "./i18n";
+// hrefs permite enlazar a la página equivalente en el otro idioma (p. ej. un post con slug traducido).
+const { lang, hrefs } = Astro.props as { lang: Lang; hrefs?: Partial<Record<Lang, string>> };
 ---
 
-<a href={`/${target}`} class="rounded-xl border border-white/10 px-3 py-2 text-xs font-semibold">{target.toUpperCase()}</a>
+<div class="switch" role="group" aria-label="Language">
+    {
+        supported.map((l, i) => (
+            <>
+                {i > 0 && <span class="sep">/</span>}
+                <a href={hrefs?.[l] ?? `/${l}`} class:list={["opt", { on: l === lang }]} aria-current={l === lang ? "page" : undefined} hreflang={l}>
+                    {l.toUpperCase()}
+                </a>
+            </>
+        ))
+    }
+</div>
+
+<style>
+    .switch {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-family: var(--font-mono);
+        font-size: 12.5px;
+    }
+    .sep {
+        color: rgba(22, 21, 15, 0.3);
+    }
+    .opt {
+        color: var(--muted-3);
+    }
+    .opt:hover {
+        color: var(--accent);
+    }
+    .opt.on {
+        color: var(--ink);
+    }
+</style>

@@ -151,34 +151,18 @@ declare module 'astro:content' {
 	>;
 
 	type ContentEntryMap = {
-		"blog": {
-"azure-swa-pipelines.mdx": {
-	id: "azure-swa-pipelines.mdx";
-  slug: "azure-swa-pipelines";
-  body: string;
-  collection: "blog";
-  data: any
-} & { render(): Render[".mdx"] };
-"modern-architecture.mdx": {
-	id: "modern-architecture.mdx";
-  slug: "modern-architecture";
-  body: string;
-  collection: "blog";
-  data: any
-} & { render(): Render[".mdx"] };
-"performance-audits.mdx": {
-	id: "performance-audits.mdx";
-  slug: "performance-audits";
-  body: string;
-  collection: "blog";
-  data: any
-} & { render(): Render[".mdx"] };
-};
-
+		
 	};
 
 	type DataEntryMap = {
-		
+		"posts": {
+"copilot-to-claude/series": {
+	id: "copilot-to-claude/series";
+  collection: "posts";
+  data: any
+};
+};
+
 	};
 
 	type AnyEntryMap = ContentEntryMap & DataEntryMap;

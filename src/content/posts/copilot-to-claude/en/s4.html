@@ -1,0 +1,375 @@
+<div class="goals"><h3>By the end, everyone can</h3><ul>
+    <li>Decide where each kind of knowledge lives.</li>
+    <li>Write an effective CLAUDE.md and path-scoped rules.</li>
+    <li>Configure shared and personal permissions in <code>settings.json</code>.</li>
+    <li>Set up notifications, a status line and authentication in their personal <code>settings.json</code>.</li>
+    <li>Migrate the Copilot instructions.</li>
+  </ul></div>
+  <p class="course"><strong>Companion course:</strong> <a href="https://anthropic.skilljar.com/claude-code-in-action">Claude Code in Action</a></p>
+
+  <h2>Where does everything go?</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Kind of knowledge</th><th>Where</th><th>Who sees it</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Kind of knowledge">Build/test commands, architecture, repo conventions</td><td data-label="Where"><code>CLAUDE.md</code> (committed)</td><td data-label="Who sees it">The whole team</td></tr>
+      <tr><td data-label="Kind of knowledge">Rules for certain files (endpoints, tests, migrations)</td><td data-label="Where"><code>.claude/rules/*.md</code> with <code>paths</code></td><td data-label="Who sees it">The whole team, only when it applies</td></tr>
+      <tr><td data-label="Kind of knowledge">Your sandbox URLs, test data, preferences in this repo</td><td data-label="Where"><code>CLAUDE.local.md</code> (in .gitignore)</td><td data-label="Who sees it">Only you</td></tr>
+      <tr><td data-label="Kind of knowledge">Your preferences across all repos</td><td data-label="Where"><code>~/.claude/CLAUDE.md</code> and <code>~/.claude/rules/</code></td><td data-label="Who sees it">Only you</td></tr>
+      <tr><td data-label="Kind of knowledge">Company standards, security, compliance</td><td data-label="Where">Managed policy CLAUDE.md</td><td data-label="Who sees it">The whole organization (can't be excluded)</td></tr>
+      <tr><td data-label="Kind of knowledge">Repeatable procedures (release, migration, review)</td><td data-label="Where">Skills</td><td data-label="Who sees it">Depends on location</td></tr>
+      <tr><td data-label="Kind of knowledge">What Claude learns from your corrections</td><td data-label="Where">Auto memory (<code>~/.claude/projects/…/memory/</code>)</td><td data-label="Who sees it">Only you</td></tr>
+      <tr><td data-label="Kind of knowledge">Business documents, ADRs for chat</td><td data-label="Where">Project in claude.ai</td><td data-label="Who sees it">Whoever has access</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>The .claude folder</h2>
+  <div class="code"><div class="fname"><span>Recommended repo structure</span><button class="copy" type="button">Copy</button></div><pre class="tree"><code>my-repo/
+├── CLAUDE.md                 <span class="c"># team instructions (committed)</span>
+├── CLAUDE.local.md           <span class="c"># personal (gitignored)</span>
+├── .mcp.json                 <span class="c"># team MCP servers (committed)</span>
+└── .claude/
+    ├── settings.json         <span class="c"># permissions, hooks, env, model (committed)</span>
+    ├── settings.local.json   <span class="c"># personal overrides (gitignored)</span>
+    ├── rules/                <span class="c"># path-scoped rules</span>
+    │   ├── api.md
+    │   └── testing.md
+    ├── skills/               <span class="c"># /commands and procedures</span>
+    │   └── new-migration/SKILL.md
+    ├── agents/               <span class="c"># subagents</span>
+    │   └── security-reviewer.md
+    └── hooks/                <span class="c"># scripts called by hooks</span>
+        ├── protect-files.sh
+        └── format.sh</code></pre></div>
+  <p class="prose">On your machine, <code>~/.claude/</code> has the same structure for personal things (settings, CLAUDE.md, rules, skills, agents), plus per-project auto memory and history.</p>
+
+  <h2>A CLAUDE.md that works</h2>
+  <div class="prose"><ul>
+    <li><strong>Under 200 lines.</strong> Long files eat context and lower adherence. Move the detail into path-scoped rules.</li>
+    <li><strong>What Claude can't figure out on its own:</strong> exact commands, decisions and their why, known pitfalls. Don't copy what the code already says.</li>
+    <li><strong>Concrete and verifiable:</strong> "Use <code>Result&lt;T&gt;</code> for business errors" beats "handle errors properly".</li>
+    <li><strong>No contradictions</strong>: if two rules clash, Claude picks one at random.</li>
+    <li><strong>Start with <code>/init</code>:</strong> it analyzes the repo and generates a draft. If <code>.github/copilot-instructions.md</code> already exists, it reads it and pulls in what's relevant.</li>
+  </ul></div>
+
+  <div data-stack="dotnet">
+  <div class="code"><div class="fname"><span>CLAUDE.md · .NET API</span><button class="copy" type="button">Copy</button></div><pre><code><span class="k"># Orders API</span>
+
+<span class="k">## Stack</span>
+- .NET 8, ASP.NET Core Minimal APIs, EF Core 8 (SQL Server), MediatR
+- Tests: xUnit + FluentAssertions + Testcontainers
+
+<span class="k">## Commands</span>
+- Build: `dotnet build Orders.sln`
+- Tests: `dotnet test Orders.sln --no-build`
+- Format: `dotnet format Orders.sln --verify-no-changes`
+- New migration: `dotnet ef migrations add &lt;Name&gt; -p src/Orders.Infrastructure -s src/Orders.Api`
+
+<span class="k">## Architecture</span>
+- Clean Architecture: Api → Application → Domain. Infrastructure implements Application interfaces.
+- Domain doesn't reference EF Core or ASP.NET Core.
+
+<span class="k">## Conventions</span>
+- Async end to end; propagate `CancellationToken`.
+- Business errors with `Result&lt;T&gt;`; exceptions only for the unexpected.
+- Never edit a migration that's already applied: create a new one.
+- Sensitive configuration only via User Secrets or Key Vault; never in appsettings.
+
+<span class="k">## Before finishing a task</span>
+- Run build, tests and format. If something fails, fix it before reporting.
+
+@docs/adr/README.md</code></pre></div>
+  </div>
+  <div data-stack="node">
+  <div class="code"><div class="fname"><span>CLAUDE.md · Node/TS monorepo</span><button class="copy" type="button">Copy</button></div><pre><code><span class="k"># Web Portal (pnpm monorepo)</span>
+
+<span class="k">## Stack</span>
+- Node 22, TypeScript strict, pnpm workspaces
+- apps/api: NestJS + Prisma (PostgreSQL) · apps/web: Next.js App Router
+- Tests: Vitest (unit), Playwright (e2e)
+
+<span class="k">## Commands</span>
+- Install: `pnpm install`
+- Tests: `pnpm -r test` · one package: `pnpm --filter api test`
+- Types: `pnpm -r typecheck` · Lint: `pnpm lint`
+- Migration: `pnpm --filter api prisma migrate dev --name &lt;name&gt;`
+
+<span class="k">## Conventions</span>
+- No `any`; use `unknown` and narrowing.
+- Input validation with zod at the edges (controllers, route handlers).
+- Server Components by default; `"use client"` only when there's interactivity.
+- Don't edit `pnpm-lock.yaml` by hand.
+
+<span class="k">## Before finishing a task</span>
+- Run typecheck, lint and the affected package's tests.
+
+@docs/adr/README.md</code></pre></div>
+  </div>
+
+  <h3>Importing other files</h3>
+  <p class="prose"><code>@path/file</code> inside a CLAUDE.md loads that file at startup (paths relative to the importing file, up to 4 levels of nesting). To mention a path without importing it, wrap it in backticks. Imports outside the repo ask for approval the first time.</p>
+
+  <h3>How they load</h3>
+  <p class="prose">Claude Code loads <code>CLAUDE.md</code> and <code>CLAUDE.local.md</code> from the current directory and every parent; <strong>they're concatenated, not overridden</strong>. Ones in subdirectories load when Claude reads files there. In monorepos, <code>claudeMdExcludes</code> avoids loading other teams' files. If the repo only has <code>AGENTS.md</code>, Claude reads it as the project instructions.</p>
+
+  <h2>Path-scoped rules</h2>
+  <p class="prose">They're the equivalent of Copilot's <code>*.instructions.md</code> with <code>applyTo</code>. They only load when Claude reads matching files, so they don't spend context the rest of the time.</p>
+  <div data-stack="dotnet">
+  <div class="code"><div class="fname"><span>.claude/rules/endpoints.md</span><button class="copy" type="button">Copy</button></div><pre><code>---
+paths:
+  - "src/Orders.Api/Endpoints/**/*.cs"
+---
+<span class="k"># Endpoint rules</span>
+- Each endpoint in its own static class with `MapXxx(this IEndpointRouteBuilder)`.
+- Validate with FluentValidation; return errors with `Results.ValidationProblem`.
+- Return `TypedResults` so OpenAPI documents the responses.
+- Explicit authorization: `.RequireAuthorization("policy")`.</code></pre></div>
+  </div>
+  <div data-stack="node">
+  <div class="code"><div class="fname"><span>.claude/rules/testing.md</span><button class="copy" type="button">Copy</button></div><pre><code>---
+paths:
+  - "**/*.{spec,test}.ts"
+  - "apps/web/e2e/**/*.ts"
+---
+<span class="k"># Test rules</span>
+- One `describe` per unit; names in the form "should … when …".
+- No `setTimeout` in tests: use Vitest fake timers.
+- In e2e, select by role or `data-testid`, never by CSS classes.
+- Mock only at the edges (HTTP, DB); don't mock your own code.</code></pre></div>
+  </div>
+
+  <h2>Auto memory</h2>
+  <p class="prose">Claude keeps its own notes while it works: your preferences, corrections you give it, project decisions and where to find things outside the repo. They live in <code>~/.claude/projects/&lt;project&gt;/memory/</code> and load at startup (first 200 lines). Manage them with <code>/memory</code>, which also opens the CLAUDE.md files for editing. Turn it off with <code>"autoMemoryEnabled": false</code>.</p>
+  <div class="note"><strong>Team rule.</strong> If you correct Claude on something twice, don't rely on auto memory: add it to CLAUDE.md or a rule so the whole team has it.</div>
+
+  <h2>settings.json: layers and permissions</h2>
+  <p class="prose">Precedence order, highest to lowest: <strong>managed settings</strong> (organization) → CLI flags → <code>.claude/settings.local.json</code> → <code>.claude/settings.json</code> → <code>~/.claude/settings.json</code>.</p>
+  <div class="note warn"><strong>How permissions are evaluated:</strong> first <code>deny</code>, then <code>ask</code>, then <code>allow</code>. The first match wins, and a <code>deny</code> in any layer can't be overridden by an <code>allow</code>.</div>
+
+  <div data-stack="dotnet">
+  <div class="code"><div class="fname"><span>.claude/settings.json · .NET</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  <span class="k">"$schema"</span>: <span class="s">"https://json.schemastore.org/claude-code-settings.json"</span>,
+  <span class="k">"permissions"</span>: {
+    <span class="k">"allow"</span>: [
+      <span class="s">"Bash(dotnet build *)"</span>,
+      <span class="s">"Bash(dotnet test *)"</span>,
+      <span class="s">"Bash(dotnet format *)"</span>,
+      <span class="s">"Bash(dotnet ef migrations add *)"</span>,
+      <span class="s">"Bash(git diff *)"</span>,
+      <span class="s">"Bash(git log *)"</span>
+    ],
+    <span class="k">"ask"</span>: [
+      <span class="s">"Bash(git push *)"</span>,
+      <span class="s">"Bash(dotnet ef database update *)"</span>
+    ],
+    <span class="k">"deny"</span>: [
+      <span class="s">"Read(./.env)"</span>,
+      <span class="s">"Read(./.env.*)"</span>,
+      <span class="s">"Read(**/appsettings.Production.json)"</span>,
+      <span class="s">"Read(~/.microsoft/usersecrets/**)"</span>,
+      <span class="s">"Bash(dotnet nuget push *)"</span>
+    ]
+  },
+  <span class="k">"env"</span>: { <span class="k">"DOTNET_CLI_TELEMETRY_OPTOUT"</span>: <span class="s">"1"</span> }
+}</code></pre></div>
+  </div>
+  <div data-stack="node">
+  <div class="code"><div class="fname"><span>.claude/settings.json · Node</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  <span class="k">"$schema"</span>: <span class="s">"https://json.schemastore.org/claude-code-settings.json"</span>,
+  <span class="k">"permissions"</span>: {
+    <span class="k">"allow"</span>: [
+      <span class="s">"Bash(pnpm test *)"</span>,
+      <span class="s">"Bash(pnpm lint *)"</span>,
+      <span class="s">"Bash(pnpm -r typecheck)"</span>,
+      <span class="s">"Bash(pnpm --filter api test *)"</span>,
+      <span class="s">"Bash(git diff *)"</span>,
+      <span class="s">"Bash(git log *)"</span>
+    ],
+    <span class="k">"ask"</span>: [
+      <span class="s">"Bash(git push *)"</span>,
+      <span class="s">"Bash(pnpm add *)"</span>,
+      <span class="s">"Bash(pnpm --filter api prisma migrate *)"</span>
+    ],
+    <span class="k">"deny"</span>: [
+      <span class="s">"Read(./.env)"</span>,
+      <span class="s">"Read(./.env.*)"</span>,
+      <span class="s">"Read(**/secrets/**)"</span>,
+      <span class="s">"Bash(npm publish *)"</span>,
+      <span class="s">"Bash(pnpm publish *)"</span>
+    ]
+  }
+}</code></pre></div>
+  </div>
+  <div class="prose">
+    <h3>Rule syntax</h3>
+    <ul>
+      <li><code>Bash(git log *)</code>: the <code>*</code> goes after the subcommand. <code>Bash(git *)</code> would allow all of git, including <code>push</code>.</li>
+      <li><code>Read</code>/<code>Edit</code> use gitignore-style patterns: <code>./path</code> relative to the current directory, <code>/path</code> relative to the settings file, <code>~/path</code> from your home, <code>//path</code> absolute.</li>
+      <li><code>WebFetch(domain:learn.microsoft.com)</code>, <code>mcp__github__create_issue</code>, <code>Agent(name)</code>.</li>
+      <li>Bash rules that try to restrict arguments are fragile (<code>curl</code> with different options). For real guarantees use hooks or the sandbox.</li>
+      <li><code>/permissions</code> shows and edits them; <code>/fewer-permission-prompts</code> analyzes your sessions and suggests an allowlist.</li>
+    </ul>
+  </div>
+
+  <h2>settings.json recipes</h2>
+  <div class="prose">
+    <p>So far we've covered permissions. But <code>settings.json</code> does much more: notifications, status line, default model, environment variables, how you authenticate. These recipes are the most useful day to day.</p>
+    <p>Almost all of them are <strong>personal</strong>: they go in <code>~/.claude/settings.json</code> (your user folder) and apply to all your repos. When a recipe makes sense for the whole team, I say so.</p>
+  </div>
+
+  <h3>Get notified when Claude finishes or needs permission</h3>
+  <div class="prose">
+    <p>The problem: you give Claude a task, switch windows, and don't notice it's been waiting five minutes for your approval. The fix is two hooks:</p>
+    <ul>
+      <li><code>Notification</code> fires when Claude needs your attention: a pending permission or a long wait.</li>
+      <li><code>Stop</code> fires every time Claude finishes responding.</li>
+    </ul>
+  </div>
+  <div class="code"><div class="fname"><span>~/.claude/settings.json · Windows (sound, nothing to install)</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"Notification"</span>: [
+      { <span class="k">"matcher"</span>: <span class="s">"permission_prompt|idle_prompt"</span>,
+        <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>,
+          <span class="k">"command"</span>: <span class="s">"powershell.exe -NoProfile -Command \"[System.Media.SystemSounds]::Exclamation.Play()\""</span> }] }
+    ],
+    <span class="k">"Stop"</span>: [
+      { <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>,
+          <span class="k">"command"</span>: <span class="s">"powershell.exe -NoProfile -Command \"[System.Media.SystemSounds]::Asterisk.Play()\""</span> }] }
+    ]
+  }
+}</code></pre></div>
+  <p class="prose">Two different sounds: one when it's waiting for permission and another when it's done. That way you know without looking whether you need to go back.</p>
+  <div class="code"><div class="fname"><span>Windows with a visual notification (BurntToast module)</span><button class="copy" type="button">Copy</button></div><pre><code><span class="c"># Once, in PowerShell:</span>
+Install-Module BurntToast -Scope CurrentUser
+
+<span class="c"># Then, in the settings.json hook:</span>
+<span class="k">"command"</span>: <span class="s">"powershell.exe -NoProfile -Command \"New-BurntToastNotification -Text 'Claude Code','Needs your attention'\""</span></code></pre></div>
+  <div class="code"><div class="fname"><span>macOS and Linux: the hook's "command" line</span><button class="copy" type="button">Copy</button></div><pre><code><span class="c">// macOS</span>
+<span class="k">"command"</span>: <span class="s">"osascript -e 'display notification \"Needs your attention\" with title \"Claude Code\" sound name \"Glass\"'"</span>
+
+<span class="c">// Linux</span>
+<span class="k">"command"</span>: <span class="s">"notify-send 'Claude Code' 'Needs your attention'"</span></code></pre></div>
+  <div class="note"><strong>It goes in your personal configuration, not in the repo.</strong> The command depends on the operating system and everyone prefers different notifications. To test it, ask Claude for something that needs permission and switch windows.</div>
+
+  <h3>Status line</h3>
+  <div class="prose">
+    <p>A line below the prompt that always shows what matters: model, folder, branch and how much context you're using. Claude Code runs your script whenever something changes and passes it the session data as JSON.</p>
+    <p>The quick way is to ask Claude for it: <code>/statusline show model, git branch and context %</code>. It generates the script and registers it. If you'd rather do it by hand:</p>
+  </div>
+  <div class="code"><div class="fname"><span>~/.claude/statusline.sh</span><button class="copy" type="button">Copy</button></div><pre><code>#!/usr/bin/env bash
+<span class="c"># Claude Code sends the session data on stdin, as JSON.</span>
+INPUT=$(cat)
+MODEL=$(echo "$INPUT" | jq -r '.model.display_name')
+DIR=$(echo "$INPUT" | jq -r '.workspace.current_dir' | xargs basename)
+CTX=$(echo "$INPUT" | jq -r '.context_window.used_percentage // 0')
+BRANCH=$(git -C "$(echo "$INPUT" | jq -r '.workspace.current_dir')" branch --show-current 2&gt;/dev/null)
+
+echo "[$MODEL] $DIR ${BRANCH:+on $BRANCH} · ${CTX}% context"</code></pre></div>
+  <div class="code"><div class="fname"><span>~/.claude/settings.json</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  <span class="k">"statusLine"</span>: {
+    <span class="k">"type"</span>: <span class="s">"command"</span>,
+    <span class="k">"command"</span>: <span class="s">"bash ~/.claude/statusline.sh"</span>
+  }
+}</code></pre></div>
+  <p class="prose">Result: <code>[Sonnet 5] orders-api on PAY-482 · 34% context</code>. Once the percentage goes past 70–80%, it's a good time for <code>/compact</code> or <code>/clear</code>. Requires <code>jq</code>.</p>
+
+  <h3>Use an API key instead of the subscription</h3>
+  <div class="prose">
+    <p>By default Claude Code uses your claude.ai account and consumes the plan's quota. You can use a <strong>Claude Console API key</strong> instead, billed per token. It makes sense for CI pipelines, scripts, or if your company bills usage through the API.</p>
+  </div>
+  <div class="code"><div class="fname"><span>Option 1 · environment variable</span><button class="copy" type="button">Copy</button></div><pre><code><span class="c"># PowerShell (this terminal only)</span>
+$env:ANTHROPIC_API_KEY = "sk-ant-..."
+
+<span class="c"># bash / zsh</span>
+export ANTHROPIC_API_KEY="sk-ant-..."
+
+claude   <span class="c"># uses the API key instead of the account</span></code></pre></div>
+  <div class="code"><div class="fname"><span>Option 2 · apiKeyHelper in ~/.claude/settings.json</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  <span class="c">// A script that prints the key. That way it isn't written in any file.</span>
+  <span class="k">"apiKeyHelper"</span>: <span class="s">"~/.claude/get-api-key.sh"</span>
+}</code></pre></div>
+  <p class="prose">The script can read the key from your password manager or a company vault. It's the safest option and the right one for teams.</p>
+  <div class="code"><div class="fname"><span>If the company uses Amazon Bedrock or Google Vertex</span><button class="copy" type="button">Copy</button></div><pre><code><span class="c"># Bedrock: uses your AWS credentials</span>
+export CLAUDE_CODE_USE_BEDROCK=1
+export AWS_REGION=us-east-1
+
+<span class="c"># Vertex AI: uses your Google Cloud credentials</span>
+export CLAUDE_CODE_USE_VERTEX=1
+export CLOUD_ML_REGION=us-east5
+export ANTHROPIC_VERTEX_PROJECT_ID=my-project</code></pre></div>
+  <div class="note danger"><strong>Never put an API key in the repo's <code>.claude/settings.json</code></strong> or in any file that goes into git. If the admin set <code>forceLoginMethod</code> in managed settings, the API key may not be allowed: check first.</div>
+
+  <h3>Default model, environment and folders</h3>
+  <div class="code"><div class="fname"><span>The repo's .claude/settings.json (works for the whole team)</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  <span class="c">// Model each session in this repo starts with</span>
+  <span class="k">"model"</span>: <span class="s">"sonnet"</span>,
+
+  <span class="k">"permissions"</span>: {
+    <span class="c">// Always start in Plan mode</span>
+    <span class="k">"defaultMode"</span>: <span class="s">"plan"</span>,
+    <span class="c">// Folders outside the repo Claude can access</span>
+    <span class="k">"additionalDirectories"</span>: [<span class="s">"../shared-contracts"</span>]
+  },
+
+  <span class="c">// Environment variables for every command Claude runs</span>
+  <span class="k">"env"</span>: {
+    <span data-stack="dotnet"><span class="k">"ASPNETCORE_ENVIRONMENT"</span>: <span class="s">"Development"</span>,
+    <span class="k">"DOTNET_CLI_TELEMETRY_OPTOUT"</span>: <span class="s">"1"</span></span><span data-stack="node"><span class="k">"NODE_ENV"</span>: <span class="s">"development"</span>,
+    <span class="k">"NEXT_TELEMETRY_DISABLED"</span>: <span class="s">"1"</span></span>
+  }
+}</code></pre></div>
+  <p class="prose">The <code>//</code> comments are for explanation; delete them in the real file. For the subagents' model, add <code>"CLAUDE_CODE_SUBAGENT_MODEL": "haiku"</code> inside <code>env</code>.</p>
+
+  <h3>Useful switches</h3>
+  <ul class="kv">
+<li><strong><code>"disableAllHooks": true</code></strong><span>Temporarily turns off every hook. Handy if a hook fails and blocks you.</span></li>
+<li><strong><code>"autoMemoryEnabled": false</code></strong><span>Turns off auto memory if you'd rather everything live in CLAUDE.md.</span></li>
+<li><strong><code>"claudeMdExcludes"</code></strong><span>In monorepos, avoids loading other teams' CLAUDE.md files.</span></li>
+</ul>
+
+  <h3>Your personal settings.json, all together</h3>
+  <div class="code"><div class="fname"><span>~/.claude/settings.json · full example (Windows)</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  <span class="k">"$schema"</span>: <span class="s">"https://json.schemastore.org/claude-code-settings.json"</span>,
+  <span class="k">"statusLine"</span>: { <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>: <span class="s">"bash ~/.claude/statusline.sh"</span> },
+  <span class="k">"permissions"</span>: {
+    <span class="k">"allow"</span>: [<span class="s">"Bash(git status)"</span>, <span class="s">"Bash(git diff *)"</span>, <span class="s">"Bash(git log *)"</span>],
+    <span class="k">"deny"</span>: [<span class="s">"Read(~/.ssh/**)"</span>, <span class="s">"Read(~/.aws/**)"</span>, <span class="s">"Read(~/.azure/**)"</span>]
+  },
+  <span class="k">"hooks"</span>: {
+    <span class="k">"Notification"</span>: [
+      { <span class="k">"matcher"</span>: <span class="s">"permission_prompt|idle_prompt"</span>,
+        <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>,
+          <span class="k">"command"</span>: <span class="s">"powershell.exe -NoProfile -Command \"[System.Media.SystemSounds]::Exclamation.Play()\""</span> }] }
+    ],
+    <span class="k">"Stop"</span>: [
+      { <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>,
+          <span class="k">"command"</span>: <span class="s">"powershell.exe -NoProfile -Command \"[System.Media.SystemSounds]::Asterisk.Play()\""</span> }] }
+    ]
+  }
+}</code></pre></div>
+  <p class="prose">The <code>$schema</code> makes VS Code and Rider autocomplete the keys and flag errors as you edit. After changing the file, open a new session or check with <code>/hooks</code> and <code>/status</code> that it loaded.</p>
+
+  <div class="practice">
+<h2 class="practice-h">Practice</h2>
+<div class="lab">
+    <div class="lab-h"><h3>Lab 4 · Set up the team repo</h3><span class="pill">60 min</span></div>
+    <ol>
+      <li>If the repo has <code>.github/copilot-instructions.md</code>, run <code>/init</code> and check what it pulled in. If not, run <code>/init</code> anyway.</li>
+      <li>Trim CLAUDE.md to under 200 lines. Move endpoint- and test-specific content to <code>.claude/rules/</code>.</li>
+      <li>Create <code>.claude/settings.json</code> with the allow/ask/deny from the example, adapted to your commands.</li>
+      <li>Create your <code>CLAUDE.local.md</code> and add it to <code>.gitignore</code> along with <code>.claude/settings.local.json</code>.</li>
+      <li>Open a new session and run <code>/context</code>: check that the right files load.</li>
+      <li>Ask Claude to read <code>.env</code>: it should refuse because of the <code>deny</code>.</li>
+      <li>Open a PR with the <code>.claude/</code> folder for the team to review.</li>
+    </ol>
+  </div>
+  <div class="check" data-check="s4">
+    <h3>Checklist · Session 4</h3>
+    <label><input type="checkbox" id="s4-1"><span>The repo has a CLAUDE.md under 200 lines reviewed by the team.</span></label>
+    <label><input type="checkbox" id="s4-2"><span>There's at least one rule with <code>paths</code>.</span></label>
+    <label><input type="checkbox" id="s4-3"><span>settings.json with allow/ask/deny in the repo; secrets denied.</span></label>
+    <label><input type="checkbox" id="s4-4"><span>I know what goes in CLAUDE.local.md, ~/.claude and managed policy.</span></label>
+    <label><input type="checkbox" id="s4-5"><span>I get notified when Claude finishes or asks for permission.</span></label>
+    <label><input type="checkbox" id="s4-6"><span>I have a status line with model, branch and context %.</span></label>
+  </div>
+  <div class="quiz" data-quiz="s4"></div>
+</div>

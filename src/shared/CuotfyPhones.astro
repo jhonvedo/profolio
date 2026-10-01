@@ -1,0 +1,537 @@
+---
+// Mockups de pantallas de la app Cuotfy (inicio + registro de gastos con IA), hechos en HTML/CSS.
+type Mock = {
+    alt: string; greeting: string; totalLabel: string; total: string; month: string;
+    income: string; incomeVal: string; expense: string; expenseVal: string;
+    askTitle: string; askSub: string; quick: string; quick1: string; quick1Sub: string; quick2: string; quick2Sub: string;
+    input: string; nav: string[]; tab1: string; tab2: string; iaTitle: string; iaDesc: string; examples: string[];
+    resultCat: string; resultName: string; resultAmt: string; button: string;
+};
+const { mock: m } = Astro.props as { mock: Mock };
+
+const icon = (d: string) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const sparkle = icon('<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 3v4M17 5h4"/><circle cx="5" cy="19" r="1.5"/>');
+const navIcons = [
+    icon('<path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>'),
+    icon('<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 15h2"/>'),
+    sparkle,
+    icon('<path d="M4 4v16h16M8 16v-4M12 16V8M16 16v-6"/>'),
+    icon('<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>'),
+];
+---
+
+    <div class="featured-visual" role="img" aria-label={m.alt}>
+        <div class="phones" aria-hidden="true">
+            <!-- IA screen (back) -->
+            <div class="phone phone-back">
+                <div class="scr scr-ia">
+                    <div class="ia-tabs">
+                        <span class="on">{m.tab1}</span>
+                        <span>{m.tab2}</span>
+                    </div>
+                    <div class="ia-hero">
+                        <div class="ia-hero-top">
+                            <b>{m.iaTitle}</b>
+                            <span class="ia-chip">✦ Claude AI</span>
+                        </div>
+                        <p>{m.iaDesc}</p>
+                    </div>
+                    <div class="ia-box">
+                        <div class="ia-input">{m.input}<span class="caret"></span></div>
+                        {m.examples.map((ex) => <div class="ia-ex">{ex}</div>)}
+                        <div class="ia-btn"><Fragment set:html={sparkle} /> {m.button}</div>
+                    </div>
+                    <div class="ia-result">
+                        <div>
+                            <div class="ia-result-cat">{m.resultCat}</div>
+                            <div class="ia-result-name">{m.resultName}</div>
+                        </div>
+                        <div class="ia-result-amt">{m.resultAmt}</div>
+                    </div>
+                </div>
+                <div class="tabbar">
+                    {m.nav.map((n, i) => <span class:list={{ on: i === 2, ai: i === 2 }}><Fragment set:html={navIcons[i]} />{n}</span>)}
+                </div>
+            </div>
+
+            <!-- Home screen (front) -->
+            <div class="phone phone-front">
+                <div class="scr">
+                    <div class="home-head">
+                        <div class="home-top">
+                            <span class="home-logo"><i></i>cuotfy</span>
+                            <span class="home-avatar">JA</span>
+                        </div>
+                        <div class="home-hi">{m.greeting}</div>
+                        <div class="home-label">{m.totalLabel}</div>
+                        <div class="home-total">{m.total}</div>
+                        <div class="home-label" style="margin-top:8px;">{m.month}</div>
+                        <div class="home-kpis">
+                            <div><span class="k-dot" style="background:var(--g500);"></span>{m.income}<b>{m.incomeVal}</b></div>
+                            <div><span class="k-dot" style="background:#ef4444;"></span>{m.expense}<b>{m.expenseVal}</b></div>
+                        </div>
+                    </div>
+                    <div class="home-body">
+                        <div class="home-ask">
+                            <Fragment set:html={sparkle} />
+                            <div><b>{m.askTitle}</b><span>{m.askSub}</span></div>
+                            <em>›</em>
+                        </div>
+                        <div class="home-quick-label">{m.quick}</div>
+                        <div class="home-quick">
+                            <div><i></i><b>{m.quick1}</b><span>{m.quick1Sub}</span></div>
+                            <div><i></i><b>{m.quick2}</b><span>{m.quick2Sub}</span></div>
+                        </div>
+                        <div class="home-input">
+                            <Fragment set:html={sparkle} />
+                            <span>{m.input}</span>
+                            <em>➤</em>
+                        </div>
+                    </div>
+                </div>
+                <div class="tabbar">
+                    {m.nav.map((n, i) => <span class:list={{ on: i === 0 }}><Fragment set:html={navIcons[i]} />{n}</span>)}
+                </div>
+            </div>
+        </div>
+    </div>
+
+<style>
+    /* tokens del sistema de diseño de Cuotfy, locales al mockup */
+    .featured-visual {
+        --g900: #052e16;
+        --g800: #14532d;
+        --g700: #15803d;
+        --g600: #16a34a;
+        --g500: #22c55e;
+        --g400: #4ade80;
+        --g300: #86efac;
+        --g50: #f0fdf4;
+        --ai: #5b21b6;
+        --ai-soft: #ede9fe;
+        --ai-mid: #7c3aed;
+        --border: rgba(12, 15, 13, 0.08);
+        --ink: #0c1a10;
+        --ink-2: rgba(12, 26, 16, 0.55);
+        --ink-3: rgba(12, 26, 16, 0.32);
+        --sh-sm: 0 1px 4px rgba(5, 46, 22, 0.06), 0 2px 8px rgba(5, 46, 22, 0.04);
+        --sh-md: 0 4px 16px rgba(5, 46, 22, 0.1);
+    }
+    .featured-visual {
+        aspect-ratio: 16 / 10;
+        min-height: 440px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 36px 24px;
+        overflow: hidden;
+    }
+
+    /* phone mockups (based on the Cuotfy app screens) */
+    .phones {
+        position: relative;
+        width: 384px;
+        height: 420px;
+        flex-shrink: 0;
+    }
+    .phone {
+        position: absolute;
+        width: 196px;
+        height: 408px;
+        border-radius: 30px;
+        background: #0b120d;
+        padding: 6px;
+        box-shadow:
+            0 24px 50px rgba(22, 21, 15, 0.22),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        font-family: var(--font-body);
+        color: var(--ink);
+    }
+    .phone :global(svg) {
+        width: 1em;
+        height: 1em;
+        flex-shrink: 0;
+    }
+    .phone-back {
+        right: 0;
+        top: 12px;
+        transform: rotate(6deg);
+    }
+    .phone-front {
+        left: 0;
+        top: 0;
+        transform: rotate(-4deg);
+        z-index: 1;
+    }
+    .scr {
+        flex: 1;
+        background: #f6f8f5;
+        border-radius: 24px 24px 0 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    .tabbar {
+        background: #fff;
+        border-radius: 0 0 24px 24px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-around;
+        padding: 6px 4px 8px;
+    }
+    .tabbar span {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        font-size: 5.5px;
+        color: var(--ink-3);
+    }
+    .tabbar span :global(svg) {
+        font-size: 11px;
+    }
+    .tabbar .on {
+        color: var(--g700);
+        font-weight: 700;
+    }
+    .tabbar .ai {
+        color: var(--ai-mid);
+    }
+
+    /* home */
+    .home-head {
+        background: linear-gradient(160deg, #14532d 0%, #052e16 70%, #020a04 100%);
+        padding: 14px 12px 12px;
+        color: #fff;
+    }
+    .home-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .home-logo {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 800;
+        font-size: 13px;
+    }
+    .home-logo i {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--g500);
+    }
+    .home-avatar {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--g600);
+        font-size: 7px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .home-hi {
+        font-size: 7.5px;
+        color: var(--g400);
+        margin: 6px 0 8px;
+    }
+    .home-label {
+        font-size: 5.5px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: var(--g400);
+    }
+    .home-total {
+        font-family: var(--font-mono);
+        font-size: 19px;
+        font-weight: 600;
+        margin-top: 2px;
+    }
+    .home-kpis {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        margin-top: 5px;
+    }
+    .home-kpis div {
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        border-radius: 8px;
+        padding: 5px 6px;
+        font-size: 5.5px;
+        text-transform: uppercase;
+        color: var(--g300);
+    }
+    .home-kpis b {
+        display: block;
+        font-family: var(--font-mono);
+        font-size: 7.5px;
+        color: #fff;
+        margin-top: 2px;
+        text-transform: none;
+    }
+    .k-dot {
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        margin-right: 3px;
+    }
+    .home-body {
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        flex: 1;
+    }
+    .home-ask {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--ai-soft);
+        border: 1px solid var(--ai-mid);
+        border-radius: 10px;
+        padding: 7px 8px;
+        color: var(--ai-mid);
+        font-size: 12px;
+    }
+    .home-ask div {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .home-ask b {
+        font-size: 7.5px;
+    }
+    .home-ask span {
+        font-size: 6px;
+        color: var(--ink-2);
+    }
+    .home-ask em {
+        font-style: normal;
+        font-size: 12px;
+    }
+    .home-quick-label {
+        font-size: 5.5px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        color: var(--ink-2);
+        text-transform: uppercase;
+        margin-top: 2px;
+    }
+    .home-quick {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+    }
+    .home-quick div {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 7px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        box-shadow: var(--sh-sm);
+    }
+    .home-quick i {
+        width: 14px;
+        height: 14px;
+        border-radius: 5px;
+        border: 1px solid var(--border);
+        background: var(--g50);
+        margin-bottom: 4px;
+    }
+    .home-quick b {
+        font-size: 7px;
+    }
+    .home-quick span {
+        font-size: 6px;
+        color: var(--ink-2);
+    }
+    .home-input {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 6px 6px 6px 8px;
+        box-shadow: var(--sh-md);
+        color: var(--ai-mid);
+        font-size: 10px;
+    }
+    .home-input span {
+        flex: 1;
+        font-size: 7px;
+        color: var(--ink);
+        font-weight: 600;
+    }
+    .home-input em {
+        font-style: normal;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--g700);
+        color: #fff;
+        font-size: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* IA */
+    .scr-ia {
+        padding: 12px 10px;
+        gap: 8px;
+        background: linear-gradient(180deg, #f7f5ff 0%, #f6f8f5 100%);
+    }
+    .ia-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: rgba(12, 26, 16, 0.05);
+        border-radius: 100px;
+        padding: 2px;
+        font-size: 7px;
+        text-align: center;
+        color: var(--ink-2);
+    }
+    .ia-tabs span {
+        padding: 4px;
+        border-radius: 100px;
+    }
+    .ia-tabs .on {
+        background: var(--ai-mid);
+        color: #fff;
+        font-weight: 700;
+    }
+    .ia-hero {
+        background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+        border-radius: 12px;
+        padding: 10px;
+        color: #fff;
+    }
+    .ia-hero-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 4px;
+    }
+    .ia-hero b {
+        font-size: 10px;
+    }
+    .ia-chip {
+        font-size: 5.5px;
+        font-weight: 700;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 100px;
+        padding: 2px 5px;
+        white-space: nowrap;
+    }
+    .ia-hero p {
+        font-size: 6.5px;
+        line-height: 1.5;
+        margin: 5px 0 0;
+        color: rgba(255, 255, 255, 0.85);
+    }
+    .ia-box {
+        background: rgba(237, 233, 254, 0.7);
+        border: 1px solid #ddd6fe;
+        border-radius: 12px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .ia-input {
+        background: #fff;
+        border: 1px solid #ddd6fe;
+        border-radius: 8px;
+        padding: 7px;
+        font-size: 7px;
+        font-weight: 600;
+        min-height: 26px;
+        margin-bottom: 2px;
+    }
+    .caret {
+        display: inline-block;
+        width: 1px;
+        height: 8px;
+        background: var(--ai-mid);
+        margin-left: 1px;
+        vertical-align: middle;
+        animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink {
+        50% {
+            opacity: 0;
+        }
+    }
+    .ia-ex {
+        background: #fff;
+        border: 1px solid #ddd6fe;
+        border-radius: 100px;
+        padding: 3px 7px;
+        font-size: 5.5px;
+        color: var(--ai);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .ia-btn {
+        margin-top: 3px;
+        background: var(--ai);
+        color: #fff;
+        border-radius: 8px;
+        padding: 6px;
+        font-size: 7px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+    .ia-result {
+        background: #fff;
+        border-radius: 10px;
+        padding: 7px 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: var(--sh-md);
+        border-left: 3px solid var(--g500);
+    }
+    .ia-result-cat {
+        font-size: 5.5px;
+        font-weight: 800;
+        color: var(--g700);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .ia-result-name {
+        font-size: 7px;
+        font-weight: 600;
+    }
+    .ia-result-amt {
+        font-family: var(--font-mono);
+        font-size: 8px;
+        font-weight: 700;
+        color: #b91c1c;
+    }
+    @media (max-width: 420px) {
+        .phones {
+            transform: scale(0.8);
+            margin: -40px -38px;
+        }
+        .featured-visual {
+            min-height: 380px;
+        }
+    }
+</style>

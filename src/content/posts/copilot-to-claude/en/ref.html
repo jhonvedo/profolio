@@ -1,0 +1,66 @@
+<div class="grid2">
+    <div class="card"><h3>Keyboard</h3><p>
+      <code>Shift+Tab</code> cycle permission modes<br>
+      <code>Esc</code> interrupt · <code>Esc Esc</code> clear or rewind<br>
+      <code>@</code> mention a file · <code>!</code> run shell<br>
+      <code>Ctrl+V</code> paste image · <code>Ctrl+R</code> history<br>
+      <code>Ctrl+G</code> write the prompt in your editor
+    </p></div>
+    <div class="card"><h3>Context</h3><p>
+      <code>/context</code> see usage · <code>/clear</code> start clean<br>
+      <code>/compact</code> summarize · <code>/rewind</code> go back<br>
+      <code>/resume</code> resume · <code>/branch</code> branch off<br>
+      <code>/btw</code> side question
+    </p></div>
+    <div class="card"><h3>Configuration</h3><p>
+      <code>/init</code> generate CLAUDE.md · <code>/memory</code> edit memory<br>
+      <code>/permissions</code> rules · <code>/hooks</code> see hooks<br>
+      <code>/mcp</code> servers · <code>/plugin</code> plugins<br>
+      <code>/agents</code> subagents · <code>/skills</code> skills<br>
+      <code>/model</code> model and effort · <code>/config</code> settings
+    </p></div>
+    <div class="card"><h3>Quality and cost</h3><p>
+      <code>/diff</code> see changes · <code>/code-review</code> review<br>
+      <code>/security-review</code> security<br>
+      <code>/usage</code> tokens and cost · <code>/doctor</code> diagnostics<br>
+      <code>/import</code> bring in config from other tools
+    </p></div>
+  </div>
+
+  <h2>Precedence rules to remember</h2>
+  <ul class="kv">
+<li><strong>Settings</strong><span>managed → CLI → <code>settings.local.json</code> → <code>settings.json</code> → <code>~/.claude/settings.json</code></span></li>
+<li><strong>Permission rules</strong><span><code>deny</code> → <code>ask</code> → <code>allow</code>; a deny in any layer wins</span></li>
+<li><strong>CLAUDE.md</strong><span>All concatenated: managed, user, parent directories, project, <code>CLAUDE.local.md</code> at the end of each level</span></li>
+<li><strong>Skills with the same name</strong><span>enterprise → personal → project</span></li>
+<li><strong>Subagents with the same name</strong><span>managed → <code>--agents</code> → project → user → plugin</span></li>
+</ul>
+
+  <h2>Common mistakes of teams coming from Copilot</h2>
+  <div class="prose"><ul>
+    <li><strong>Asking line by line.</strong> Describe the whole task with its success criterion.</li>
+    <li><strong>Skipping the plan.</strong> For changes across more than one file, Plan first saves rework.</li>
+    <li><strong>One endless session.</strong> <code>/clear</code> between tasks; dirty context makes answers worse.</li>
+    <li><strong>A giant CLAUDE.md.</strong> Over 200 lines lowers adherence; use path-scoped rules.</li>
+    <li><strong>Trusting instructions for security.</strong> What must always hold goes in <code>deny</code> or in hooks.</li>
+    <li><strong>Not reviewing.</strong> You sign the PR. Read the diff as if someone else wrote it.</li>
+  </ul></div>
+
+<h2>Official documentation</h2>
+
+  <p class="prose">Content checked against Anthropic's documentation as of September 21, 2026. Claude Code updates often: when in doubt, the documentation wins.</p>
+  <div class="prose"><ul>
+    <li><a href="https://code.claude.com/docs/en/memory">CLAUDE.md, rules, AGENTS.md and auto memory</a></li>
+    <li><a href="https://code.claude.com/docs/en/permissions">Permissions and modes</a></li>
+    <li><a href="https://code.claude.com/docs/en/hooks-guide">Hooks guide</a> · <a href="https://code.claude.com/docs/en/hooks">Hooks reference</a></li>
+    <li><a href="https://code.claude.com/docs/en/skills">Skills</a> · <a href="https://code.claude.com/docs/en/sub-agents">Subagents</a></li>
+    <li><a href="https://code.claude.com/docs/en/mcp">MCP</a> · <a href="https://code.claude.com/docs/en/plugin-marketplaces">Plugins and marketplaces</a></li>
+    <li><a href="https://code.claude.com/docs/en/commands">Commands</a> · <a href="https://code.claude.com/docs/en/interactive-mode">Interactive mode and shortcuts</a></li>
+    <li><a href="https://code.claude.com/docs/en/github-actions">GitHub Actions</a></li>
+    <li><a href="https://support.claude.com/en/articles/14604416-get-started-with-claude-design">Claude Design</a> · <a href="https://www.anthropic.com/news/claude-design-anthropic-labs">Announcement</a></li>
+    <li><a href="https://support.claude.com/en/articles/9517075-what-are-projects">Projects</a> · <a href="https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context">Memory</a> · <a href="https://support.claude.com/en/articles/16923645-get-started-with-claude-docs">Claude Docs</a></li>
+    <li><a href="https://support.claude.com/en/articles/11176164-use-connectors-to-extend-claude-s-capabilities">Connectors</a> · <a href="https://support.claude.com/en/articles/13119606-provision-and-manage-skills-for-your-organization">Organization skills</a></li>
+    <li><a href="https://support.claude.com/en/articles/11845131-use-claude-code-with-your-team-or-enterprise-plan">Claude Code on Team/Enterprise</a> · <a href="https://privacy.claude.com/en/articles/7996868-is-my-data-used-for-model-training">Data usage</a></li>
+    <li><a href="https://anthropic.skilljar.com/">Anthropic course catalog (Skilljar)</a> · <a href="https://academy.claude.com">Anthropic Academy</a></li>
+    <li><a href="https://claude.com/blog/cowork-is-now-claude">App unification (Sep 16, 2026)</a></li>
+  </ul></div>

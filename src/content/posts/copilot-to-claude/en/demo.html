@@ -1,0 +1,177 @@
+<div class="prose">
+    <p>A single real flow that uses almost everything covered in the program. You take a GitHub issue and type one command: <code>/resolve-issue 1</code>. In about 25 minutes the team watches Claude read the issue over MCP, explore with a subagent, plan with a strong model, implement, run into a security hook, delegate tests and review to subagents on other models, and open the PR. At the end, an <code>@claude</code> comment on the PR triggers the GitHub Action.</p>
+  </div>
+
+  <h2>Which piece appears, and when</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Piece</th><th>Moment in the demo</th><th>Session</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Piece">Named session, <code>/resume</code></td><td data-label="Moment in the demo">Start and finish</td><td data-label="Session">Operations</td></tr>
+      <tr><td data-label="Piece">Status line</td><td data-label="Moment in the demo">Always visible: model and context %</td><td data-label="Session">Operations</td></tr>
+      <tr><td data-label="Piece">Official marketplace plugin (LSP)</td><td data-label="Moment in the demo">Min 2: installed live</td><td data-label="Session">S6</td></tr>
+      <tr><td data-label="Piece">GitHub MCP</td><td data-label="Moment in the demo">Min 4 and 24: lists issues, reads the issue, creates the PR</td><td data-label="Session">S6</td></tr>
+      <tr><td data-label="Piece"><code>opusplan</code> model</td><td data-label="Moment in the demo">Min 6: Opus plans, Sonnet implements</td><td data-label="Session">Concepts</td></tr>
+      <tr><td data-label="Piece"><code>/resolve-issue</code> skill with <code>!`…`</code></td><td data-label="Moment in the demo">Min 7: orchestrates the whole flow</td><td data-label="Session">S5</td></tr>
+      <tr><td data-label="Piece">Explore subagent (built in)</td><td data-label="Moment in the demo">Min 8: searches files without cluttering the context</td><td data-label="Session">S5</td></tr>
+      <tr><td data-label="Piece">Plan mode + human correction</td><td data-label="Moment in the demo">Min 11</td><td data-label="Session">S3</td></tr>
+      <tr><td data-label="Piece"><code>deny</code> rule + PreToolUse hook</td><td data-label="Moment in the demo">Min 13: blocks the production file</td><td data-label="Session">S4, S5</td></tr>
+      <tr><td data-label="Piece">CLAUDE.md + path-scoped rules, PostToolUse hook</td><td data-label="Moment in the demo">Min 14: implements with conventions and automatic formatting</td><td data-label="Session">S4, S5</td></tr>
+      <tr><td data-label="Piece"><code>test-writer</code> subagent (Sonnet, medium effort)</td><td data-label="Moment in the demo">Min 18</td><td data-label="Session">S5</td></tr>
+      <tr><td data-label="Piece">"Green tests" Stop hook</td><td data-label="Moment in the demo">Min 18: won't let it finish with failing tests</td><td data-label="Session">S5</td></tr>
+      <tr><td data-label="Piece"><code>security-reviewer</code> subagent (Opus)</td><td data-label="Moment in the demo">Min 22</td><td data-label="Session">S5</td></tr>
+      <tr><td data-label="Piece"><code>ask</code> permission on <code>git push</code></td><td data-label="Moment in the demo">Min 24: Claude asks permission to publish</td><td data-label="Session">S4</td></tr>
+      <tr><td data-label="Piece"><code>@claude</code> GitHub Action</td><td data-label="Moment in the demo">Min 26: change requested from the PR</td><td data-label="Session">S6</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Preparation (the day before)</h2>
+  <div class="check" data-check="demo">
+    <label><input type="checkbox" id="dm-1"><span>Demo repo on GitHub (<span data-stack="dotnet">the .NET orders API</span><span data-stack="node">the Node monorepo</span>) with a green build and tests, and the <code>.claude/</code> folder from sessions 4 and 5.</span></label>
+    <label><input type="checkbox" id="dm-2"><span>Add the files below: <code>.mcp.json</code>, the <code>resolve-issue</code> skill and the <code>test-writer</code> and <code>security-reviewer</code> subagents.</span></label>
+    <label><input type="checkbox" id="dm-3"><span>Create issue #1 with the text below.</span></label>
+    <label><input type="checkbox" id="dm-4"><span><em>Fine-grained</em> GitHub token for that repo only (Contents, Issues and Pull requests: read and write) exported as <code>GITHUB_PAT</code>. Check with <code>/mcp</code>.</span></label>
+    <label><input type="checkbox" id="dm-5"><span>Install the LSP binary: <span data-stack="dotnet"><code>dotnet tool install --global csharp-ls</code></span><span data-stack="node"><code>npm i -g typescript-language-server typescript</code></span>. Don't install the plugin yet: it gets installed live.</span></label>
+    <label><input type="checkbox" id="dm-6"><span><code>jq</code> installed, <code>chmod +x .claude/hooks/*.sh</code>, status line configured.</span></label>
+    <label><input type="checkbox" id="dm-7"><span>GitHub App and <code>claude.yml</code> workflow installed with <code>/install-github-app</code> and tested with a comment.</span></label>
+    <label><input type="checkbox" id="dm-8"><span>Two full rehearsals. Save the second as <code>claude -n "demo-rehearsal"</code> and leave its PR open as a backup.</span></label>
+    <label><input type="checkbox" id="dm-9"><span>Before starting: clean <code>main</code> branch, <code>claude update</code>, large terminal font, system notifications off.</span></label>
+  </div>
+
+  <h2>Issue #1</h2>
+  <div data-stack="dotnet">
+  <div class="code"><div class="fname"><span>GitHub · Issue #1</span><button class="copy" type="button">Copy</button></div><pre><code><span class="k">Title:</span> Endpoint to list an order's refunds
+
+As a support agent I want to see an order's refunds so I can answer complaints.
+
+<span class="k">Acceptance criteria</span>
+- GET /orders/{id}/refunds returns the paginated list (page, pageSize; pageSize max 50).
+- 404 if the order doesn't exist.
+- Only users with the "Support" policy.
+- Sorted from most recent to oldest.
+- Raise the payments client HTTP timeout to 30 s in appsettings.Production.json.</code></pre></div>
+  </div>
+  <div data-stack="node">
+  <div class="code"><div class="fname"><span>GitHub · Issue #1</span><button class="copy" type="button">Copy</button></div><pre><code><span class="k">Title:</span> Endpoint to list an order's refunds
+
+As a support agent I want to see an order's refunds so I can answer complaints.
+
+<span class="k">Acceptance criteria</span>
+- GET /orders/:id/refunds returns the paginated list (page, pageSize; pageSize max 50).
+- 404 if the order doesn't exist.
+- Only users with the "support" role.
+- Sorted from most recent to oldest.
+- Raise PAYMENTS_TIMEOUT_MS to 30000 in .env.production.</code></pre></div>
+  </div>
+  <p class="prose">The last criterion is the <strong>deliberate trap</strong>: it touches a production file that the <code>deny</code> rule and the protection hook block. That way the team sees the control in action without forcing it.</p>
+
+  <h2>Demo files</h2>
+  <div class="code"><div class="fname"><span>.mcp.json</span><button class="copy" type="button">Copy</button></div><pre><code>{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"github"</span>: {
+      <span class="k">"type"</span>: <span class="s">"http"</span>,
+      <span class="k">"url"</span>: <span class="s">"https://api.githubcopilot.com/mcp/"</span>,
+      <span class="k">"headers"</span>: { <span class="k">"Authorization"</span>: <span class="s">"Bearer ${GITHUB_PAT}"</span> }
+    }
+  }
+}</code></pre></div>
+
+  <div class="code"><div class="fname"><span>.claude/skills/resolve-issue/SKILL.md</span><button class="copy" type="button">Copy</button></div><pre><code>---
+description: Resolves a GitHub issue end to end (read, plan, implement, test, review, open PR). Only when the user runs /resolve-issue.
+argument-hint: "[issue-number]"
+arguments: [issue]
+disable-model-invocation: true
+allowed-tools: mcp__github Bash(git checkout -b *) Bash(git add *) Bash(git commit *) <span data-stack="dotnet">Bash(dotnet build *) Bash(dotnet test *)</span><span data-stack="node">Bash(pnpm -r test) Bash(pnpm -r typecheck)</span>
+---
+<span class="k"># Resolve issue #$issue</span>
+
+<span class="k">## Repo state</span>
+!`git status --short`
+!`git log --oneline -3`
+
+<span class="k">## Process</span>
+1. <span class="k">Read.</span> Using the `github` MCP server's tools, read issue #$issue in this
+   repository and its comments. Summarize the requirement and list the acceptance criteria.
+2. <span class="k">Explore.</span> Delegate the search for relevant files to the Explore subagent.
+   Ask only for paths and a short summary.
+3. <span class="k">Plan.</span> Present a numbered plan: files to touch, tests, risks.
+   If a criterion touches protected or production files, say so in the plan.
+   WAIT for the user's approval.
+4. <span class="k">Branch.</span> `git checkout -b issue-$issue` plus a short descriptive suffix.
+5. <span class="k">Implement</span> following CLAUDE.md and `.claude/rules/`.
+6. <span class="k">Tests.</span> Delegate one test per acceptance criterion to the `test-writer` subagent.
+   Then run the full suite.
+7. <span class="k">Review.</span> Delegate to the `security-reviewer` subagent. Fix high-severity findings.
+8. <span class="k">Publish.</span> Conventional commit mentioning #$issue, `git push -u origin HEAD`
+   and create the PR with the `github` MCP tools. PR body:
+   summary, how it was tested, review findings, follow-ups for humans and `Closes #$issue`.
+9. Finish with the PR link and a table: criterion → status.</code></pre></div>
+  <p class="prose">The whole skill is in English: the <code>description</code> loads on every turn, and the body only when invoked. <code>git push</code> is left out of <code>allowed-tools</code> on purpose: since it's set to <code>ask</code> in <code>settings.json</code>, Claude will have to ask for permission live.</p>
+
+  <div data-stack="dotnet">
+  <div class="code"><div class="fname"><span>.claude/agents/test-writer.md</span><button class="copy" type="button">Copy</button></div><pre><code>---
+name: test-writer
+description: Writes and runs automated tests for given acceptance criteria. Use after a feature is implemented.
+tools: Read, Grep, Glob, Edit, Write, Bash
+model: sonnet
+effort: medium
+---
+You are a testing specialist for ASP.NET Core.
+- Integration tests with WebApplicationFactory and FluentAssertions; follow the existing ones in tests/.
+- One test per acceptance criterion, named Method_Scenario_Result.
+- Cover the edge cases: 404, 403 without the policy, pageSize &gt; 50, empty list.
+- Run `dotnet test` and report: tests created, result, criteria coverage.
+- Don't modify production code; if a test reveals a bug, report it.</code></pre></div>
+  </div>
+  <div data-stack="node">
+  <div class="code"><div class="fname"><span>.claude/agents/test-writer.md</span><button class="copy" type="button">Copy</button></div><pre><code>---
+name: test-writer
+description: Writes and runs automated tests for given acceptance criteria. Use after a feature is implemented.
+tools: Read, Grep, Glob, Edit, Write, Bash
+model: sonnet
+effort: medium
+---
+You are a testing specialist for NestJS.
+- Tests with Vitest + Supertest; follow the patterns in the existing *.spec.ts files.
+- One test per acceptance criterion, in the form "should … when …".
+- Cover the edge cases: 404, 403 without the role, pageSize &gt; 50, empty list.
+- Run `pnpm --filter api test` and report: tests created, result, criteria coverage.
+- Don't modify production code; if a test reveals a bug, report it.</code></pre></div>
+  </div>
+  <p class="prose">The <code>security-reviewer</code> subagent is the one from session 5 (Opus, no edit permissions). The hooks and <code>settings.json</code> are also the ones from sessions 4 and 5.</p>
+
+  <h2>Minute-by-minute script</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Min</th><th>What you do / type</th><th>What you point out to the team</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Min">0</td><td data-label="What you do / type">Show the <code>.claude/</code> tree, <code>.mcp.json</code> and issue #1 on GitHub. Then: <code>claude -n "demo-issue-1"</code></td><td data-label="What you point out to the team">"All of this is versioned in the repo: anyone who clones it gets the same Claude." The status line shows model and context.</td></tr>
+      <tr><td data-label="Min">2</td><td data-label="What you do / type"><code>/plugin install <span data-stack="dotnet">csharp-lsp</span><span data-stack="node">typescript-lsp</span>@claude-plugins-official</code> → Installed tab</td><td data-label="What you point out to the team">The plugin's context cost and scope. Now Claude sees compile errors while editing, without running the build.</td></tr>
+      <tr><td data-label="Min">4</td><td data-label="What you do / type"><code>/mcp</code> and then: <em>"what open issues are there in this repo?"</em></td><td data-label="What you point out to the team">Claude uses an <code>mcp__github__…</code> tool. MCP = external data with your token's permissions.</td></tr>
+      <tr><td data-label="Min">6</td><td data-label="What you do / type"><code>/model opusplan</code></td><td data-label="What you point out to the team">Opus plans, Sonnet implements: quality where it matters and lower cost in execution.</td></tr>
+      <tr><td data-label="Min">7</td><td data-label="What you do / type">Shift+Tab to Plan mode and <code>/resolve-issue 1</code></td><td data-label="What you point out to the team">The skill loads now, not before. The <code>!`git …`</code> lines already injected the repo's real state.</td></tr>
+      <tr><td data-label="Min">8</td><td data-label="What you do / type">Watch it read the issue and delegate to Explore</td><td data-label="What you point out to the team">The subagent reads many files; only the summary reaches the main session. Watch the context %.</td></tr>
+      <tr><td data-label="Min">11</td><td data-label="What you do / type">The plan appears. Correct something out loud: <em>"if pageSize is over 50 return 400 instead of truncating, and add that case to the tests"</em>. Approve.</td><td data-label="What you point out to the team">The human's value is in the plan, not in typing code.</td></tr>
+      <tr><td data-label="Min">13</td><td data-label="What you do / type">Claude tries to touch <span data-stack="dotnet"><code>appsettings.Production.json</code></span><span data-stack="node"><code>.env.production</code></span></td><td data-label="What you point out to the team">The <code>deny</code> rule or the hook blocks it and Claude leaves it as a follow-up for a human. "This doesn't depend on the model obeying."</td></tr>
+      <tr><td data-label="Min">14</td><td data-label="What you do / type">Switch to <code>acceptEdits</code> (Shift+Tab). Implementation.</td><td data-label="What you point out to the team">The PostToolUse hook formats every file. LSP diagnostics show up while editing. Path-scoped rules load when endpoints are touched.</td></tr>
+      <tr><td data-label="Min">18</td><td data-label="What you do / type">Delegation to <code>test-writer</code></td><td data-label="What you point out to the team">Another model (Sonnet, medium effort) and its own context. If a test fails, the Stop hook won't let it finish.</td></tr>
+      <tr><td data-label="Min">22</td><td data-label="What you do / type">Delegation to <code>security-reviewer</code></td><td data-label="What you point out to the team">Opus, read-only. Findings with file and line.</td></tr>
+      <tr><td data-label="Min">24</td><td data-label="What you do / type">Claude asks permission for <code>git push</code> → you approve. The PR is created over MCP.</td><td data-label="What you point out to the team"><code>ask</code> rule: anything irreversible goes through a human. Open the PR in the browser.</td></tr>
+      <tr><td data-label="Min">26</td><td data-label="What you do / type">Comment on the PR: <code>@claude add a test for when the order belongs to another customer</code></td><td data-label="What you point out to the team">The GitHub Action runs with the same CLAUDE.md and the same skills. While it runs: <code>/usage</code> and <code>/context</code>.</td></tr>
+      <tr><td data-label="Min">29</td><td data-label="What you do / type"><code>/exit</code> and then <code>claude -r "demo-issue-1"</code>. Show the Action's new commit on the PR.</td><td data-label="What you point out to the team">Sessions get named and resumed. Wrap-up: the pieces table above.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Plan B</h2>
+  <ul class="kv">
+<li><strong>The GitHub MCP won't authenticate</strong><span>Check <code>GITHUB_PAT</code> and <code>/mcp reconnect</code>. If it still fails, ask Claude to use <code>gh issue view 1</code> and <code>gh pr create</code>. Explain that the result is the same with a different integration.</span></li>
+<li><strong>The model is slow or you hit a usage limit</strong><span><code>claude -r "demo-rehearsal" --fork-session</code> and walk through the session you already did. It also shows how work gets resumed.</span></li>
+<li><strong>Claude doesn't touch the production file</strong><span>Ask directly: <em>"also apply the timeout change"</em>. The block shows up the same way.</span></li>
+<li><strong>Tests take too long</strong><span>Before the demo, put the command that runs only the affected test project in CLAUDE.md.</span></li>
+<li><strong>The GitHub Action is slow</strong><span>Show the rehearsal PR where it already ran and come back at the end of the session.</span></li>
+<li><strong>The network goes down</strong><span>Record the second rehearsal on video and have it ready.</span></li>
+</ul>
+
+  <h2>UI variant (optional, +8 min)</h2>
+  <div class="prose">
+    <p>If the team has a front end, start in Claude Design: prototype the "Order refunds" screen with the team's design system, share it in comment mode and bring the handoff package into Claude Code. Then the flow continues the same way with a second issue for the front end. This shows the full design → code → PR loop.</p>
+  </div>
+  <div class="note"><strong>After the demo:</strong> have each person repeat the flow with a real issue of their own using the same skill. It's the best way to confirm the program worked.</div>

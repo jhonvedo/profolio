@@ -1,0 +1,177 @@
+<div class="prose">
+    <p>Un solo flujo real que usa casi todo lo visto en el programa. Tomas un issue de GitHub y escribes un comando: <code>/resolver-issue 1</code>. En unos 25 minutos el equipo ve a Claude leer el issue por MCP, explorar con un subagente, planear con un modelo fuerte, implementar, chocar con un hook de seguridad, delegar tests y revisión a subagentes con otros modelos, y abrir el PR. Al final, un comentario <code>@claude</code> en el PR dispara la GitHub Action.</p>
+  </div>
+
+  <h2>Qué pieza aparece y en qué momento</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Pieza</th><th>Momento de la demo</th><th>Sesión</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Pieza">Sesión con nombre, <code>/resume</code></td><td data-label="Momento de la demo">Arranque y cierre</td><td data-label="Sesión">Operación</td></tr>
+      <tr><td data-label="Pieza">Barra de estado</td><td data-label="Momento de la demo">Siempre visible: modelo y % de contexto</td><td data-label="Sesión">Operación</td></tr>
+      <tr><td data-label="Pieza">Plugin del marketplace oficial (LSP)</td><td data-label="Momento de la demo">Min 2: se instala en vivo</td><td data-label="Sesión">S6</td></tr>
+      <tr><td data-label="Pieza">MCP de GitHub</td><td data-label="Momento de la demo">Min 4 y 24: lista issues, lee el issue, crea el PR</td><td data-label="Sesión">S6</td></tr>
+      <tr><td data-label="Pieza">Modelo <code>opusplan</code></td><td data-label="Momento de la demo">Min 6: Opus planea, Sonnet implementa</td><td data-label="Sesión">Conceptos</td></tr>
+      <tr><td data-label="Pieza">Skill <code>/resolver-issue</code> con <code>!`…`</code></td><td data-label="Momento de la demo">Min 7: orquesta todo el flujo</td><td data-label="Sesión">S5</td></tr>
+      <tr><td data-label="Pieza">Subagente Explore (incluido)</td><td data-label="Momento de la demo">Min 8: busca archivos sin ensuciar el contexto</td><td data-label="Sesión">S5</td></tr>
+      <tr><td data-label="Pieza">Modo Plan + corrección humana</td><td data-label="Momento de la demo">Min 11</td><td data-label="Sesión">S3</td></tr>
+      <tr><td data-label="Pieza">Regla <code>deny</code> + hook PreToolUse</td><td data-label="Momento de la demo">Min 13: bloquea el archivo de producción</td><td data-label="Sesión">S4, S5</td></tr>
+      <tr><td data-label="Pieza">CLAUDE.md + reglas por ruta, hook PostToolUse</td><td data-label="Momento de la demo">Min 14: implementa con convenciones y formato automático</td><td data-label="Sesión">S4, S5</td></tr>
+      <tr><td data-label="Pieza">Subagente <code>escritor-tests</code> (Sonnet, esfuerzo medio)</td><td data-label="Momento de la demo">Min 18</td><td data-label="Sesión">S5</td></tr>
+      <tr><td data-label="Pieza">Hook Stop "tests verdes"</td><td data-label="Momento de la demo">Min 18: no deja terminar con tests en rojo</td><td data-label="Sesión">S5</td></tr>
+      <tr><td data-label="Pieza">Subagente <code>revisor-seguridad</code> (Opus)</td><td data-label="Momento de la demo">Min 22</td><td data-label="Sesión">S5</td></tr>
+      <tr><td data-label="Pieza">Permiso <code>ask</code> en <code>git push</code></td><td data-label="Momento de la demo">Min 24: Claude pide permiso para publicar</td><td data-label="Sesión">S4</td></tr>
+      <tr><td data-label="Pieza">GitHub Action <code>@claude</code></td><td data-label="Momento de la demo">Min 26: cambio pedido desde el PR</td><td data-label="Sesión">S6</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Preparación (el día anterior)</h2>
+  <div class="check" data-check="demo">
+    <label><input type="checkbox" id="dm-1"><span>Repo de demo en GitHub (<span data-stack="dotnet">la API de pedidos .NET</span><span data-stack="node">el monorepo Node</span>) con build y tests en verde, y la carpeta <code>.claude/</code> de las sesiones 4 y 5.</span></label>
+    <label><input type="checkbox" id="dm-2"><span>Agregar los archivos de abajo: <code>.mcp.json</code>, la skill <code>resolver-issue</code> y los subagentes <code>escritor-tests</code> y <code>revisor-seguridad</code>.</span></label>
+    <label><input type="checkbox" id="dm-3"><span>Crear el issue #1 con el texto de abajo.</span></label>
+    <label><input type="checkbox" id="dm-4"><span>Token de GitHub <em>fine-grained</em> solo para ese repo (Contents, Issues y Pull requests: lectura y escritura) exportado como <code>GITHUB_PAT</code>. Verificar con <code>/mcp</code>.</span></label>
+    <label><input type="checkbox" id="dm-5"><span>Instalar el binario del LSP: <span data-stack="dotnet"><code>dotnet tool install --global csharp-ls</code></span><span data-stack="node"><code>npm i -g typescript-language-server typescript</code></span>. No instalar el plugin todavía: se instala en vivo.</span></label>
+    <label><input type="checkbox" id="dm-6"><span><code>jq</code> instalado, <code>chmod +x .claude/hooks/*.sh</code>, barra de estado configurada.</span></label>
+    <label><input type="checkbox" id="dm-7"><span>GitHub App y workflow <code>claude.yml</code> instalados con <code>/install-github-app</code> y probados con un comentario.</span></label>
+    <label><input type="checkbox" id="dm-8"><span>Dos ensayos completos. Guardar el segundo como <code>claude -n "demo-ensayo"</code> y dejar su PR abierto como respaldo.</span></label>
+    <label><input type="checkbox" id="dm-9"><span>Antes de empezar: rama <code>main</code> limpia, <code>claude update</code>, fuente de la terminal grande, notificaciones del sistema apagadas.</span></label>
+  </div>
+
+  <h2>El issue #1</h2>
+  <div data-stack="dotnet">
+  <div class="code"><div class="fname"><span>GitHub · Issue #1</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="k">Título:</span> Endpoint para listar los reembolsos de un pedido
+
+Como agente de soporte quiero ver los reembolsos de un pedido para responder reclamos.
+
+<span class="k">Criterios de aceptación</span>
+- GET /orders/{id}/refunds devuelve la lista paginada (page, pageSize; pageSize máximo 50).
+- 404 si el pedido no existe.
+- Solo usuarios con la política "Support".
+- Ordenados del más reciente al más antiguo.
+- Subir el timeout HTTP del cliente de pagos a 30 s en appsettings.Production.json.</code></pre></div>
+  </div>
+  <div data-stack="node">
+  <div class="code"><div class="fname"><span>GitHub · Issue #1</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="k">Título:</span> Endpoint para listar los reembolsos de un pedido
+
+Como agente de soporte quiero ver los reembolsos de un pedido para responder reclamos.
+
+<span class="k">Criterios de aceptación</span>
+- GET /orders/:id/refunds devuelve la lista paginada (page, pageSize; pageSize máximo 50).
+- 404 si el pedido no existe.
+- Solo usuarios con rol "support".
+- Ordenados del más reciente al más antiguo.
+- Subir PAYMENTS_TIMEOUT_MS a 30000 en .env.production.</code></pre></div>
+  </div>
+  <p class="prose">El último criterio es la <strong>trampa intencional</strong>: toca un archivo de producción que la regla <code>deny</code> y el hook de protección bloquean. Así el equipo ve el control en acción sin forzarlo.</p>
+
+  <h2>Archivos de la demo</h2>
+  <div class="code"><div class="fname"><span>.mcp.json</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"github"</span>: {
+      <span class="k">"type"</span>: <span class="s">"http"</span>,
+      <span class="k">"url"</span>: <span class="s">"https://api.githubcopilot.com/mcp/"</span>,
+      <span class="k">"headers"</span>: { <span class="k">"Authorization"</span>: <span class="s">"Bearer ${GITHUB_PAT}"</span> }
+    }
+  }
+}</code></pre></div>
+
+  <div class="code"><div class="fname"><span>.claude/skills/resolver-issue/SKILL.md</span><button class="copy" type="button">Copiar</button></div><pre><code>---
+description: Resolves a GitHub issue end to end (read, plan, implement, test, review, open PR). Only when the user runs /resolver-issue.
+argument-hint: "[issue-number]"
+arguments: [issue]
+disable-model-invocation: true
+allowed-tools: mcp__github Bash(git checkout -b *) Bash(git add *) Bash(git commit *) <span data-stack="dotnet">Bash(dotnet build *) Bash(dotnet test *)</span><span data-stack="node">Bash(pnpm -r test) Bash(pnpm -r typecheck)</span>
+---
+<span class="k"># Resolver el issue #$issue</span>
+
+<span class="k">## Estado del repo</span>
+!`git status --short`
+!`git log --oneline -3`
+
+<span class="k">## Proceso</span>
+1. <span class="k">Leer.</span> Con las herramientas del servidor MCP `github`, lee el issue #$issue de este
+   repositorio y sus comentarios. Resume el requisito y lista los criterios de aceptación.
+2. <span class="k">Explorar.</span> Delega al subagente Explore la búsqueda de los archivos relevantes.
+   Pide solo rutas y un resumen corto.
+3. <span class="k">Planear.</span> Presenta un plan numerado: archivos a tocar, tests, riesgos.
+   Si un criterio toca archivos protegidos o de producción, dilo en el plan.
+   ESPERA la aprobación del usuario.
+4. <span class="k">Rama.</span> `git checkout -b issue-$issue` y un sufijo corto descriptivo.
+5. <span class="k">Implementar</span> siguiendo CLAUDE.md y `.claude/rules/`.
+6. <span class="k">Tests.</span> Delega al subagente `escritor-tests` un test por criterio de aceptación.
+   Luego corre la suite completa.
+7. <span class="k">Revisar.</span> Delega al subagente `revisor-seguridad`. Corrige lo de severidad alta.
+8. <span class="k">Publicar.</span> Commit convencional que mencione #$issue, `git push -u origin HEAD`
+   y crea el PR con las herramientas MCP de `github`. Cuerpo del PR:
+   resumen, cómo se probó, hallazgos de la revisión, pendientes para humanos y `Closes #$issue`.
+9. Termina con el enlace del PR y una tabla: criterio → estado.</code></pre></div>
+  <p class="prose">La <code>description</code> está en inglés porque se carga en cada turno; el cuerpo en español porque solo se carga al invocarla. <code>git push</code> no está en <code>allowed-tools</code> a propósito: como en <code>settings.json</code> está en <code>ask</code>, Claude tendrá que pedir permiso en vivo.</p>
+
+  <div data-stack="dotnet">
+  <div class="code"><div class="fname"><span>.claude/agents/escritor-tests.md</span><button class="copy" type="button">Copiar</button></div><pre><code>---
+name: escritor-tests
+description: Writes and runs automated tests for given acceptance criteria. Use after a feature is implemented.
+tools: Read, Grep, Glob, Edit, Write, Bash
+model: sonnet
+effort: medium
+---
+Eres un especialista en tests para ASP.NET Core.
+- Tests de integración con WebApplicationFactory y FluentAssertions; sigue los existentes en tests/.
+- Un test por criterio de aceptación, con nombre Metodo_Escenario_Resultado.
+- Cubre los casos límite: 404, 403 sin política, pageSize &gt; 50, lista vacía.
+- Corre `dotnet test` y reporta: tests creados, resultado, cobertura de criterios.
+- No modifiques código de producción; si un test revela un bug, repórtalo.</code></pre></div>
+  </div>
+  <div data-stack="node">
+  <div class="code"><div class="fname"><span>.claude/agents/escritor-tests.md</span><button class="copy" type="button">Copiar</button></div><pre><code>---
+name: escritor-tests
+description: Writes and runs automated tests for given acceptance criteria. Use after a feature is implemented.
+tools: Read, Grep, Glob, Edit, Write, Bash
+model: sonnet
+effort: medium
+---
+Eres un especialista en tests para NestJS.
+- Tests con Vitest + Supertest; sigue los patrones de los *.spec.ts existentes.
+- Un test por criterio de aceptación, en forma "debe … cuando …".
+- Cubre los casos límite: 404, 403 sin rol, pageSize &gt; 50, lista vacía.
+- Corre `pnpm --filter api test` y reporta: tests creados, resultado, cobertura de criterios.
+- No modifiques código de producción; si un test revela un bug, repórtalo.</code></pre></div>
+  </div>
+  <p class="prose">El subagente <code>revisor-seguridad</code> es el de la sesión 5 (Opus, sin permisos de edición). Los hooks y el <code>settings.json</code> también son los de las sesiones 4 y 5.</p>
+
+  <h2>Guion minuto a minuto</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Min</th><th>Qué haces / escribes</th><th>Qué señalas al equipo</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Min">0</td><td data-label="Qué haces / escribes">Muestra el árbol de <code>.claude/</code>, <code>.mcp.json</code> y el issue #1 en GitHub. Luego: <code>claude -n "demo-issue-1"</code></td><td data-label="Qué señalas al equipo">"Todo esto está versionado en el repo: cualquiera que lo clone tiene el mismo Claude." La barra de estado muestra modelo y contexto.</td></tr>
+      <tr><td data-label="Min">2</td><td data-label="Qué haces / escribes"><code>/plugin install <span data-stack="dotnet">csharp-lsp</span><span data-stack="node">typescript-lsp</span>@claude-plugins-official</code> → pestaña Installed</td><td data-label="Qué señalas al equipo">Costo de contexto del plugin y scope. Ahora Claude ve errores de compilación al editar, sin correr el build.</td></tr>
+      <tr><td data-label="Min">4</td><td data-label="Qué haces / escribes"><code>/mcp</code> y luego: <em>"¿qué issues abiertos hay en este repo?"</em></td><td data-label="Qué señalas al equipo">Claude usa una herramienta <code>mcp__github__…</code>. MCP = datos externos con los permisos de tu token.</td></tr>
+      <tr><td data-label="Min">6</td><td data-label="Qué haces / escribes"><code>/model opusplan</code></td><td data-label="Qué señalas al equipo">Opus planea, Sonnet implementa: calidad donde importa y menor costo en la ejecución.</td></tr>
+      <tr><td data-label="Min">7</td><td data-label="Qué haces / escribes">Shift+Tab hasta modo Plan y <code>/resolver-issue 1</code></td><td data-label="Qué señalas al equipo">La skill se carga ahora, no antes. Los <code>!`git …`</code> ya inyectaron el estado real del repo.</td></tr>
+      <tr><td data-label="Min">8</td><td data-label="Qué haces / escribes">Observa la lectura del issue y la delegación a Explore</td><td data-label="Qué señalas al equipo">El subagente lee muchos archivos; a la sesión principal solo llega el resumen. Mira el % de contexto.</td></tr>
+      <tr><td data-label="Min">11</td><td data-label="Qué haces / escribes">Aparece el plan. Corrige algo en voz alta: <em>"si pageSize es mayor que 50 responde 400 en vez de truncar, y agrega ese caso a los tests"</em>. Aprueba.</td><td data-label="Qué señalas al equipo">El valor del humano está en el plan, no en teclear código.</td></tr>
+      <tr><td data-label="Min">13</td><td data-label="Qué haces / escribes">Claude intenta tocar <span data-stack="dotnet"><code>appsettings.Production.json</code></span><span data-stack="node"><code>.env.production</code></span></td><td data-label="Qué señalas al equipo">La regla <code>deny</code> o el hook lo bloquean y Claude lo deja como pendiente para un humano. "Esto no depende de que el modelo obedezca."</td></tr>
+      <tr><td data-label="Min">14</td><td data-label="Qué haces / escribes">Pasa a <code>acceptEdits</code> (Shift+Tab). Implementación.</td><td data-label="Qué señalas al equipo">El hook PostToolUse formatea cada archivo. Los diagnósticos del LSP aparecen al editar. Las reglas por ruta se cargan al tocar endpoints.</td></tr>
+      <tr><td data-label="Min">18</td><td data-label="Qué haces / escribes">Delegación a <code>escritor-tests</code></td><td data-label="Qué señalas al equipo">Otro modelo (Sonnet, esfuerzo medio) y contexto propio. Si un test falla, el hook Stop no deja terminar.</td></tr>
+      <tr><td data-label="Min">22</td><td data-label="Qué haces / escribes">Delegación a <code>revisor-seguridad</code></td><td data-label="Qué señalas al equipo">Opus, solo lectura. Hallazgos con archivo y línea.</td></tr>
+      <tr><td data-label="Min">24</td><td data-label="Qué haces / escribes">Claude pide permiso para <code>git push</code> → apruebas. Se crea el PR por MCP.</td><td data-label="Qué señalas al equipo">Regla <code>ask</code>: lo irreversible pasa por un humano. Abre el PR en el navegador.</td></tr>
+      <tr><td data-label="Min">26</td><td data-label="Qué haces / escribes">En el PR comenta: <code>@claude agrega un test para cuando el pedido pertenece a otro cliente</code></td><td data-label="Qué señalas al equipo">La GitHub Action corre con el mismo CLAUDE.md y las mismas skills. Mientras corre: <code>/usage</code> y <code>/context</code>.</td></tr>
+      <tr><td data-label="Min">29</td><td data-label="Qué haces / escribes"><code>/exit</code> y luego <code>claude -r "demo-issue-1"</code>. Muestra el commit nuevo de la Action en el PR.</td><td data-label="Qué señalas al equipo">Las sesiones se nombran y se retoman. Cierre: la tabla de piezas de arriba.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Plan B</h2>
+  <ul class="kv">
+<li><strong>El MCP de GitHub no autentica</strong><span>Revisa <code>GITHUB_PAT</code> y <code>/mcp reconnect</code>. Si sigue fallando, pide a Claude que use <code>gh issue view 1</code> y <code>gh pr create</code>. Explica que el resultado es el mismo con otra integración.</span></li>
+<li><strong>El modelo va lento o hay límite de uso</strong><span><code>claude -r "demo-ensayo" --fork-session</code> y recorre la sesión ya hecha. También sirve para mostrar cómo se retoma trabajo.</span></li>
+<li><strong>Claude no toca el archivo de producción</strong><span>Pídelo directo: <em>"aplica también el cambio del timeout"</em>. El bloqueo se ve igual.</span></li>
+<li><strong>Los tests tardan demasiado</strong><span>Antes de la demo, deja en CLAUDE.md el comando que corre solo el proyecto de tests afectado.</span></li>
+<li><strong>La GitHub Action tarda</strong><span>Muestra el PR del ensayo donde ya corrió y vuelve al final de la sesión.</span></li>
+<li><strong>Se cae la red</strong><span>Graba el segundo ensayo en video y tenlo listo.</span></li>
+</ul>
+
+  <h2>Variante con interfaz (opcional, +8 min)</h2>
+  <div class="prose">
+    <p>Si el equipo tiene front, empieza en Claude Design: prototipa la pantalla "Reembolsos del pedido" con el design system del equipo, compártela en modo comentario y lleva el paquete de handoff a Claude Code. Luego el flujo sigue igual con un segundo issue para el front. Esto muestra el circuito completo diseño → código → PR.</p>
+  </div>
+  <div class="note"><strong>Después de la demo:</strong> que cada persona repita el flujo con un issue real propio usando la misma skill. Es la mejor forma de comprobar que el programa funcionó.</div>

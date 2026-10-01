@@ -5,5 +5,5 @@ import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
     site: "https://jhonacevedo.com",
-    integrations: [tailwind({ applyBaseStyles: false }), mdx(), sitemap()],
+    integrations: [tailwind({ applyBaseStyles: false }), mdx(), sitemap({ filter: (page) => !page.includes("/blog/") })],
 });

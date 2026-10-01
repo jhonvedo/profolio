@@ -1,0 +1,329 @@
+---
+import Base from "../../../layouts/Base.astro";
+import LanguageSwitcher from "../../../shared/LanguageSwitcher.astro";
+import { supported, type Lang } from "../../../shared/i18n";
+import { series, partHref, type Series, type Part } from "../../../shared/posts";
+import "../../../styles/post.css";
+
+const contents = import.meta.glob<string>("../../../content/posts/*/*/*.html", { query: "?raw", import: "default", eager: true });
+
+export const getStaticPaths = () =>
+    series.flatMap((s) =>
+        supported.flatMap((lang) =>
+            s.langs[lang].parts.map((part, index) => ({
+                params: { lang, slug: `${s.langs[lang].slug}${part.slug ? `/${part.slug}` : ""}` },
+                props: { s, lang, part, index },
+            })),
+        ),
+    );
+
+const { s, lang, part, index } = Astro.props as { s: Series; lang: Lang; part: Part; index: number };
+const parts = s.langs[lang].parts;
+const html = contents[`../../../content/posts/${s.id}/${lang}/${part.id}.html`];
+const isIndex = index === 0;
+const prev = parts[index - 1];
+const next = parts[index + 1];
+const hrefs = Object.fromEntries(supported.map((l) => [l, partHref(s, l, s.langs[l].parts[index])]));
+
+const t = {
+    es: { series: "Serie", part: "Parte", of: "de", read: "min de lectura", inSeries: "En esta serie", examples: "Ejemplos para:", prev: "Anterior", next: "Siguiente", index: "← Índice de la serie", start: "Antes de empezar" },
+    en: { series: "Series", part: "Part", of: "of", read: "min read", inSeries: "In this series", examples: "Examples for:", prev: "Previous", next: "Next", index: "← Series index", start: "Before you start" },
+}[lang];
+const title = isIndex ? s.title[lang] : part.title;
+---
+
+<Base lang={lang} noindex title={`${title} · Jhon Acevedo`} description={part.lede}>
+    <Fragment slot="head">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..800;1,300..600&family=DM+Mono:wght@400;500&display=swap" />
+        {supported.map((l) => <link rel="alternate" hreflang={l} href={hrefs[l]} />)}
+    </Fragment>
+
+    <div class="post-nav">
+        <div class="post-nav-in">
+            <a href={`/${lang}`} class="post-brand">Jhon Acevedo</a>
+            <LanguageSwitcher lang={lang} hrefs={hrefs} />
+        </div>
+    </div>
+
+    <article class="post" data-lang={lang}>
+        <div class="post-wrap">
+            <header class="post-head">
+                {
+                    isIndex ? (
+                        <div class="post-kicker">{s.eyebrow[lang]}</div>
+                    ) : (
+                        <>
+                            <div class="post-series">
+                                <a href={partHref(s, lang, parts[0])}>{s.title[lang]}</a> · {t.part} {index} {t.of} {parts.length - 1}
+                            </div>
+                            <div class="post-kicker">{part.kicker}</div>
+                        </>
+                    )
+                }
+                <h1>{title}</h1>
+                <p class="post-lede">{part.lede}</p>
+                <div class="post-meta">
+                    <span>
+                        {part.minutes} {t.read}
+                    </span>
+                    {part.pills.map((p) => <span>{p}</span>)}
+                </div>
+            </header>
+
+            {
+                part.hasStack && (
+                    <div class="stack-bar">
+                        <span id="stack-label">{t.examples}</span>
+                        <div class="seg" role="group" aria-labelledby="stack-label">
+                            <button type="button" data-set-stack="dotnet" aria-pressed="true">
+                                .NET / C#
+                            </button>
+                            <button type="button" data-set-stack="node" aria-pressed="false">
+                                Node / TypeScript
+                            </button>
+                        </div>
+                    </div>
+                )
+            }
+
+            <div class="post-body">
+                {
+                    isIndex && (
+                        <>
+                            <h2>{t.inSeries}</h2>
+                            <ol class="series-list">
+                                {parts.slice(1).map((p, i) => (
+                                    <li>
+                                        <a href={partHref(s, lang, p)}>
+                                            <span class="series-n">{String(i + 1).padStart(2, "0")}</span>
+                                            <span class="series-title">{p.title}</span>
+                                            <span class="series-min">
+                                                {p.minutes} {t.read}
+                                            </span>
+                                            <span class="series-lede">{p.lede}</span>
+                                        </a>
+                                    </li>
+                                ))}
+                            </ol>
+                            <h2>{t.start}</h2>
+                        </>
+                    )
+                }
+                <Fragment set:html={html} />
+            </div>
+
+            <footer class="post-foot">
+                <a class="index-link" href={partHref(s, lang, parts[0])}>{t.index}</a>
+                <nav class="pager" aria-label={t.series}>
+                    {
+                        prev && (
+                            <a class="prev" href={partHref(s, lang, prev)}>
+                                <small>← {t.prev}</small>
+                                <b>{index === 1 ? s.title[lang] : prev.title}</b>
+                            </a>
+                        )
+                    }
+                    {
+                        next && (
+                            <a class="next" href={partHref(s, lang, next)}>
+                                <small>{t.next} →</small>
+                                <b>{next.title}</b>
+                            </a>
+                        )
+                    }
+                </nav>
+            </footer>
+        </div>
+    </article>
+</Base>
+
+<script>
+    import { quizzes } from "../../../content/posts/copilot-to-claude/quiz";
+
+    const post = document.querySelector<HTMLElement>(".post");
+    if (post) {
+        const lang = (post.dataset.lang === "en" ? "en" : "es") as "es" | "en";
+        const t = {
+            es: { copy: "Copiar", copied: "Copiado", more: "Ver todo el código", less: "Ver menos", quiz: "Autoevaluación", ok: "Correcto. ", bad: "No es esa. ", reset: "Reiniciar" },
+            en: { copy: "Copy", copied: "Copied", more: "Show all the code", less: "Show less", quiz: "Self-assessment", ok: "Correct. ", bad: "Not that one. ", reset: "Reset" },
+        }[lang];
+        const store = (k: string, v: string) => {
+            try {
+                localStorage.setItem(k, v);
+            } catch {}
+        };
+        const load = (k: string) => {
+            try {
+                return localStorage.getItem(k);
+            } catch {
+                return null;
+            }
+        };
+
+        // Stack (.NET / Node): se recuerda entre posts
+        const setStack = (s: string) => {
+            post.classList.remove("stack-dotnet", "stack-node");
+            post.classList.add(`stack-${s}`);
+            post.querySelectorAll<HTMLButtonElement>("[data-set-stack]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.setStack === s)));
+            store("cc-guide-stack", s);
+        };
+        setStack(load("cc-guide-stack") === "node" ? "node" : "dotnet");
+        post.querySelectorAll<HTMLButtonElement>("[data-set-stack]").forEach((b) => b.addEventListener("click", () => setStack(b.dataset.setStack!)));
+
+        // Código: copiar y recortar los bloques largos
+        post.querySelectorAll<HTMLElement>(".code").forEach((box) => {
+            const pre = box.querySelector("pre");
+            const btn = box.querySelector<HTMLButtonElement>(".copy");
+            if (!pre) return;
+            if (btn) {
+                btn.textContent = t.copy;
+                btn.addEventListener("click", () => {
+                    const code = pre.querySelector("code")!.cloneNode(true) as HTMLElement;
+                    const inactive = post.classList.contains("stack-node") ? "dotnet" : "node";
+                    code.querySelectorAll(`[data-stack="${inactive}"]`).forEach((n) => n.remove());
+                    navigator.clipboard?.writeText(code.textContent ?? "").then(() => {
+                        btn.textContent = t.copied;
+                        setTimeout(() => (btn.textContent = t.copy), 1400);
+                    });
+                });
+            }
+            const lines = pre.textContent!.replace(/\s+$/, "").split("\n").length;
+            if (lines <= 16) return;
+            box.classList.add("clipped");
+            const more = document.createElement("button");
+            more.type = "button";
+            more.className = "more";
+            more.textContent = `${t.more} (${lines})`;
+            more.addEventListener("click", () => {
+                const open = box.classList.toggle("clipped");
+                more.textContent = open ? `${t.more} (${lines})` : t.less;
+            });
+            box.appendChild(more);
+        });
+
+        // Checklists: el progreso se guarda en el navegador y se comparte entre posts e idiomas
+        let saved: Record<string, boolean> = {};
+        try {
+            saved = JSON.parse(load("cc-guide-checks") || "{}") || {};
+        } catch {}
+        post.querySelectorAll<HTMLElement>(".check").forEach((block) => {
+            const boxes = block.querySelectorAll<HTMLInputElement>("input[type=checkbox]");
+            const h = block.querySelector("h3");
+            const count = document.createElement("span");
+            count.className = "count";
+            if (h) h.appendChild(count);
+            else block.prepend(count);
+            const refresh = () => {
+                let n = 0;
+                boxes.forEach((b) => {
+                    if (b.checked) n++;
+                    b.parentElement!.classList.toggle("done", b.checked);
+                });
+                count.textContent = `${n} / ${boxes.length}`;
+            };
+            boxes.forEach((b) => {
+                b.checked = !!saved[b.id];
+                b.addEventListener("change", () => {
+                    saved[b.id] = b.checked;
+                    store("cc-guide-checks", JSON.stringify(saved));
+                    refresh();
+                });
+            });
+            refresh();
+        });
+
+        // Autoevaluación
+        post.querySelectorAll<HTMLElement>("[data-quiz]").forEach((box) => {
+            const list = quizzes[lang][box.dataset.quiz!];
+            if (!list) return;
+            const h = document.createElement("h3");
+            h.textContent = t.quiz;
+            box.appendChild(h);
+            list.forEach((item, qi) => {
+                const d = document.createElement("div");
+                d.className = "q";
+                const p = document.createElement("p");
+                p.textContent = `${qi + 1}. ${item.q}`;
+                const opts = document.createElement("div");
+                opts.className = "opts";
+                const why = document.createElement("div");
+                why.className = "why";
+                why.hidden = true;
+                // Mezcla el orden de las opciones para que la posición no delate la respuesta
+                const order = item.o.map((_, i) => i);
+                for (let i = order.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [order[i], order[j]] = [order[j], order[i]];
+                }
+                order.forEach((oi) => {
+                    const b = document.createElement("button");
+                    b.type = "button";
+                    b.textContent = item.o[oi];
+                    b.dataset.correct = String(oi === item.a);
+                    b.addEventListener("click", () => {
+                        opts.querySelectorAll<HTMLButtonElement>("button").forEach((x) => {
+                            x.disabled = true;
+                            if (x.dataset.correct === "true") x.classList.add("ok");
+                        });
+                        if (oi !== item.a) b.classList.add("bad");
+                        why.textContent = (oi === item.a ? t.ok : t.bad) + item.w;
+                        why.hidden = false;
+                    });
+                    opts.appendChild(b);
+                });
+                d.append(p, opts, why);
+                box.appendChild(d);
+            });
+            const r = document.createElement("button");
+            r.type = "button";
+            r.className = "reset";
+            r.textContent = t.reset;
+            r.addEventListener("click", () => {
+                box.querySelectorAll<HTMLButtonElement>(".opts button").forEach((x) => {
+                    x.disabled = false;
+                    x.classList.remove("ok", "bad");
+                });
+                box.querySelectorAll<HTMLElement>(".why").forEach((w) => (w.hidden = true));
+            });
+            box.appendChild(r);
+        });
+    }
+</script>
+
+<style is:global>
+    body {
+        margin: 0;
+        background: #f4f1ea;
+    }
+    .post-nav {
+        --font-mono: "DM Mono", ui-monospace, monospace;
+        --muted-3: #9a9689;
+        background: #f4f1ea;
+        border-bottom: 1px solid rgba(22, 21, 15, 0.12);
+    }
+    .post-nav-in {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 14px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+    }
+    .post-brand {
+        font-family: "Hanken Grotesk", system-ui, sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        letter-spacing: -0.2px;
+        color: #16150f;
+        text-decoration: none;
+    }
+    .post-brand:hover {
+        color: #c8391a;
+    }
+    @media (max-width: 700px) {
+        .post-nav-in {
+            padding-inline: 18px;
+        }
+    }
+</style>

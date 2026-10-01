@@ -1,0 +1,40 @@
+<div class="prose">
+    <p>Con Copilot, la unidad de trabajo es <strong>la línea o el bloque</strong>: escribes, el modelo sugiere, aceptas con Tab. Con Claude, la unidad de trabajo es <strong>la tarea</strong>: describes un resultado, Claude explora el repositorio, planea, edita varios archivos, ejecuta build y tests, y te entrega un cambio revisable.</p>
+    <p>Eso cambia qué hace bien un desarrollador experto: menos teclear y más <em>especificar, dar contexto, poner límites y revisar</em>. Todo el programa gira alrededor de esas cuatro habilidades.</p>
+  </div>
+
+  <div class="flow" aria-label="Ciclo de trabajo con Claude Code">
+    <span>Explorar</span><b>→</b><span>Planear</span><b>→</b><span>Implementar</span><b>→</b><span>Verificar</span><b>→</b><span>Commit / PR</span>
+  </div>
+
+  <h2>Equivalencias Copilot → Claude</h2>
+  <p class="prose">Casi todo lo que el equipo ya configuró en Copilot tiene un lugar en Claude. Esta tabla sirve de guía de migración.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>En Copilot</th><th>En Claude</th><th>Notas</th></tr></thead>
+    <tbody>
+      <tr><td data-label="En Copilot">Copilot Chat en el IDE</td><td data-label="En Claude">Extensión de Claude Code para VS Code / JetBrains, o <code>claude</code> en la terminal</td><td data-label="Notas">Mismo agente en todas las superficies; comparten configuración.</td></tr>
+      <tr><td data-label="En Copilot">Agent mode / coding agent</td><td data-label="En Claude">Claude Code (local), Claude Code en la web (nube) y <code>@claude</code> en GitHub</td><td data-label="Notas">Sesión S3 y S6.</td></tr>
+      <tr><td data-label="En Copilot"><code>.github/copilot-instructions.md</code></td><td data-label="En Claude"><code>CLAUDE.md</code></td><td data-label="Notas"><code>/init</code> lee el archivo de Copilot e incorpora lo relevante.</td></tr>
+      <tr><td data-label="En Copilot"><code>.github/instructions/*.instructions.md</code> con <code>applyTo</code></td><td data-label="En Claude"><code>.claude/rules/*.md</code> con <code>paths</code></td><td data-label="Notas">Reglas que solo se cargan cuando Claude toca archivos que coinciden.</td></tr>
+      <tr><td data-label="En Copilot"><code>.github/prompts/*.prompt.md</code></td><td data-label="En Claude">Skills: <code>.claude/skills/&lt;nombre&gt;/SKILL.md</code></td><td data-label="Notas">Se invocan como <code>/nombre</code> y Claude también puede usarlas solo.</td></tr>
+      <tr><td data-label="En Copilot">Custom agents / chat modes</td><td data-label="En Claude">Subagentes: <code>.claude/agents/*.md</code></td><td data-label="Notas">Cada uno con su prompt, herramientas y modelo.</td></tr>
+      <tr><td data-label="En Copilot"><code>AGENTS.md</code></td><td data-label="En Claude">Se lee directo si no hay <code>CLAUDE.md</code></td><td data-label="Notas">O impórtalo con <code>@AGENTS.md</code> dentro de <code>CLAUDE.md</code>.</td></tr>
+      <tr><td data-label="En Copilot">MCP en <code>.vscode/mcp.json</code></td><td data-label="En Claude"><code>.mcp.json</code> en la raíz del repo</td><td data-label="Notas">Sesión S6.</td></tr>
+      <tr><td data-label="En Copilot">Copilot code review</td><td data-label="En Claude"><code>/code-review</code>, <code>/security-review</code>, Code Review y GitHub Action</td><td data-label="Notas">Sesión S6.</td></tr>
+      <tr><td data-label="En Copilot">Spaces / contexto compartido</td><td data-label="En Claude">Projects en claude.ai + skills de organización</td><td data-label="Notas">Sesión S1.</td></tr>
+      <tr><td data-label="En Copilot">Autocompletado inline (ghost text)</td><td data-label="En Claude">Sin equivalente directo</td><td data-label="Notas">Claude trabaja por tareas, no por sugerencia de línea. Muchos equipos mantienen el autocompletado que prefieran y usan Claude para el trabajo de agente.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Checklist del administrador (antes de la sesión 1)</h2>
+  <p class="prose">En Team y Enterprise varias funciones vienen apagadas por defecto. Un Owner debe revisar esto en <strong>Organization settings</strong> antes de que el equipo empiece:</p>
+  <div class="check" data-check="admin">
+    <label><input type="checkbox" id="adm-1"><span>Asientos asignados con Claude Code incluido (en Team viene en todos los asientos; en planes Enterprise antiguos se requiere asiento Premium o "Chat + Claude Code").</span></label>
+    <label><input type="checkbox" id="adm-2"><span><strong>Capabilities:</strong> activar "Code execution and file creation", Skills y, si lo quieren, Memory (en Team/Enterprise viene apagada; apagarla después borra la memoria de todos).</span></label>
+    <label><input type="checkbox" id="adm-3"><span><strong>Connectors:</strong> habilitar los que usará el equipo (GitHub, Atlassian, Linear, Slack, Google Drive…) y definir si sus acciones son de solo lectura o requieren aprobación.</span></label>
+    <label><input type="checkbox" id="adm-4"><span><strong>Artifacts:</strong> en Enterprise, activar Claude Design y Claude Docs (vienen apagados).</span></label>
+    <label><input type="checkbox" id="adm-5"><span><strong>Claude Code:</strong> revisar la política de sesiones en la nube y preparar managed settings (sesión S6).</span></label>
+    <label><input type="checkbox" id="adm-7"><span>El admin completó el curso <a href="https://anthropic.skilljar.com/deploying-claude-enterprise-with-confidence">Deploying Claude Enterprise with Confidence</a>.</span></label>
+    <label><input type="checkbox" id="adm-6"><span>Repositorio de práctica listo: uno .NET y uno Node, con build y tests funcionando.</span></label>
+  </div>
+  <div class="note warn"><strong>Ojo con las fechas.</strong> El 16 de septiembre de 2026 Anthropic unificó Cowork y el chat en una sola app de Claude y lanzó Claude Docs y Claude Slides. El despliegue llega primero a Pro y Max; Team lo recibe "pronto" y Enterprise con 30 días de aviso. Si alguna pantalla no coincide con esta guía, probablemente es eso.</div>

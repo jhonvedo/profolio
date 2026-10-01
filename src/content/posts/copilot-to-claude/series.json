@@ -1,0 +1,310 @@
+{
+  "es": {
+    "slug": "de-copilot-a-claude",
+    "parts": [
+      {
+        "id": "mapa",
+        "slug": "",
+        "title": "El cambio de mentalidad",
+        "kicker": "Antes de empezar",
+        "lede": "Seis sesiones prácticas para que un equipo que viene de GitHub Copilot trabaje con Claude a nivel experto: la plataforma, Claude Design, Claude Code, la carpeta .claude/, hooks e integraciones.",
+        "pills": [],
+        "minutes": 3,
+        "hasStack": false
+      },
+      {
+        "id": "conceptos",
+        "slug": "conceptos",
+        "title": "Las piezas de Claude y cuándo usar cada una",
+        "kicker": "Conceptos clave",
+        "lede": "Modelo, esfuerzo, contexto, skills, subagentes, hooks, MCP y plugins: las piezas con las que se arma todo lo demás, y en qué idioma conviene escribirle a Claude.",
+        "pills": [
+          "Base para todas las sesiones"
+        ],
+        "minutes": 8,
+        "hasStack": true
+      },
+      {
+        "id": "s1",
+        "slug": "sesion-1-plataforma",
+        "title": "La plataforma Claude",
+        "kicker": "Sesión 1",
+        "lede": "Modelos y esfuerzo, Projects compartidos, memoria, Docs y Slides, conectores, y qué pasa con los datos del equipo en un plan comercial.",
+        "pills": [
+          "~2 h",
+          "claude.ai · web, escritorio y móvil"
+        ],
+        "minutes": 5,
+        "hasStack": true
+      },
+      {
+        "id": "s2",
+        "slug": "sesion-2-claude-design",
+        "title": "Claude Design",
+        "kicker": "Sesión 2",
+        "lede": "Prototipos interactivos, design systems construidos desde el código y el paquete de handoff que lleva un diseño a Claude Code sin partir de un pantallazo.",
+        "pills": [
+          "~1.5 h",
+          "Beta · Pro, Max, Team, Enterprise"
+        ],
+        "minutes": 3,
+        "hasStack": false
+      },
+      {
+        "id": "s3",
+        "slug": "sesion-3-claude-code",
+        "title": "Claude Code: el flujo de trabajo",
+        "kicker": "Sesión 3",
+        "lede": "Instalación, cada modo de permisos con un ejemplo, los comandos con / según el momento de la tarea y una tarea completa comando a comando.",
+        "pills": [
+          "~2 h",
+          "Terminal · VS Code · JetBrains · Escritorio · Web"
+        ],
+        "minutes": 11,
+        "hasStack": true
+      },
+      {
+        "id": "s4",
+        "slug": "sesion-4-conocimiento",
+        "title": "Conocimiento y la carpeta .claude",
+        "kicker": "Sesión 4",
+        "lede": "Dónde vive cada tipo de conocimiento, CLAUDE.md, reglas por ruta, permisos, y recetas de settings.json: avisos, barra de estado, API key y más.",
+        "pills": [
+          "~2 h",
+          "Manejo de conocimiento"
+        ],
+        "minutes": 13,
+        "hasStack": true
+      },
+      {
+        "id": "s5",
+        "slug": "sesion-5-hooks-skills-subagentes",
+        "title": "Hooks, skills y subagentes",
+        "kicker": "Sesión 5",
+        "lede": "Hooks que se ejecutan siempre, skills que empaquetan procedimientos del equipo y subagentes con herramientas limitadas.",
+        "pills": [
+          "~2.5 h",
+          "Automatización determinista y reutilizable"
+        ],
+        "minutes": 9,
+        "hasStack": true
+      },
+      {
+        "id": "s6",
+        "slug": "sesion-6-integraciones",
+        "title": "Integraciones y gobierno",
+        "kicker": "Sesión 6",
+        "lede": "MCP, conectores, plugins para distribuir la configuración, @claude en GitHub, modo headless y los managed settings del administrador.",
+        "pills": [
+          "~2.5 h",
+          "MCP · plugins · CI · gobierno"
+        ],
+        "minutes": 6,
+        "hasStack": false
+      },
+      {
+        "id": "operacion",
+        "slug": "dia-a-dia",
+        "title": "Administrar Claude en el día a día",
+        "kicker": "Operación diaria",
+        "lede": "Nombrar y retomar sesiones, trabajar en paralelo, administrar plugins y controlar costos: lo que separa a quien usa Claude de quien lo maneja con soltura.",
+        "pills": [
+          "Se cubre en S3 y S6",
+          "Referencia de uso continuo"
+        ],
+        "minutes": 5,
+        "hasStack": false
+      },
+      {
+        "id": "demo",
+        "slug": "demo-en-vivo",
+        "title": "Del issue al PR revisado, en vivo",
+        "kicker": "Demo en vivo",
+        "lede": "Un flujo real de 30 minutos que usa casi todo el programa: de un issue de GitHub a un PR revisado, con guion minuto a minuto y plan B.",
+        "pills": [
+          "~30 min",
+          "Ensayar 2 veces antes"
+        ],
+        "minutes": 10,
+        "hasStack": true
+      },
+      {
+        "id": "cursos",
+        "slug": "cursos",
+        "title": "Cursos de Anthropic para complementar",
+        "kicker": "Cursos oficiales",
+        "lede": "Qué curso gratuito de Anthropic va con cada sesión, cuándo hacerlo y para quién.",
+        "pills": [
+          "Anthropic Academy · gratuitos",
+          "A su ritmo"
+        ],
+        "minutes": 2,
+        "hasStack": false
+      },
+      {
+        "id": "ref",
+        "slug": "referencia",
+        "title": "Para tener a mano",
+        "kicker": "Referencia rápida",
+        "lede": "Atajos, comandos, precedencias y los errores más comunes de un equipo que viene de Copilot. Más las fuentes oficiales.",
+        "pills": [],
+        "minutes": 2,
+        "hasStack": false
+      }
+    ]
+  },
+  "en": {
+    "slug": "from-copilot-to-claude",
+    "parts": [
+      {
+        "id": "mapa",
+        "slug": "",
+        "title": "The mindset shift",
+        "kicker": "Before you start",
+        "lede": "Six hands-on sessions to get a team coming from GitHub Copilot working with Claude at an expert level: the platform, Claude Design, Claude Code, the .claude/ folder, hooks and integrations.",
+        "pills": [],
+        "minutes": 3,
+        "hasStack": false
+      },
+      {
+        "id": "conceptos",
+        "slug": "concepts",
+        "title": "Claude's building blocks and when to use each",
+        "kicker": "Key concepts",
+        "lede": "Model, effort, context, skills, subagents, hooks, MCP and plugins: the pieces everything else is built from, and which language to write to Claude in.",
+        "pills": [
+          "Foundation for every session"
+        ],
+        "minutes": 7,
+        "hasStack": true
+      },
+      {
+        "id": "s1",
+        "slug": "session-1-platform",
+        "title": "The Claude platform",
+        "kicker": "Session 1",
+        "lede": "Models and effort, shared Projects, memory, Docs and Slides, connectors, and what happens to the team's data on a commercial plan.",
+        "pills": [
+          "~2 h",
+          "claude.ai · web, desktop and mobile"
+        ],
+        "minutes": 4,
+        "hasStack": true
+      },
+      {
+        "id": "s2",
+        "slug": "session-2-claude-design",
+        "title": "Claude Design",
+        "kicker": "Session 2",
+        "lede": "Interactive prototypes, design systems built from code, and the handoff package that takes a design into Claude Code without starting from a screenshot.",
+        "pills": [
+          "~1.5 h",
+          "Beta · Pro, Max, Team, Enterprise"
+        ],
+        "minutes": 2,
+        "hasStack": false
+      },
+      {
+        "id": "s3",
+        "slug": "session-3-claude-code",
+        "title": "Claude Code: the workflow",
+        "kicker": "Session 3",
+        "lede": "Installation, each permission mode with an example, slash commands by task phase, and a full task command by command.",
+        "pills": [
+          "~2 h",
+          "Terminal · VS Code · JetBrains · Desktop · Web"
+        ],
+        "minutes": 11,
+        "hasStack": true
+      },
+      {
+        "id": "s4",
+        "slug": "session-4-knowledge",
+        "title": "Knowledge and the .claude folder",
+        "kicker": "Session 4",
+        "lede": "Where each kind of knowledge lives, CLAUDE.md, path-scoped rules, permissions, and settings.json recipes: notifications, status line, API key and more.",
+        "pills": [
+          "~2 h",
+          "Knowledge management"
+        ],
+        "minutes": 12,
+        "hasStack": true
+      },
+      {
+        "id": "s5",
+        "slug": "session-5-hooks-skills-subagents",
+        "title": "Hooks, skills and subagents",
+        "kicker": "Session 5",
+        "lede": "Hooks that always run, skills that package team procedures, and subagents with limited tools.",
+        "pills": [
+          "~2.5 h",
+          "Deterministic, reusable automation"
+        ],
+        "minutes": 9,
+        "hasStack": true
+      },
+      {
+        "id": "s6",
+        "slug": "session-6-integrations",
+        "title": "Integrations and governance",
+        "kicker": "Session 6",
+        "lede": "MCP, connectors, plugins to distribute configuration, @claude on GitHub, headless mode and the admin's managed settings.",
+        "pills": [
+          "~2.5 h",
+          "MCP · plugins · CI · governance"
+        ],
+        "minutes": 6,
+        "hasStack": false
+      },
+      {
+        "id": "operacion",
+        "slug": "day-to-day",
+        "title": "Running Claude day to day",
+        "kicker": "Day-to-day operations",
+        "lede": "Naming and resuming sessions, working in parallel, managing plugins and controlling costs: what separates using Claude from handling it fluently.",
+        "pills": [
+          "Covered in S3 and S6",
+          "Ongoing reference"
+        ],
+        "minutes": 5,
+        "hasStack": false
+      },
+      {
+        "id": "demo",
+        "slug": "live-demo",
+        "title": "From issue to reviewed PR, live",
+        "kicker": "Live demo",
+        "lede": "A real 30-minute flow that uses almost the whole program: from a GitHub issue to a reviewed PR, with a minute-by-minute script and a plan B.",
+        "pills": [
+          "~30 min",
+          "Rehearse twice beforehand"
+        ],
+        "minutes": 9,
+        "hasStack": true
+      },
+      {
+        "id": "cursos",
+        "slug": "courses",
+        "title": "Anthropic courses to complement the program",
+        "kicker": "Official courses",
+        "lede": "Which free Anthropic course goes with each session, when to take it and for whom.",
+        "pills": [
+          "Anthropic Academy · free",
+          "Self-paced"
+        ],
+        "minutes": 2,
+        "hasStack": false
+      },
+      {
+        "id": "ref",
+        "slug": "reference",
+        "title": "Keep it handy",
+        "kicker": "Quick reference",
+        "lede": "Shortcuts, commands, precedence rules and the most common mistakes of a team coming from Copilot. Plus the official sources.",
+        "pills": [],
+        "minutes": 2,
+        "hasStack": false
+      }
+    ]
+  }
+}

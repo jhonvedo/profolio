@@ -1,0 +1,801 @@
+/* Diseño de lectura para los posts del blog: una columna, tipografía grande y pocos tipos de bloque. */
+.post {
+    --paper: #f4f1ea;
+    --surface: #ece8de;
+    --surface-2: #e3ded1;
+    --ink: #16150f;
+    --ink-2: #4a4840;
+    --ink-3: #6f6b60;
+    --line: #d8d2c4;
+    --line-strong: #b5ae9f;
+    --accent: #c8391a;
+    --accent-soft: #f3ded6;
+    --warn: #8a5a00;
+    --danger: #8c2f26;
+    --danger-soft: #f6e1dd;
+    --success: #2f6b3a;
+    --success-soft: #e1eddc;
+    --code-bg: #1c1b16;
+    --code-ink: #efece3;
+    --code-dim: #9a9689;
+    --code-key: #f2a58c;
+    --code-str: #e9c98a;
+    --serif: "Hanken Grotesk", system-ui, sans-serif;
+    --body: "Hanken Grotesk", system-ui, sans-serif;
+    --mono: "DM Mono", ui-monospace, Consolas, monospace;
+    --measure: 680px;
+    --wide: 860px;
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+}
+.post *,
+.post *::before,
+.post *::after {
+    box-sizing: border-box;
+}
+.post a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+}
+.post a:hover {
+    color: var(--ink);
+}
+.post :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+.post code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--surface-2);
+    padding: 0.08em 0.35em;
+    border-radius: 3px;
+    word-break: break-word;
+}
+.post p,
+.post ul,
+.post ol {
+    margin: 0 0 1.1rem;
+}
+.post ul,
+.post ol {
+    padding-left: 1.3rem;
+}
+.post li {
+    margin: 0.35rem 0;
+}
+.post strong {
+    font-weight: 600;
+}
+.post em {
+    font-style: italic;
+}
+
+/* Columna de lectura */
+.post-wrap {
+    max-width: var(--wide);
+    margin: 0 auto;
+    padding: 0 24px;
+}
+.post-body > *,
+.post-body .practice > *,
+.post-body .prose > * {
+    max-width: var(--measure);
+}
+.post-body > .tbl,
+.post-body > .code,
+.post-body > .grid2,
+.post-body > .grid3,
+.post-body > [data-stack] {
+    max-width: var(--wide);
+}
+.post-body .prose {
+    max-width: none;
+}
+
+/* Cabecera del post */
+.post-head {
+    padding: 56px 0 36px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 40px;
+}
+.post-series {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-3);
+    margin-bottom: 18px;
+}
+.post-series a {
+    color: var(--accent);
+    text-decoration: none;
+}
+.post-series a:hover {
+    text-decoration: underline;
+}
+.post-kicker {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 10px;
+}
+.post-head h1 {
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    margin: 0 0 18px;
+    text-wrap: balance;
+    max-width: 20ch;
+}
+.post-lede {
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 60ch;
+    margin: 0 0 22px;
+    text-wrap: pretty;
+}
+.post-meta {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 0;
+}
+.post-meta span + span::before {
+    content: "·";
+    margin: 0 10px;
+}
+
+/* Selector de stack: solo en posts que tienen ejemplos por stack */
+.stack-bar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: rgba(244, 241, 234, 0.96);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+    margin: -40px 0 40px;
+    padding: 10px 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    font-size: 14px;
+    color: var(--ink-2);
+}
+.seg {
+    display: inline-flex;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.seg button {
+    font: 500 13px var(--body);
+    border: 0;
+    border-right: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--ink-2);
+    padding: 6px 14px;
+    cursor: pointer;
+}
+.seg button:last-child {
+    border-right: 0;
+}
+.seg button[aria-pressed="true"] {
+    background: var(--ink);
+    color: var(--paper);
+}
+[data-stack] {
+    display: none;
+}
+.stack-dotnet [data-stack="dotnet"],
+.stack-node [data-stack="node"] {
+    display: block;
+}
+.stack-dotnet span[data-stack="dotnet"],
+.stack-node span[data-stack="node"] {
+    display: inline;
+}
+
+/* Títulos */
+.post h2,
+.post h3 {
+    font-family: var(--serif);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    margin: 0;
+}
+.post-body h2 {
+    font-size: 27px;
+    font-weight: 700;
+    margin-top: 3rem;
+    margin-bottom: 0.9rem;
+}
+.post-body h3 {
+    font-size: 19px;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+}
+.post-body > h2:first-child {
+    margin-top: 0;
+}
+
+/* Objetivos de la sesión */
+.goals {
+    border-left: 3px solid var(--accent);
+    padding: 4px 0 4px 20px;
+    margin: 0 0 2rem;
+}
+.goals h3 {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-3);
+    margin: 0 0 8px;
+}
+.goals ul {
+    margin: 0;
+}
+.course {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin: -1rem 0 2rem;
+}
+
+/* Un solo tipo de nota, con el color del borde como única variación */
+.note {
+    background: var(--surface);
+    border-left: 3px solid var(--line-strong);
+    padding: 14px 20px;
+    margin: 1.4rem 0;
+    font-size: 16px;
+    line-height: 1.65;
+}
+.note.warn {
+    border-left-color: var(--warn);
+}
+.note.danger {
+    border-left-color: var(--danger);
+}
+.note strong:first-child {
+    font-weight: 700;
+}
+
+/* Listas clave–valor (antes eran tablas de dos columnas) */
+.kv {
+    list-style: none;
+    padding: 0;
+    margin: 1.2rem 0 1.6rem;
+    border-top: 1px solid var(--line);
+}
+.kv li {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 6px 24px;
+    padding: 12px 0;
+    margin: 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 16px;
+    line-height: 1.55;
+}
+.kv strong {
+    font-weight: 600;
+}
+.kv span {
+    color: var(--ink-2);
+}
+
+/* Tablas: solo comparaciones de 3 o más columnas */
+.tbl {
+    overflow-x: auto;
+    margin: 1.2rem 0 1.8rem;
+    border-top: 2px solid var(--ink);
+}
+.post table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 15.5px;
+    line-height: 1.55;
+}
+.post th,
+.post td {
+    text-align: left;
+    vertical-align: top;
+    padding: 11px 16px 11px 0;
+    border-bottom: 1px solid var(--line);
+}
+.post th:last-child,
+.post td:last-child {
+    padding-right: 0;
+}
+.post th {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-3);
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.post td code {
+    white-space: nowrap;
+}
+
+/* Tarjetas */
+.grid2,
+.grid3 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 1.4rem 0 1.8rem;
+}
+.grid3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.card {
+    border: 1px solid var(--line);
+    background: var(--paper);
+    padding: 16px 18px;
+    font-size: 15.5px;
+    line-height: 1.6;
+}
+.card h3 {
+    font-size: 16.5px;
+    font-weight: 600;
+    margin: 0 0 6px;
+}
+.card p {
+    color: var(--ink-2);
+    margin: 0.3rem 0 0;
+}
+
+/* Flujo */
+.flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 1.2rem 0 1.6rem;
+}
+.flow span {
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    padding: 6px 12px;
+    font-weight: 500;
+    font-size: 14px;
+    font-family: var(--mono);
+}
+.flow b {
+    color: var(--ink-3);
+    font-weight: 400;
+}
+
+/* Código: nombre de archivo siempre visible; lo largo se recorta con "ver todo" */
+.code {
+    margin: 1.2rem 0 1.8rem;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    border-radius: 6px;
+    overflow: hidden;
+}
+.code .fname {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 16px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--code-dim);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.code pre {
+    margin: 0;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.6;
+    tab-size: 2;
+}
+.code pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+    word-break: normal;
+    white-space: pre;
+}
+.code.clipped pre {
+    max-height: 14.5em;
+    overflow: hidden;
+    position: relative;
+}
+.code.clipped pre::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 5em;
+    background: linear-gradient(transparent, var(--code-bg));
+}
+.code .more {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--code-ink);
+    font: 500 13px var(--mono);
+    padding: 10px;
+    cursor: pointer;
+}
+.code .more:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+.copy {
+    font: 500 12.5px var(--mono);
+    color: var(--code-dim);
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 3px 10px;
+    cursor: pointer;
+}
+.copy:hover {
+    color: var(--code-ink);
+    border-color: var(--code-ink);
+}
+.c {
+    color: var(--code-dim);
+    font-style: italic;
+}
+.k {
+    color: var(--code-key);
+    font-weight: 500;
+}
+.s {
+    color: var(--code-str);
+}
+
+/* Práctica: laboratorio + checklist + autoevaluación, un solo bloque al final */
+.practice {
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--ink);
+}
+.practice-h {
+    font-family: var(--mono) !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: var(--accent);
+    margin: 0 0 1.2rem !important;
+}
+.lab {
+    margin: 0 0 2.2rem;
+}
+.lab .lab-h {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 0.4rem;
+}
+.lab h3 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+}
+.lab ol {
+    margin-top: 0.6rem;
+}
+.lab li {
+    margin: 0.5rem 0;
+}
+.pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-3);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 2px 10px;
+}
+.check {
+    margin: 0 0 2.2rem;
+}
+.check h3 {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 17px;
+    margin: 0 0 4px;
+}
+.check > .count {
+    display: block;
+    margin-bottom: 4px;
+}
+.check .count {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 400;
+    color: var(--ink-3);
+}
+.check label {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1.55;
+}
+.check input {
+    margin-top: 0.35rem;
+    width: 17px;
+    height: 17px;
+    accent-color: var(--accent);
+    flex: none;
+}
+.check label.done span {
+    color: var(--ink-3);
+    text-decoration: line-through;
+    text-decoration-color: var(--line-strong);
+}
+.quiz {
+    margin: 0;
+}
+.quiz h3 {
+    font-size: 17px;
+    margin: 0 0 4px;
+}
+.q {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+}
+.q p {
+    font-weight: 600;
+    margin: 0 0 0.6rem;
+    font-size: 16px;
+}
+.opts {
+    display: grid;
+    gap: 6px;
+}
+.opts button {
+    text-align: left;
+    font: inherit;
+    font-size: 15.5px;
+    line-height: 1.5;
+    padding: 9px 13px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+}
+.opts button:hover:not(:disabled) {
+    border-color: var(--ink-2);
+}
+.opts button.ok {
+    background: var(--success-soft);
+    border-color: var(--success);
+    color: var(--success);
+    font-weight: 600;
+}
+.opts button.ok::before {
+    content: "✓ ";
+}
+.opts button.bad {
+    background: var(--danger-soft);
+    border-color: var(--danger);
+    color: var(--danger);
+}
+.opts button.bad::before {
+    content: "✗ ";
+}
+.opts button:disabled {
+    cursor: default;
+}
+.why {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-top: 0.6rem;
+    border-left: 2px solid var(--line-strong);
+    padding: 0.1rem 0 0.1rem 0.7rem;
+}
+.quiz .reset {
+    margin-top: 12px;
+    font: 500 13px var(--mono);
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 5px 12px;
+    color: var(--ink-2);
+    cursor: pointer;
+}
+
+/* Índice de la serie */
+.series-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 3rem;
+    counter-reset: part;
+    border-top: 1px solid var(--line);
+}
+.series-list li {
+    margin: 0;
+    border-bottom: 1px solid var(--line);
+}
+.series-list a {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    gap: 6px 16px;
+    padding: 16px 0;
+    text-decoration: none;
+    color: var(--ink);
+    align-items: baseline;
+}
+.series-list a:hover .series-title {
+    color: var(--accent);
+}
+.series-n {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+}
+.series-title {
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    transition: color 200ms ease;
+}
+.series-lede {
+    grid-column: 2;
+    font-size: 15.5px;
+    color: var(--ink-2);
+    line-height: 1.55;
+}
+.series-min {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-3);
+    white-space: nowrap;
+}
+
+/* Pie: anterior / siguiente */
+.post-foot {
+    margin-top: 4rem;
+    padding: 28px 0 64px;
+    border-top: 1px solid var(--line);
+}
+.post-foot .index-link {
+    font-family: var(--mono);
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--ink-3);
+}
+.post-foot .index-link:hover {
+    color: var(--accent);
+}
+.pager {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+.pager a {
+    display: block;
+    border: 1px solid var(--line);
+    padding: 16px 18px;
+    text-decoration: none;
+    color: var(--ink);
+}
+.pager a:hover {
+    border-color: var(--ink);
+}
+.pager a.next {
+    text-align: right;
+    grid-column: 2;
+}
+.pager small {
+    display: block;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink-3);
+    margin-bottom: 4px;
+}
+.pager b {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+@media (max-width: 700px) {
+    .post {
+        font-size: 16.5px;
+    }
+    .post-wrap {
+        padding: 0 18px;
+    }
+    .post-head {
+        padding-top: 36px;
+    }
+    .post-lede {
+        font-size: 18px;
+    }
+    .grid2,
+    .grid3 {
+        grid-template-columns: 1fr;
+    }
+    .kv li {
+        grid-template-columns: 1fr;
+        gap: 2px;
+    }
+    /* Las tablas se apilan: cada fila es una tarjeta y cada celda lleva su encabezado */
+    .tbl {
+        overflow: visible;
+        border-top: 0;
+    }
+    .post table,
+    .post tbody,
+    .post tr,
+    .post td {
+        display: block;
+    }
+    .post thead {
+        display: none;
+    }
+    .post tr {
+        border: 1px solid var(--line);
+        padding: 4px 14px;
+        margin-bottom: 12px;
+        background: var(--paper);
+    }
+    .post td {
+        padding: 8px 0;
+        border-bottom: 1px solid var(--line);
+    }
+    .post td:last-child {
+        border-bottom: 0;
+    }
+    .post td[data-label]::before {
+        content: attr(data-label);
+        display: block;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--ink-3);
+        margin-bottom: 2px;
+    }
+    .post td code {
+        white-space: normal;
+    }
+    .pager {
+        grid-template-columns: 1fr;
+    }
+    .pager a.next {
+        grid-column: 1;
+    }
+    .series-list a {
+        grid-template-columns: 32px minmax(0, 1fr);
+    }
+    .series-min {
+        grid-column: 2;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .post * {
+        transition: none !important;
+    }
+}

@@ -1,0 +1,257 @@
+<div class="goals"><h3>Al terminar, cada persona puede</h3><ul>
+    <li>Escribir hooks que formatean, protegen archivos y verifican antes de terminar.</li>
+    <li>Empaquetar un procedimiento del equipo como skill.</li>
+    <li>Crear un subagente especializado con herramientas limitadas.</li>
+  </ul></div>
+  <p class="course"><strong>Curso complementario:</strong> <a href="https://anthropic.skilljar.com/introduction-to-agent-skills">Introduction to Agent Skills</a> · <a href="https://anthropic.skilljar.com/introduction-to-subagents">Introduction to Subagents</a></p>
+
+  <div class="tbl"><table>
+    <thead><tr><th>Herramienta</th><th>Qué es</th><th>Garantía</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Herramienta"><strong>CLAUDE.md / rules</strong></td><td data-label="Qué es">Contexto e instrucciones</td><td data-label="Garantía">Claude <em>intenta</em> seguirlas</td></tr>
+      <tr><td data-label="Herramienta"><strong>Hooks</strong></td><td data-label="Qué es">Comandos que Claude Code ejecuta en eventos del ciclo de vida</td><td data-label="Garantía"><strong>Siempre</strong> se ejecutan</td></tr>
+      <tr><td data-label="Herramienta"><strong>Skills</strong></td><td data-label="Qué es">Procedimientos con instrucciones, scripts y archivos de apoyo</td><td data-label="Garantía">Se cargan al invocarlas</td></tr>
+      <tr><td data-label="Herramienta"><strong>Subagentes</strong></td><td data-label="Qué es">Agentes con su propio contexto, prompt, herramientas y modelo</td><td data-label="Garantía">Aíslan el trabajo del contexto principal</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>Regla práctica:</strong> si algo <em>debe</em> pasar siempre (formatear, bloquear secretos, correr tests), es un hook. Si es "cómo hacemos X", es una skill o una regla.</div>
+
+  <h2>Hooks</h2>
+  <h3>Eventos principales</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Evento</th><th>Cuándo</th><th>¿Puede bloquear?</th><th>Uso típico</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Evento"><code>SessionStart</code></td><td data-label="Cuándo">Inicia o se retoma la sesión</td><td data-label="¿Puede bloquear?">No</td><td data-label="Uso típico">Inyectar contexto (rama, sprint, estado)</td></tr>
+      <tr><td data-label="Evento"><code>UserPromptSubmit</code></td><td data-label="Cuándo">Envías un prompt</td><td data-label="¿Puede bloquear?">Sí</td><td data-label="Uso típico">Añadir contexto, bloquear secretos pegados</td></tr>
+      <tr><td data-label="Evento"><code>PreToolUse</code></td><td data-label="Cuándo">Antes de usar una herramienta</td><td data-label="¿Puede bloquear?">Sí</td><td data-label="Uso típico">Proteger archivos, bloquear comandos</td></tr>
+      <tr><td data-label="Evento"><code>PermissionRequest</code></td><td data-label="Cuándo">Se va a mostrar un diálogo de permiso</td><td data-label="¿Puede bloquear?">Decide</td><td data-label="Uso típico">Aprobar o denegar automáticamente</td></tr>
+      <tr><td data-label="Evento"><code>PostToolUse</code></td><td data-label="Cuándo">La herramienta terminó bien</td><td data-label="¿Puede bloquear?">No</td><td data-label="Uso típico">Formatear, lint, logs</td></tr>
+      <tr><td data-label="Evento"><code>Stop</code></td><td data-label="Cuándo">Claude termina de responder</td><td data-label="¿Puede bloquear?">Sí (obliga a continuar)</td><td data-label="Uso típico">Exigir tests en verde</td></tr>
+      <tr><td data-label="Evento"><code>SubagentStart</code> / <code>SubagentStop</code></td><td data-label="Cuándo">Subagente inicia o termina</td><td data-label="¿Puede bloquear?">Stop: sí</td><td data-label="Uso típico">Validar su resultado</td></tr>
+      <tr><td data-label="Evento"><code>Notification</code></td><td data-label="Cuándo">Claude necesita tu atención</td><td data-label="¿Puede bloquear?">No</td><td data-label="Uso típico">Notificación de escritorio o Slack</td></tr>
+      <tr><td data-label="Evento"><code>PreCompact</code> / <code>PostCompact</code></td><td data-label="Cuándo">Alrededor de la compactación</td><td data-label="¿Puede bloquear?">No</td><td data-label="Uso típico">Guardar el transcript</td></tr>
+      <tr><td data-label="Evento"><code>SessionEnd</code></td><td data-label="Cuándo">Termina la sesión</td><td data-label="¿Puede bloquear?">No</td><td data-label="Uso típico">Limpieza, métricas</td></tr>
+    </tbody>
+  </table></div>
+  <p class="prose">Hay más eventos (<code>PostToolUseFailure</code>, <code>ConfigChange</code>, <code>FileChanged</code>, <code>InstructionsLoaded</code>, <code>WorktreeCreate</code>, <code>TaskCompleted</code>…). La referencia completa está en la documentación de hooks.</p>
+
+  <h3>Anatomía</h3>
+  <div class="code"><div class="fname"><span>Forma de la configuración</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"NombreDelEvento"</span>: [
+      {
+        <span class="k">"matcher"</span>: <span class="s">"Edit|Write"</span>,         <span class="c">// qué herramienta; vacío = todas</span>
+        <span class="k">"hooks"</span>: [
+          {
+            <span class="k">"type"</span>: <span class="s">"command"</span>,           <span class="c">// también: http, mcp_tool, prompt, agent</span>
+            <span class="k">"command"</span>: <span class="s">"\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/x.sh"</span>,
+            <span class="k">"if"</span>: <span class="s">"Edit(*.cs)"</span>,           <span class="c">// filtro opcional con sintaxis de permisos</span>
+            <span class="k">"timeout"</span>: 60                  <span class="c">// segundos</span>
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre></div>
+  <p class="prose">Los comentarios <code>//</code> son solo explicativos: JSON no admite comentarios en el archivo real.</p>
+  <div class="grid3">
+    <div class="card"><h3>Entrada</h3><p>JSON por stdin: <code>session_id</code>, <code>cwd</code>, <code>hook_event_name</code>, <code>tool_name</code>, <code>tool_input</code> (p. ej. <code>tool_input.file_path</code>, <code>tool_input.command</code>).</p></div>
+    <div class="card"><h3>Exit 0</h3><p>Todo bien. En <code>SessionStart</code> y <code>UserPromptSubmit</code> el stdout se agrega como contexto para Claude.</p></div>
+    <div class="card"><h3>Exit 2</h3><p>Bloquea. El stderr se usa como motivo y Claude lo lee. Otros códigos son errores no bloqueantes.</p></div>
+  </div>
+  <p class="prose">Para control fino, imprime JSON en stdout. Los valores de <code>permissionDecision</code> son <code>allow</code>, <code>deny</code> o <code>ask</code>. Los campos específicos del evento van dentro de <code>hookSpecificOutput</code>; si los pones arriba, se ignoran sin error.</p>
+  <div class="code"><div class="fname"><span>Salida JSON de un hook</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="c">// PreToolUse: decidir por la herramienta</span>
+{ <span class="k">"hookSpecificOutput"</span>: { <span class="k">"hookEventName"</span>: <span class="s">"PreToolUse"</span>,
+    <span class="k">"permissionDecision"</span>: <span class="s">"deny"</span>, <span class="k">"permissionDecisionReason"</span>: <span class="s">"…"</span> } }
+
+<span class="c">// Stop: no dejar terminar</span>
+{ <span class="k">"decision"</span>: <span class="s">"block"</span>, <span class="k">"reason"</span>: <span class="s">"…"</span> }</code></pre></div>
+
+  <h3>Hook 1 · Proteger archivos sensibles (PreToolUse)</h3>
+  <div class="code"><div class="fname"><span>.claude/hooks/proteger-archivos.sh</span><button class="copy" type="button">Copiar</button></div><pre><code>#!/usr/bin/env bash
+<span class="c"># Bloquea ediciones a archivos que solo deben cambiar humanos.</span>
+INPUT=$(cat)
+FILE=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+FILE="${FILE//\\//}"   <span class="c"># normaliza rutas de Windows</span>
+
+PROTEGIDOS=(".env" ".git/" <span data-stack="dotnet">"appsettings.Production.json" "/Migrations/"</span><span data-stack="node">"pnpm-lock.yaml" "prisma/migrations/"</span>)
+
+for p in "${PROTEGIDOS[@]}"; do
+  if [[ "$FILE" == *"$p"* ]]; then
+    echo "Bloqueado: $FILE es un archivo protegido ($p). <span data-stack="dotnet">Las migraciones se generan con dotnet ef.</span><span data-stack="node">Usa los comandos de pnpm/prisma.</span>" &gt;&amp;2
+    exit 2
+  fi
+done
+exit 0</code></pre></div>
+
+  <h3>Hook 2 · Formatear después de editar (PostToolUse)</h3>
+  <div data-stack="dotnet">
+  <div class="code"><div class="fname"><span>.claude/hooks/formatear.sh · .NET</span><button class="copy" type="button">Copiar</button></div><pre><code>#!/usr/bin/env bash
+FILE=$(jq -r '.tool_input.file_path // empty')
+case "$FILE" in
+  *.cs)
+    dotnet format "$CLAUDE_PROJECT_DIR/Orders.sln" --include "$FILE" --no-restore &gt;/dev/null 2&gt;&amp;1 ;;
+esac
+exit 0</code></pre></div>
+  </div>
+  <div data-stack="node">
+  <div class="code"><div class="fname"><span>.claude/hooks/formatear.sh · Node</span><button class="copy" type="button">Copiar</button></div><pre><code>#!/usr/bin/env bash
+FILE=$(jq -r '.tool_input.file_path // empty')
+case "$FILE" in
+  *.ts|*.tsx|*.js|*.json|*.md)
+    cd "$CLAUDE_PROJECT_DIR" &amp;&amp; pnpm exec prettier --write "$FILE" &gt;/dev/null 2&gt;&amp;1
+    pnpm exec eslint --fix "$FILE" &gt;/dev/null 2&gt;&amp;1 ;;
+esac
+exit 0</code></pre></div>
+  </div>
+
+  <h3>Hook 3 · No terminar con tests en rojo (Stop)</h3>
+  <div class="code"><div class="fname"><span>.claude/hooks/tests-verdes.sh</span><button class="copy" type="button">Copiar</button></div><pre><code>#!/usr/bin/env bash
+INPUT=$(cat)
+<span class="c"># Evita bucles: si ya obligamos a continuar una vez, deja terminar.</span>
+if [ "$(echo "$INPUT" | jq -r '.stop_hook_active')" = "true" ]; then exit 0; fi
+
+cd "$CLAUDE_PROJECT_DIR"
+<span class="c"># Solo verifica si hay cambios sin commit.</span>
+git diff --quiet &amp;&amp; git diff --cached --quiet &amp;&amp; exit 0
+
+if ! OUT=$(<span data-stack="dotnet">dotnet test --nologo -v q</span><span data-stack="node">pnpm -r test</span> 2&gt;&amp;1); then
+  echo "Los tests fallan. Corrígelos antes de terminar:" &gt;&amp;2
+  echo "$OUT" | tail -n 40 &gt;&amp;2
+  exit 2
+fi
+exit 0</code></pre></div>
+
+  <h3>Hook 4 · Contexto al iniciar (SessionStart)</h3>
+  <div class="code"><div class="fname"><span>.claude/hooks/contexto.sh</span><button class="copy" type="button">Copiar</button></div><pre><code>#!/usr/bin/env bash
+cd "$CLAUDE_PROJECT_DIR"
+echo "Rama actual: $(git branch --show-current)"
+echo "Últimos commits:"; git log --oneline -5
+exit 0</code></pre></div>
+
+  <h3>Registrarlos en .claude/settings.json</h3>
+  <div class="code"><div class="fname"><span>.claude/settings.json (sección hooks)</span><button class="copy" type="button">Copiar</button></div><pre><code>{
+  <span class="k">"hooks"</span>: {
+    <span class="k">"SessionStart"</span>: [
+      { <span class="k">"matcher"</span>: <span class="s">"startup|resume"</span>,
+        <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>: <span class="s">"\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/contexto.sh"</span> }] }
+    ],
+    <span class="k">"PreToolUse"</span>: [
+      { <span class="k">"matcher"</span>: <span class="s">"Edit|Write"</span>,
+        <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>: <span class="s">"\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/proteger-archivos.sh"</span> }] }
+    ],
+    <span class="k">"PostToolUse"</span>: [
+      { <span class="k">"matcher"</span>: <span class="s">"Edit|Write"</span>,
+        <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>: <span class="s">"\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/formatear.sh"</span> }] }
+    ],
+    <span class="k">"Stop"</span>: [
+      { <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>: <span class="s">"\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/tests-verdes.sh"</span>, <span class="k">"timeout"</span>: 300 }] }
+    ],
+    <span class="k">"Notification"</span>: [
+      { <span class="k">"matcher"</span>: <span class="s">"permission_prompt|idle_prompt"</span>,
+        <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>: <span class="s">"notify-send 'Claude Code' 'Necesita tu atención'"</span> }] }
+    ]
+  }
+}</code></pre></div>
+  <div class="prose"><ul>
+    <li>Haz los scripts ejecutables: <code>chmod +x .claude/hooks/*.sh</code>.</li>
+    <li>La notificación usa <code>notify-send</code> (Linux). En macOS usa <code>osascript -e 'display notification "…" with title "Claude Code"'</code>; en Windows, un script de PowerShell. Como depende del SO, ponla en <code>~/.claude/settings.json</code>, no en el repo.</li>
+    <li><code>/hooks</code> muestra los hooks cargados. <code>claude --debug</code> registra cada ejecución.</li>
+    <li>Un hook que sale con código 2 bloquea incluso si hay una regla <code>allow</code>; pero un hook que dice "allow" no anula un <code>deny</code>.</li>
+  </ul></div>
+  <div class="note danger"><strong>Seguridad:</strong> los hooks ejecutan comandos con tus permisos. Revisa los hooks de un repo antes de confiar en la carpeta, igual que revisarías un script de <code>postinstall</code>.</div>
+
+  <h2>Skills</h2>
+  <div class="prose">
+    <p>Una skill es una carpeta con <code>SKILL.md</code> (frontmatter + instrucciones) y, opcionalmente, scripts y archivos de referencia. Claude solo tiene en contexto la descripción de cada skill; el contenido completo se carga al usarla (<strong>divulgación progresiva</strong>). Se invocan con <code>/nombre</code> o Claude las usa solo cuando la descripción encaja.</p>
+    <p>Los antiguos comandos en <code>.claude/commands/*.md</code> siguen funcionando y ahora son equivalentes a skills; para trabajo nuevo usa <code>.claude/skills/</code>.</p>
+  </div>
+  <div data-stack="dotnet">
+  <div class="code"><div class="fname"><span>.claude/skills/nueva-migracion/SKILL.md</span><button class="copy" type="button">Copiar</button></div><pre><code>---
+description: Crea y valida una migración de EF Core. Úsala cuando el usuario cambie entidades o pida una migración.
+argument-hint: "[NombreDeLaMigracion]"
+disable-model-invocation: true
+allowed-tools: Bash(dotnet ef *) Bash(dotnet build *) Read Grep
+---
+<span class="k">## Estado actual</span>
+!`git status --short`
+
+<span class="k">## Tarea</span>
+1. Verifica que el build pasa: `dotnet build Orders.sln`.
+2. Crea la migración: `dotnet ef migrations add $ARGUMENTS -p src/Orders.Infrastructure -s src/Orders.Api`.
+3. Lee el archivo generado y reporta: tablas/columnas afectadas, pérdida de datos posible, índices.
+4. Si hay `DropColumn` o cambios de tipo, detente y pide confirmación.
+5. Genera el script idempotente para revisión: `dotnet ef migrations script --idempotent`.</code></pre></div>
+  </div>
+  <div data-stack="node">
+  <div class="code"><div class="fname"><span>.claude/skills/nuevo-endpoint/SKILL.md</span><button class="copy" type="button">Copiar</button></div><pre><code>---
+description: Crea un endpoint NestJS completo (DTO zod, servicio, controller, tests). Úsala cuando pidan un endpoint nuevo en apps/api.
+argument-hint: "[recurso] [verbo]"
+arguments: [recurso, verbo]
+allowed-tools: Bash(pnpm --filter api *) Read Grep Glob Edit Write
+---
+<span class="k">## Referencia</span>
+Sigue el patrón de [ejemplo-endpoint.md](ejemplo-endpoint.md).
+
+<span class="k">## Tarea</span>
+Crea el endpoint `$verbo` para el recurso `$recurso`:
+1. DTO con zod en `apps/api/src/$recurso/dto/`.
+2. Método en el servicio con manejo de errores tipado.
+3. Ruta en el controller con guard de autenticación.
+4. Tests unitarios del servicio y un test e2e con Supertest.
+5. Corre `pnpm --filter api test` y `pnpm --filter api typecheck`.</code></pre></div>
+  </div>
+  <ul class="kv">
+<li><strong><code>description</code></strong><span>Qué hace y cuándo usarla. Claude decide con esto; escribe primero el caso principal.</span></li>
+<li><strong><code>disable-model-invocation: true</code></strong><span>Solo tú la invocas (deploys, migraciones, cualquier cosa con efectos).</span></li>
+<li><strong><code>user-invocable: false</code></strong><span>Solo Claude la usa (conocimiento de referencia).</span></li>
+<li><strong><code>allowed-tools</code></strong><span>Herramientas pre-aprobadas mientras corre.</span></li>
+<li><strong><code>argument-hint</code>, <code>arguments</code></strong><span>Argumentos: <code>$ARGUMENTS</code>, <code>$0</code>, <code>$1</code> o <code>$nombre</code>.</span></li>
+<li><strong><code>context: fork</code> + <code>agent</code></strong><span>Ejecuta en un subagente aislado.</span></li>
+<li><strong><code>paths</code>, <code>model</code>, <code>effort</code></strong><span>Activar por ruta; forzar modelo o esfuerzo.</span></li>
+</ul>
+  <p class="prose"><code>!`comando`</code> ejecuta el comando antes de enviar la skill y reemplaza el marcador con la salida, así Claude recibe datos reales. Mantén <code>SKILL.md</code> por debajo de 500 líneas y mueve el detalle a archivos de apoyo. <code>/skills</code> lista las skills y <code>/skill-doctor</code> revisa cuánto contexto consumen.</p>
+  <div class="note"><strong>Skills en claude.ai y en Claude Code:</strong> el mismo formato sirve en ambos. Las skills que un admin provisiona en la organización se sincronizan a Claude Code y aparecen como <code>/anthropic-skills:&lt;nombre&gt;</code>.</div>
+
+  <h2>Subagentes</h2>
+  <p class="prose">Un subagente trabaja en su propio contexto y devuelve solo el resultado, así la sesión principal no se llena con archivos leídos. Claude Code trae <strong>Explore</strong> (búsqueda de solo lectura), <strong>Plan</strong> y <strong>general-purpose</strong>. Los propios se crean con <code>/agents</code> o a mano:</p>
+  <div class="code"><div class="fname"><span>.claude/agents/revisor-seguridad.md</span><button class="copy" type="button">Copiar</button></div><pre><code>---
+name: revisor-seguridad
+description: Revisa cambios buscando vulnerabilidades (inyección, authz, secretos, deserialización). Úsalo antes de abrir un PR que toque autenticación, pagos o datos personales.
+tools: Read, Grep, Glob, Bash
+model: opus
+---
+Eres un revisor de seguridad para <span data-stack="dotnet">APIs ASP.NET Core</span><span data-stack="node">APIs NestJS y apps Next.js</span>.
+1. Lee `git diff main...HEAD`.
+2. Revisa: validación de entrada, autorización por recurso, consultas parametrizadas,
+   secretos en código o logs, CORS, manejo de errores que filtre información.
+3. Reporta solo hallazgos con evidencia: archivo, línea, riesgo, escenario de explotación y corrección.
+4. No edites archivos ni ejecutes comandos que modifiquen el repositorio.</code></pre></div>
+  <div class="prose"><ul>
+    <li>Invócalo en lenguaje natural ("usa el revisor-seguridad") o con <code>@"revisor-seguridad (agent)"</code>.</li>
+    <li>Campos útiles: <code>tools</code>/<code>disallowedTools</code>, <code>model</code> (<code>sonnet</code>, <code>opus</code>, <code>haiku</code>, <code>fable</code>, <code>inherit</code>), <code>permissionMode</code>, <code>skills</code>, <code>mcpServers</code>, <code>memory</code>, <code>isolation: worktree</code>, <code>maxTurns</code>.</li>
+    <li>Prioridad por nombre: managed → <code>--agents</code> → <code>.claude/agents/</code> → <code>~/.claude/agents/</code> → plugins.</li>
+  </ul></div>
+
+  <div class="practice">
+<h2 class="practice-h">Práctica</h2>
+<div class="lab">
+    <div class="lab-h"><h3>Laboratorio 5 · Automatizar el repo</h3><span class="pill">75 min</span></div>
+    <ol>
+      <li>Crea <code>.claude/hooks/</code> con los cuatro scripts y regístralos. Verifica con <code>/hooks</code>.</li>
+      <li>Pide a Claude que edite <code>.env</code>: el hook debe bloquearlo y Claude debe explicar por qué.</li>
+      <li>Rompe un test a propósito y pide un cambio menor: el hook de Stop debe obligar a Claude a arreglarlo.</li>
+      <li>Convierte un procedimiento del equipo en skill (migración, release, nuevo endpoint). Pruébalo con <code>/nombre</code>.</li>
+      <li>Crea el subagente de seguridad y úsalo sobre la rama del laboratorio 3.</li>
+      <li>Abre un PR con todo y pide revisión a otra persona.</li>
+    </ol>
+  </div>
+  <div class="check" data-check="s5">
+    <h3>Checklist · Sesión 5</h3>
+    <label><input type="checkbox" id="s5-1"><span>Hooks de protección, formato y tests funcionando en el repo.</span></label>
+    <label><input type="checkbox" id="s5-2"><span>Entiendo exit 0 vs exit 2 y la salida JSON.</span></label>
+    <label><input type="checkbox" id="s5-3"><span>Creé una skill del equipo con frontmatter correcto.</span></label>
+    <label><input type="checkbox" id="s5-4"><span>Creé un subagente con herramientas limitadas.</span></label>
+  </div>
+  <div class="quiz" data-quiz="s5"></div>
+</div>

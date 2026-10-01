@@ -1,0 +1,81 @@
+<div class="goals"><h3>Al terminar, cada persona puede</h3><ul>
+    <li>Elegir modelo y nivel de esfuerzo según la tarea.</li>
+    <li>Crear y compartir un Project con conocimiento e instrucciones del equipo.</li>
+    <li>Usar memoria, búsqueda en chats pasados, Research, artifacts, Docs y Slides.</li>
+    <li>Explicar qué pasa con los datos del equipo en un plan comercial.</li>
+  </ul></div>
+  <p class="course"><strong>Curso complementario:</strong> <a href="https://anthropic.skilljar.com/claude-101">Claude 101</a></p>
+
+  <h2>Modelos y esfuerzo</h2>
+  <ul class="kv">
+<li><strong><strong>Claude Fable 5.1</strong></strong><span>El más capaz para código y trabajo de conocimiento (septiembre 2026). Refactors grandes, diseño de arquitectura, bugs difíciles.</span></li>
+<li><strong><strong>Claude Opus 5</strong></strong><span>Tareas complejas de varios pasos con buen balance de velocidad. Tiene modo Fast.</span></li>
+<li><strong><strong>Claude Sonnet 5</strong></strong><span>Trabajo diario: features medianas, tests, explicación de código. Rápido y económico.</span></li>
+<li><strong><strong>Claude Haiku 4.5</strong></strong><span>Tareas cortas y de alto volumen; buen candidato para subagentes de búsqueda.</span></li>
+</ul>
+  <p class="prose">Ejemplos concretos por tipo de tarea en <a href="/es/blog/de-copilot-a-claude/conceptos#modelo-esfuerzo">Conceptos → Modelo y esfuerzo</a>. El <strong>esfuerzo</strong> (Low, Medium, High, Extra High, Max) controla cuánto razona el modelo antes de responder. Más esfuerzo es mejor para problemas ambiguos y peor para preguntas simples, porque tarda más y consume más cuota. En Fable 5.1 y Opus 5 el razonamiento ("Thinking") siempre está activo.</p>
+
+  <h2>Projects: el conocimiento compartido del equipo</h2>
+  <div class="prose">
+    <p>Un Project agrupa chats con tres cosas en común: <strong>archivos de conocimiento</strong>, <strong>instrucciones</strong> y su propia <strong>memoria</strong>. Es el lugar para lo que no vive en el repositorio: ADRs, estándares de API, guías de estilo, documentación de negocio, contratos OpenAPI.</p>
+    <ul>
+      <li><strong>Capacidad:</strong> cuando el conocimiento se acerca al límite de contexto, Claude activa RAG automáticamente y busca en los archivos en vez de cargarlos todos (hasta ~10× más capacidad). Límite de 30 MB por archivo.</li>
+      <li><strong>Compartir (Team/Enterprise):</strong> "Can view" o "Can edit", con personas, listas o toda la organización. Aparecen en "Shared with me".</li>
+      <li><strong>Instrucciones:</strong> escríbelas como a un compañero nuevo: stack, convenciones, qué evitar, formato de respuesta.</li>
+    </ul>
+  </div>
+  <div class="code"><div class="fname"><span>Instrucciones de ejemplo · Project "Plataforma Pagos"</span><button class="copy" type="button">Copiar</button></div><pre><code>Eres parte del equipo de Plataforma Pagos.
+Stack: <span data-stack="dotnet">.NET 8 (ASP.NET Core Minimal APIs, EF Core, SQL Server, Azure)</span><span data-stack="node">Node 22 + TypeScript (NestJS, Prisma, PostgreSQL, Next.js)</span>.
+- Responde en español; el código y sus comentarios en inglés.
+- Sigue los ADRs de la carpeta de conocimiento; si una propuesta contradice un ADR, dilo.
+- Antes de proponer código, pregunta si falta información de negocio.
+- Prefiere ejemplos con tests. Marca explícitamente cualquier supuesto.</code></pre></div>
+
+  <h2>Memoria y chats pasados</h2>
+  <div class="prose">
+    <p>La memoria guarda hechos durables (rol, preferencias, decisiones) como temas editables. Cada Project tiene su propia memoria separada. La búsqueda en chats pasados permite preguntar "¿qué decidimos sobre el versionado de la API?". Se puede pausar, reiniciar o usar chats incógnito.</p>
+  </div>
+  <div class="note"><strong>Regla del equipo.</strong> La memoria personal no sustituye la documentación. Si una decisión afecta a todos, va a un ADR en el repo o al conocimiento del Project, no a la memoria de una persona.</div>
+
+  <h2>Artifacts, Docs y Slides</h2>
+  <div class="grid3">
+    <div class="card"><h3>Artifacts</h3><p>Páginas, diagramas, SVG y apps React que Claude publica con su propio enlace. Pueden llamar a Claude y a conectores (cada visitante usa su propia cuota).</p></div>
+    <div class="card"><h3>Claude Docs</h3><p>Documentos vivos con coedición, comentarios y @Claude en el hilo. Exporta a .docx, PDF, .md o Google Docs. Ideal para specs y postmortems.</p></div>
+    <div class="card"><h3>Claude Slides</h3><p>Presentaciones 16:9 exportables a PPTX o PDF. Para demos de sprint y propuestas técnicas.</p></div>
+  </div>
+
+  <h2>Research, archivos y conectores</h2>
+  <div class="prose"><ul>
+    <li><strong>Research</strong> ("+" → Research): varias búsquedas encadenadas con citas. Útil para comparar librerías o evaluar una migración. Requiere búsqueda web activa.</li>
+    <li><strong>Creación de archivos:</strong> Claude genera y edita .xlsx, .pptx, .docx y PDF ejecutando código en un entorno aislado. El admin controla la salida a internet de ese entorno.</li>
+    <li><strong>Conectores:</strong> GitHub, Jira/Confluence, Linear, Slack, Google Drive, Notion, Figma. Heredan los permisos del usuario en el sistema de origen: Claude no ve nada que tú no puedas ver.</li>
+    <li><strong>Skills de organización:</strong> un admin sube un .zip con <code>SKILL.md</code> en <em>Organization settings → Skills</em> y queda disponible para todos (sesión S5).</li>
+  </ul></div>
+
+  <h2>Datos y privacidad en planes comerciales</h2>
+  <div class="note"><strong>Lo esencial:</strong> las conversaciones de Team y Enterprise no se usan para entrenar modelos por defecto. La excepción es el feedback con pulgar arriba/abajo, que conserva esa conversación; el admin puede desactivarlo con el ajuste "Rate chats". Enterprise añade retención personalizada, audit logs, SCIM y claves administradas por el cliente.</div>
+
+  <div class="practice">
+<h2 class="practice-h">Práctica</h2>
+<div class="lab">
+    <div class="lab-h"><h3>Laboratorio 1 · Project del equipo</h3><span class="pill">45 min</span></div>
+    <ol>
+      <li>Crea un Project con el nombre del producto. Sube 3–5 documentos reales: un ADR, el estándar de API, el contrato OpenAPI de un servicio y la guía de estilo.</li>
+      <li>Escribe instrucciones a partir de la plantilla de arriba y ajústalas a tu equipo.</li>
+      <li>Pregunta: <em>"Según nuestros ADRs, ¿cómo deberíamos exponer un endpoint de reembolsos?"</em>. Revisa si cita los documentos correctos.</li>
+      <li>Cambia a Sonnet 5 con esfuerzo bajo y repite. Compara calidad y tiempo con Fable 5.1 en esfuerzo alto.</li>
+      <li>Pide un Claude Doc con el diseño del endpoint y deja un comentario con <code>@Claude</code> pidiendo añadir los casos de error.</li>
+      <li>Comparte el Project con el equipo como "Can view".</li>
+    </ol>
+  </div>
+
+  <div class="check" data-check="s1">
+    <h3>Checklist · Sesión 1</h3>
+    <label><input type="checkbox" id="s1-1"><span>Sé cuándo usar Fable 5.1, Opus 5, Sonnet 5 y Haiku 4.5.</span></label>
+    <label><input type="checkbox" id="s1-2"><span>Tengo un Project del equipo con conocimiento e instrucciones.</span></label>
+    <label><input type="checkbox" id="s1-3"><span>Entiendo la diferencia entre memoria, conocimiento del Project y documentación del repo.</span></label>
+    <label><input type="checkbox" id="s1-4"><span>Creé un Doc y lo edité con @Claude.</span></label>
+    <label><input type="checkbox" id="s1-5"><span>Puedo explicar la política de datos del plan.</span></label>
+  </div>
+  <div class="quiz" data-quiz="s1"></div>
+</div>

@@ -1,0 +1,52 @@
+<div class="goals"><h3>Al terminar, cada persona puede</h3><ul>
+    <li>Crear un prototipo interactivo a partir de un requisito.</li>
+    <li>Construir un design system desde el código o los archivos de diseño del equipo.</li>
+    <li>Pasar un diseño a Claude Code sin partir de un pantallazo.</li>
+  </ul></div>
+  <p class="course"><strong>Tutorial complementario:</strong> <a href="https://academy.claude.com/tutorials/using-claude-design-for-presentations-and-slide-decks">Claude Design para presentaciones (Anthropic Academy)</a></p>
+
+  <div class="prose">
+    <p>Claude Design (lanzado en abril de 2026 por Anthropic Labs) produce diseños, prototipos interactivos, wireframes, landing pages, one-pagers y material visual. Se abre en <code>claude.ai/design</code>, desde la barra lateral de la app de escritorio, dentro de cualquier chat (<em>Output → Design</em>) o desde Claude Code con <code>/design</code>.</p>
+    <p>Para desarrolladores, lo valioso no es el dibujo sino el <strong>circuito diseño ↔ código</strong>: el design system sale de los componentes reales y el diseño vuelve al código con toda su información.</p>
+  </div>
+
+  <h2>Design systems</h2>
+  <div class="prose"><ul>
+    <li>Claude construye un design system desde tu repositorio de GitHub, archivos de diseño o uploads: tokens (color, tipografía, espaciado, radios), componentes y guías.</li>
+    <li>Los diseños nuevos se verifican contra tus componentes, así no se inventan botones que no existen.</li>
+    <li>Con el rol <strong>Claude Design Admin</strong> alguien aprueba los design systems oficiales y los bloquea contra ediciones.</li>
+    <li>Desde Claude Code, <code>/design-sync</code> convierte un design system de React y lo sube a Claude Design (<code>/design-login</code> autoriza el acceso).</li>
+  </ul></div>
+  <div class="note"><strong>Equipos .NET:</strong> <code>/design-sync</code> trabaja con design systems de React. Si el front es Blazor o Razor, construye el design system desde archivos de diseño o capturas de la librería de componentes, y documenta los tokens en el repositorio.</div>
+
+  <h2>Handoff a Claude Code</h2>
+  <div class="flow"><span>Requisito</span><b>→</b><span>Prototipo en Design</span><b>→</b><span>Revisión y comentarios</span><b>→</b><span>Paquete de handoff</span><b>→</b><span>Claude Code implementa</span></div>
+  <p class="prose">Claude arma un paquete de handoff para que Claude Code continúe desde el trabajo real de diseño "en lugar de empezar desde un pantallazo". El flujo también funciona al revés: empezar en código y llevar los componentes a Design.</p>
+
+  <h2>Compartir y exportar</h2>
+  <div class="prose"><ul>
+    <li>Privado por defecto. Enlaces con permiso de ver, comentar (por defecto en la organización) o editar. Varias personas pueden trabajar con el agente en el mismo diseño.</li>
+    <li>Exporta a .zip, PDF, PPTX o HTML autónomo; envía a Canva; e integra con Vercel, Netlify y otros.</li>
+    <li>El uso cuenta contra los límites normales del plan (compartidos con Claude Code).</li>
+  </ul></div>
+
+  <div class="practice">
+<h2 class="practice-h">Práctica</h2>
+<div class="lab">
+    <div class="lab-h"><h3>Laboratorio 2 · De historia de usuario a pantalla</h3><span class="pill">50 min</span></div>
+    <ol>
+      <li>Toma una historia de usuario real del backlog que tenga interfaz (por ejemplo, "historial de reembolsos del cliente").</li>
+      <li>Crea o importa el design system del equipo (desde el repo del front o archivos de diseño).</li>
+      <li>Pide un prototipo con estados reales: carga, vacío, error, lista con datos y detalle.</li>
+      <li>Comparte con el equipo en modo comentario y recoge dos rondas de feedback.</li>
+      <li>Genera el paquete de handoff y ábrelo en Claude Code. Pide primero un <strong>plan</strong> (Shift+Tab hasta modo Plan) antes de implementar.</li>
+    </ol>
+  </div>
+  <div class="check" data-check="s2">
+    <h3>Checklist · Sesión 2</h3>
+    <label><input type="checkbox" id="s2-1"><span>Tengo un design system del equipo en Claude Design.</span></label>
+    <label><input type="checkbox" id="s2-2"><span>Creé un prototipo con todos sus estados.</span></label>
+    <label><input type="checkbox" id="s2-3"><span>Pasé un diseño a Claude Code con el paquete de handoff.</span></label>
+  </div>
+  <div class="quiz" data-quiz="s2"></div>
+</div>
