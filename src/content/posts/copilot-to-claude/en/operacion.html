@@ -68,6 +68,47 @@ git worktree list</code></pre></div>
 <li><strong>Parallel subagents</strong><span>With <code>isolation: worktree</code> in its frontmatter, each subagent edits in its own temporary worktree, removed automatically if it finishes without changes.</span></li>
 </ul>
 
+  <h3>Sessions that talk to each other</h3>
+  <p class="prose">Each session has its own context: what the bug session knows, the feature session doesn't. Instead of copying and pasting between terminals, one session can message another one that's open on your machine. They just need a name (<code>/rename</code> or <code>-n</code>), and you mention them with <code>@</code>, which autocompletes.</p>
+  <div class="code"><div class="fname"><span>The example's two terminals, coordinating</span><button class="copy" type="button">Copy</button></div><pre><code><span class="c"># Terminal 2 · the bug is fixed</span>
+&gt; /rename BUG-7-balance
+&gt; Explain to @PAY-12-summary what changed in CreateRefund and why.
+
+<span class="c"># Terminal 1 · the feature, which depends on that calculation</span>
+&gt; /rename PAY-12-summary
+&gt; /list-agents
+<span class="c"># → the open sessions this one can reach</span>
+&gt; Ask @BUG-7-balance how it now calculates the available balance and use the same in availableToRefund.
+&gt; Let me know when @BUG-7-balance finishes.</code></pre></div>
+  <ul class="kv">
+<li><strong>What travels</strong><span>A text message written by Claude. The other session's history and files don't travel: that's what git is for.</span></li>
+<li><strong>When it arrives</strong><span>Between one tool call and the next if the session is working, or as a new turn if it's waiting.</span></li>
+<li><strong>What it can't do</strong><span>Approve permissions or change the receiving session's configuration.</span></li>
+<li><strong>Requirements</strong><span>Sessions open on the same machine (on Windows, v2.1.234 or later). A WSL session and a Windows session can't see each other.</span></li>
+<li><strong>If the session already ended</strong><span>There's no one to ask. Resume it with <code>claude -r BUG-7-balance</code>, or leave its result in a file: <code>/export bug-7.txt</code> and in the other session <code>According to @bug-7.txt, why do we validate in the endpoint?</code></span></li>
+</ul>
+
+  <h3>Start from a session without touching it: <code>--fork-session</code></h3>
+  <p class="prose">Sometimes the valuable session is the research one: it already read the module, understood the rules and answered your questions. <code>claude -r name</code> resumes it and adds everything you do next. With <code>--fork-session</code> you resume it in a <strong>new copy</strong>: the original stays intact so you can start from it again as many times as you want.</p>
+  <div class="code"><div class="fname"><span>One investigation, two tasks that start from it</span><button class="copy" type="button">Copy</button></div><pre><code><span class="c"># Monday · the session that understands the module</span>
+claude -n REF-analysis
+&gt; Explain the refund flow to me: endpoints, store, validations and tests. Don't change anything.
+
+<span class="c"># Tuesday · the feature starts from that analysis, in a copy</span>
+claude -r REF-analysis --fork-session
+&gt; /rename PAY-12-summary
+&gt; With what you already know about the flow, plan GET /orders/{id}/refund-summary.
+
+<span class="c"># Wednesday · the bug starts from the same analysis, without Tuesday's conversation</span>
+claude -r REF-analysis --fork-session
+&gt; /rename BUG-7-balance
+&gt; With what you already know about the flow, reproduce with a test the refund that exceeds the balance.</code></pre></div>
+  <ul class="kv">
+<li><strong>It copies the conversation, not the files</strong><span>Just like <code>/branch</code>. If the copy and the original will edit at the same time, each one needs its own worktree.</span></li>
+<li><strong>It isn't free</strong><span>The copy starts with all of the original's context. Worth it if that analysis took a lot; if the research was short, a new session is cheaper.</span></li>
+<li><strong>Inside a session</strong><span><code>/branch</code> forks right here to try another direction; <code>/fork</code> sends the copy to the background and you keep working in the original.</span></li>
+</ul>
+
   <h3>Good practices for working in parallel</h3>
   <div class="prose"><ul>
     <li><strong>One task, one worktree, one branch, one PR.</strong> Name the worktree after the ticket (<code>-w pay-12-summary</code>): that way you know what each folder, terminal and branch is.</li>
@@ -77,6 +118,7 @@ git worktree list</code></pre></div>
     <li><strong>Few sessions at a time.</strong> Two or three you can actually review. Each session has its own context and uses its own quota (see <a href="/en/blog/from-copilot-to-claude/consumption-and-efficiency">Consumption and efficiency</a>).</li>
     <li><strong>Review each branch separately.</strong> <code>/diff</code> and <code>/code-review</code> inside each worktree, green tests and one PR per branch. Parallelizing the work isn't parallelizing the review.</li>
     <li><strong>Watch your hooks.</strong> If Claude enters a worktree mid-session, <code>$CLAUDE_PROJECT_DIR</code> still points at the main checkout. A hook that needs the worktree's path should read the <code>cwd</code> field from its input.</li>
+    <li><strong>Coordinate with messages, document in files.</strong> Messages between sessions work while both are open. What matters later (a decision, why something changed) goes in the repo: any session and any person can read <code>docs/decisions/bug-7.md</code>.</li>
     <li><strong>Clean up when done.</strong> <code>git worktree list</code> shows what's left; remove what's already merged with <code>git worktree remove</code>.</li>
   </ul></div>
 
