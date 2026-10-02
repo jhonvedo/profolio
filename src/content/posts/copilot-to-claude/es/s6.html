@@ -37,7 +37,7 @@ claude mcp remove db</code></pre></div>
     <li><code>${VAR}</code> y <code>${VAR:-valor}</code> se expanden desde el entorno: los secretos nunca van en el archivo.</li>
     <li>Los servidores de <code>.mcp.json</code> piden aprobación la primera vez que abres el repo.</li>
     <li>Los <strong>conectores de claude.ai</strong> (los que habilitó el admin) aparecen solos en Claude Code si inicias sesión con claude.ai. <code>/mcp</code> los muestra y permite autenticar.</li>
-    <li>Cada servidor MCP añade herramientas al contexto. Conecta los que el equipo usa, no todos los que existen.</li>
+    <li>Cada servidor MCP suma al contexto los nombres de sus herramientas; la definición completa se carga cuando Claude va a usar una. Conecta los que el equipo usa, no todos los que existen.</li>
   </ul></div>
   <div class="note"><strong>Stack Azure:</strong> para equipos .NET suele valer la pena un servidor MCP de Azure DevOps o de Azure (work items, pipelines, recursos). Revisa que venga de una fuente confiable y dale el mínimo de permisos.</div>
 
@@ -53,8 +53,9 @@ claude mcp remove db</code></pre></div>
   <div class="code"><div class="fname"><span>Estructura de un plugin</span><button class="copy" type="button">Copiar</button></div><pre class="tree"><code>plataforma-tools/
 ├── .claude-plugin/plugin.json   <span class="c"># { "name", "description", "version" }</span>
 ├── skills/nueva-migracion/SKILL.md
-├── agents/revisor-seguridad.md
-├── hooks/hooks.json
+├── agents/revisor-seguridad.md  <span class="c"># sin hooks propios: ver la nota</span>
+├── hooks/hooks.json             <span class="c"># rutas con "${CLAUDE_PLUGIN_ROOT}"</span>
+├── scripts/                     <span class="c"># los scripts que llaman los hooks</span>
 └── .mcp.json</code></pre></div>
   <div class="code"><div class="fname"><span>.claude-plugin/marketplace.json (repo del marketplace)</span><button class="copy" type="button">Copiar</button></div><pre><code>{
   <span class="k">"name"</span>: <span class="s">"empresa-tools"</span>,
@@ -71,6 +72,8 @@ claude mcp remove db</code></pre></div>
   <span class="k">"enabledPlugins"</span>: { <span class="k">"plataforma-tools@empresa-tools"</span>: <span class="k">true</span> }
 }</code></pre></div>
   <p class="prose">Manualmente: <code>/plugin marketplace add mi-org/claude-plugins</code> y <code>/plugin install plataforma-tools@empresa-tools</code>. Las skills del plugin se invocan como <code>/plataforma-tools:nueva-migracion</code>. Si el repo del marketplace es privado, cada desarrollador necesita acceso de lectura a él en GitHub.</p>
+  <p class="prose">En el plugin, los hooks llaman a sus scripts con <code>"${CLAUDE_PLUGIN_ROOT}"/scripts/…</code> en lugar de <code>"$CLAUDE_PROJECT_DIR"/.claude/hooks/…</code>: los scripts viajan con el plugin, no con el repo.</p>
+  <div class="note warn"><strong>Los subagentes de un plugin ignoran <code>hooks</code>, <code>mcpServers</code> y <code>permissionMode</code></strong> por seguridad. El hook de solo lectura del <code>revisor-seguridad</code> no funcionaría dentro del plugin: deja ese subagente en <code>.claude/agents/</code> del repo, o quítale <code>Bash</code> en la versión del plugin y haz que el agente principal le pase el diff.</div>
 
   <h2>GitHub: @claude en issues y PRs</h2>
   <p class="prose">La forma rápida es <code>/install-github-app</code> dentro de Claude Code (requiere <code>gh</code> autenticado y ser admin del repo): instala la GitHub App, crea el secreto y abre un PR con el workflow. Después, cualquiera con permiso de escritura escribe <code>@claude</code> en un issue o PR.</p>
@@ -102,6 +105,7 @@ jobs:
     <li>Con suscripción en vez de API key: <code>claude setup-token</code> genera un token; úsalo como <code>claude_code_oauth_token</code>. Para toda la organización, mejor una API key de Console o federación OIDC (el token queda atado a quien lo generó).</li>
     <li>Con <code>prompt:</code> la acción corre sin mención (en cada PR, en un cron). Puede invocar skills del repo: <code>prompt: "/nombre-skill"</code>.</li>
     <li>Si usan <strong>Azure DevOps o GitLab</strong>, usen Claude Code en modo headless dentro del pipeline (abajo).</li>
+    <li>El texto de issues, PRs y comentarios es entrada no confiable: quien pueda escribir ahí puede intentar darle instrucciones a Claude. Dale al workflow solo los permisos que necesita, limita sus herramientas con <code>claude_args</code> y revisa cada PR como el de cualquier persona.</li>
   </ul></div>
 
   <h2>Headless y scripts</h2>
@@ -139,27 +143,11 @@ claude -p "Revisa el diff contra main y lista riesgos" \
     <li><code>allowManagedPermissionRulesOnly</code> hace que solo cuenten las reglas del admin.</li>
     <li><code>forceLoginOrgUUID</code> obliga a usar la cuenta de la organización.</li>
     <li>Las skills, subagentes y hooks de managed settings tienen prioridad sobre los de usuario y repo.</li>
+    <li><code>"disableAutoMode": "disable"</code> dentro de <code>permissions</code> bloquea el modo <code>auto</code>, si la organización todavía no lo quiere.</li>
+    <li><code>"sandbox": { "enabled": true }</code> impone el sandbox de la sesión 4 en macOS, Linux y WSL2.</li>
   </ul></div>
 
   <div class="practice">
 <h2 class="practice-h">Práctica</h2>
-<div class="lab">
-    <div class="lab-h"><h3>Proyecto final · Kit de Claude del equipo</h3><span class="pill">90 min + demo</span></div>
-    <ol>
-      <li>Crea el repo <code>claude-plugins</code> de la organización con un marketplace y un plugin que incluya las skills, hooks y subagentes de la sesión 5.</li>
-      <li>Actívalo en el <code>.claude/settings.json</code> de los dos repos de práctica y verifica que se instala solo.</li>
-      <li>Agrega un servidor MCP útil al <code>.mcp.json</code> (tracker de issues o documentación interna).</li>
-      <li>Instala la GitHub Action y resuelve un issue real con <code>@claude</code> de principio a fin.</li>
-      <li>Propón al admin un <code>managed-settings.json</code> con los deny de la organización.</li>
-      <li>Demo de 10 minutos: flujo completo desde Claude Design o un issue hasta el PR revisado.</li>
-    </ol>
-  </div>
-  <div class="check" data-check="s6">
-    <h3>Checklist · Sesión 6</h3>
-    <label><input type="checkbox" id="s6-1"><span>Configuré un servidor MCP con scope de proyecto y sin secretos en el archivo.</span></label>
-    <label><input type="checkbox" id="s6-2"><span>La configuración del equipo se distribuye como plugin.</span></label>
-    <label><input type="checkbox" id="s6-3"><span>@claude funciona en GitHub o Claude corre headless en el pipeline.</span></label>
-    <label><input type="checkbox" id="s6-4"><span>Entiendo qué controla el admin con managed settings.</span></label>
-  </div>
   <div class="quiz" data-quiz="s6"></div>
 </div>

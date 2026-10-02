@@ -74,10 +74,13 @@ INPUT=$(cat)
 FILE=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 FILE="${FILE//\\//}"   <span class="c"># normalize Windows paths</span>
 
-PROTECTED=(".env" ".git/" <span data-stack="dotnet">"appsettings.Production.json" "/Migrations/"</span><span data-stack="node">"pnpm-lock.yaml" "prisma/migrations/"</span>)
+<span class="c"># Templates like .env.example can be edited.</span>
+[[ "$FILE" == *.example ]] &amp;&amp; exit 0
+
+PROTECTED=("*/.env" "*/.env.*" "*/.git/*" <span data-stack="dotnet">"*/appsettings.Production.json" "*/Migrations/*"</span><span data-stack="node">"*/pnpm-lock.yaml" "*/prisma/migrations/*"</span>)
 
 for p in "${PROTECTED[@]}"; do
-  if [[ "$FILE" == *"$p"* ]]; then
+  if [[ "$FILE" == $p ]]; then   <span class="c"># $p unquoted: matched as a pattern</span>
     echo "Blocked: $FILE is a protected file ($p). <span data-stack="dotnet">Migrations are generated with dotnet ef.</span><span data-stack="node">Use the pnpm/prisma commands.</span>" &gt;&amp;2
     exit 2
   fi
@@ -88,11 +91,14 @@ exit 0</code></pre></div>
   <div data-stack="dotnet">
   <div class="code"><div class="fname"><span>.claude/hooks/format.sh · .NET</span><button class="copy" type="button">Copy</button></div><pre><code>#!/usr/bin/env bash
 FILE=$(jq -r '.tool_input.file_path // empty')
+FILE="${FILE//\\//}"; ROOT="${CLAUDE_PROJECT_DIR//\\//}"
 case "$FILE" in
   *.cs)
-    dotnet format "$CLAUDE_PROJECT_DIR/Orders.sln" --include "$FILE" --no-restore &gt;/dev/null 2&gt;&amp;1 ;;
+    <span class="c"># Only the edited file, without loading the solution or building</span>
+    cd "$ROOT" &amp;&amp; dotnet format whitespace . --folder --include "${FILE#"$ROOT"/}" &gt;/dev/null 2&gt;&amp;1 ;;
 esac
 exit 0</code></pre></div>
+  <p class="prose"><code>dotnet format</code> on the whole solution loads it through MSBuild on every edit, and over a long task that adds up to minutes. <code>whitespace --folder</code> fixes only the edited file's formatting, without building. Full formatting (style and analyzers) is checked at the end with the command in <code>CLAUDE.md</code>.</p>
   </div>
   <div data-stack="node">
   <div class="code"><div class="fname"><span>.claude/hooks/format.sh · Node</span><button class="copy" type="button">Copy</button></div><pre><code>#!/usr/bin/env bash
@@ -112,15 +118,22 @@ INPUT=$(cat)
 if [ "$(echo "$INPUT" | jq -r '.stop_hook_active')" = "true" ]; then exit 0; fi
 
 cd "$CLAUDE_PROJECT_DIR"
-<span class="c"># Only verify if there are uncommitted changes.</span>
-git diff --quiet &amp;&amp; git diff --cached --quiet &amp;&amp; exit 0
+<span class="c"># No changes (including new files): nothing to verify.</span>
+[ -z "$(git status --porcelain)" ] &amp;&amp; exit 0
+
+<span class="c"># If the code hasn't changed since the tests last passed, don't rerun them.</span>
+HASH=$( { git diff HEAD; git ls-files -o --exclude-standard -z | xargs -0 -r cat; } 2&gt;/dev/null | git hash-object --stdin )
+STAMP="$(git rev-parse --git-dir)/claude-tests-ok"
+[ "$(cat "$STAMP" 2&gt;/dev/null)" = "$HASH" ] &amp;&amp; exit 0
 
 if ! OUT=$(<span data-stack="dotnet">dotnet test --nologo -v q</span><span data-stack="node">pnpm -r test</span> 2&gt;&amp;1); then
   echo "Tests are failing. Fix them before finishing:" &gt;&amp;2
   echo "$OUT" | tail -n 40 &gt;&amp;2
   exit 2
 fi
+echo "$HASH" &gt; "$STAMP"
 exit 0</code></pre></div>
+  <p class="prose">The hook runs every time Claude finishes responding, even when it only answered a question. That's why it stores a fingerprint of the changes: if nothing changed since the tests last passed, it doesn't run them again.</p>
 
   <h3>Hook 4 · Context at startup (SessionStart)</h3>
   <div class="code"><div class="fname"><span>.claude/hooks/context.sh</span><button class="copy" type="button">Copy</button></div><pre><code>#!/usr/bin/env bash
@@ -146,16 +159,12 @@ exit 0</code></pre></div>
     ],
     <span class="k">"Stop"</span>: [
       { <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>: <span class="s">"\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/green-tests.sh"</span>, <span class="k">"timeout"</span>: 300 }] }
-    ],
-    <span class="k">"Notification"</span>: [
-      { <span class="k">"matcher"</span>: <span class="s">"permission_prompt|idle_prompt"</span>,
-        <span class="k">"hooks"</span>: [{ <span class="k">"type"</span>: <span class="s">"command"</span>, <span class="k">"command"</span>: <span class="s">"notify-send 'Claude Code' 'Needs your attention'"</span> }] }
     ]
   }
 }</code></pre></div>
   <div class="prose"><ul>
     <li>Make the scripts executable: <code>chmod +x .claude/hooks/*.sh</code>.</li>
-    <li>The notification uses <code>notify-send</code> (Linux). On macOS use <code>osascript -e 'display notification "…" with title "Claude Code"'</code>; on Windows, a PowerShell script. Since it depends on the OS, put it in <code>~/.claude/settings.json</code>, not in the repo.</li>
+    <li>The desktop notification (<code>Notification</code>) doesn't go in this file: it depends on the operating system, so each person puts it in their <code>~/.claude/settings.json</code> using the session 4 recipe.</li>
     <li><code>/hooks</code> shows the loaded hooks. <code>claude --debug</code> logs every run.</li>
     <li>A hook that exits with code 2 blocks even if there's an <code>allow</code> rule; but a hook that says "allow" doesn't override a <code>deny</code>.</li>
   </ul></div>
@@ -202,13 +211,13 @@ Create the `$verb` endpoint for the `$resource` resource:
 5. Run `pnpm --filter api test` and `pnpm --filter api typecheck`.</code></pre></div>
   </div>
   <ul class="kv">
-<li><strong><code>description</code></strong><span>What it does and when to use it. Claude decides based on this; write the main case first.</span></li>
+<li><strong><code>description</code></strong><span>What it does and when to use it. Claude decides based on this; write the main case first. Keep it in English: it loads on every turn, while the body only loads when the skill is used.</span></li>
 <li><strong><code>disable-model-invocation: true</code></strong><span>Only you invoke it (deploys, migrations, anything with side effects).</span></li>
 <li><strong><code>user-invocable: false</code></strong><span>Only Claude uses it (reference knowledge).</span></li>
 <li><strong><code>allowed-tools</code></strong><span>Tools pre-approved while it runs.</span></li>
 <li><strong><code>argument-hint</code>, <code>arguments</code></strong><span>Arguments: <code>$ARGUMENTS</code>, <code>$0</code>, <code>$1</code> or <code>$name</code>.</span></li>
-<li><strong><code>context: fork</code> + <code>agent</code></strong><span>Runs in an isolated subagent.</span></li>
-<li><strong><code>paths</code>, <code>model</code>, <code>effort</code></strong><span>Activate by path; force a model or effort.</span></li>
+<li><strong><code>context: fork</code> + <code>agent</code></strong><span>Runs the skill in a subagent that doesn't see your conversation and only returns the summary (<a href="/en/blog/from-copilot-to-claude/skills-and-subagents#context-fork">see Skills and subagents</a>).</span></li>
+<li><strong><code>paths</code>, <code>model</code>, <code>effort</code></strong><span>Activate by path; change the model or effort while the skill is active.</span></li>
 </ul>
   <p class="prose"><code>!`command`</code> runs the command before the skill is sent and replaces the placeholder with the output, so Claude gets real data. Keep <code>SKILL.md</code> under 500 lines and move detail into supporting files. <code>/skills</code> lists the skills and <code>/skill-doctor</code> checks how much context they use.</p>
   <div class="note"><strong>Skills in claude.ai and in Claude Code:</strong> the same format works in both. Skills an admin provisions for the organization sync to Claude Code and show up as <code>/anthropic-skills:&lt;name&gt;</code>.</div>
@@ -220,6 +229,12 @@ name: security-reviewer
 description: Reviews changes looking for vulnerabilities (injection, authz, secrets, deserialization). Use it before opening a PR that touches authentication, payments or personal data.
 tools: Read, Grep, Glob, Bash
 model: opus
+hooks:
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/read-only-git.sh"
 ---
 You are a security reviewer for <span data-stack="dotnet">ASP.NET Core APIs</span><span data-stack="node">NestJS APIs and Next.js apps</span>.
 1. Read `git diff main...HEAD`.
@@ -227,31 +242,23 @@ You are a security reviewer for <span data-stack="dotnet">ASP.NET Core APIs</spa
    secrets in code or logs, CORS, error handling that leaks information.
 3. Report only findings with evidence: file, line, risk, exploit scenario and fix.
 4. Don't edit files or run commands that modify the repository.</code></pre></div>
+  <div class="code"><div class="fname"><span>.claude/hooks/read-only-git.sh</span><button class="copy" type="button">Copy</button></div><pre><code>#!/usr/bin/env bash
+<span class="c"># Read-only git only: no chaining, redirects or --output (which writes files).</span>
+CMD=$(jq -r '.tool_input.command // empty')
+ALLOWED='^git (diff|log|show|status|blame)( |$)'
+if [[ $CMD =~ $ALLOWED &amp;&amp; $CMD != *[\;\&amp;\|\&lt;\&gt;\`\$]* &amp;&amp; $CMD != *--output* &amp;&amp; $CMD != *$'\n'* ]]; then
+  exit 0
+fi
+echo "The reviewer can only use git diff, log, show, status and blame." &gt;&amp;2
+exit 2</code></pre></div>
+  <p class="prose">Without <code>Edit</code> or <code>Write</code> it can't touch files, and the hook in its frontmatter only lets read-only git through: instruction 4 no longer depends on the model obeying. The <code>tools</code> field only takes tool names: <code>Bash(git diff *)</code> there limits nothing, and in <code>disallowedTools</code> it would remove Bash entirely. To limit specific commands you use a hook like this one.</p>
   <div class="prose"><ul>
     <li>Invoke it in natural language ("use the security-reviewer") or with <code>@"security-reviewer (agent)"</code>.</li>
-    <li>Useful fields: <code>tools</code>/<code>disallowedTools</code>, <code>model</code> (<code>sonnet</code>, <code>opus</code>, <code>haiku</code>, <code>fable</code>, <code>inherit</code>), <code>permissionMode</code>, <code>skills</code>, <code>mcpServers</code>, <code>memory</code>, <code>isolation: worktree</code>, <code>maxTurns</code>.</li>
+    <li>Useful fields: <code>tools</code>/<code>disallowedTools</code>, <code>model</code> (<code>sonnet</code>, <code>opus</code>, <code>haiku</code>, <code>fable</code>, <code>inherit</code>), <code>permissionMode</code>, <code>hooks</code>, <code>skills</code>, <code>mcpServers</code>, <code>memory</code>, <code>isolation: worktree</code>, <code>maxTurns</code>.</li>
     <li>Priority by name: managed → <code>--agents</code> → <code>.claude/agents/</code> → <code>~/.claude/agents/</code> → plugins.</li>
   </ul></div>
 
   <div class="practice">
 <h2 class="practice-h">Practice</h2>
-<div class="lab">
-    <div class="lab-h"><h3>Lab 5 · Automate the repo</h3><span class="pill">75 min</span></div>
-    <ol>
-      <li>Create <code>.claude/hooks/</code> with the four scripts and register them. Check with <code>/hooks</code>.</li>
-      <li>Ask Claude to edit <code>.env</code>: the hook should block it and Claude should explain why.</li>
-      <li>Break a test on purpose and ask for a minor change: the Stop hook should force Claude to fix it.</li>
-      <li>Turn a team procedure into a skill (migration, release, new endpoint). Try it with <code>/name</code>.</li>
-      <li>Create the security subagent and run it on the lab 3 branch.</li>
-      <li>Open a PR with everything and ask someone else to review it.</li>
-    </ol>
-  </div>
-  <div class="check" data-check="s5">
-    <h3>Checklist · Session 5</h3>
-    <label><input type="checkbox" id="s5-1"><span>Protection, format and test hooks working in the repo.</span></label>
-    <label><input type="checkbox" id="s5-2"><span>I understand exit 0 vs exit 2 and the JSON output.</span></label>
-    <label><input type="checkbox" id="s5-3"><span>I created a team skill with correct frontmatter.</span></label>
-    <label><input type="checkbox" id="s5-4"><span>I created a subagent with limited tools.</span></label>
-  </div>
   <div class="quiz" data-quiz="s5"></div>
 </div>

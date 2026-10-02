@@ -19,22 +19,70 @@ export const getStaticPaths = () =>
 
 const { s, lang, part, index } = Astro.props as { s: Series; lang: Lang; part: Part; index: number };
 const parts = s.langs[lang].parts;
-const html = contents[`../../../content/posts/${s.id}/${lang}/${part.id}.html`];
 const isIndex = index === 0;
 const prev = parts[index - 1];
 const next = parts[index + 1];
 const hrefs = Object.fromEntries(supported.map((l) => [l, partHref(s, l, s.langs[l].parts[index])]));
 
 const t = {
-    es: { series: "Serie", part: "Parte", of: "de", read: "min de lectura", inSeries: "En esta serie", examples: "Ejemplos para:", prev: "Anterior", next: "Siguiente", index: "← Índice de la serie", start: "Antes de empezar" },
-    en: { series: "Series", part: "Part", of: "of", read: "min read", inSeries: "In this series", examples: "Examples for:", prev: "Previous", next: "Next", index: "← Series index", start: "Before you start" },
+    es: { series: "Serie", part: "Parte", of: "de", read: "min de lectura", map: "Mapa de aprendizaje", mapHint: "Sigue el camino de arriba hacia abajo. Cada tema lleva a su sección; márcalo cuando lo domines.", examples: "Ejemplos para:", prev: "Anterior", next: "Siguiente", index: "← Índice de la serie", chapters: "capítulos", chapter: "Capítulo", topic: "Tema", optional: "Opcional", done: "Visto", mark: "Marcar como visto", progress: "temas vistos", pct: "hecho" },
+    en: { series: "Series", part: "Part", of: "of", read: "min read", map: "Learning map", mapHint: "Follow the path from top to bottom. Each topic takes you to its section; check it off once you've got it.", examples: "Examples for:", prev: "Previous", next: "Next", index: "← Series index", chapters: "chapters", chapter: "Chapter", topic: "Topic", optional: "Optional", done: "Done", mark: "Mark as done", progress: "topics done", pct: "done" },
 }[lang];
+
+// Secciones (h2) de cada parte: les da un id si no tienen y las devuelve como temas del mapa de aprendizaje.
+const slugify = (text: string) =>
+    text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const decode = (text: string) => text.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&amp;/g, "&");
+const sections = (raw: string) => {
+    const used = new Set<string>();
+    const topics: { id: string; label: string }[] = [];
+    const out = raw.replace(/<h2([^>]*)>([\s\S]*?)<\/h2>/g, (_, attrs: string, inner: string) => {
+        const text = decode(inner.replace(/<[^>]+>/g, "")).trim();
+        const own = attrs.match(/id="([^"]+)"/)?.[1];
+        let id = own ?? (attrs.includes("practice-h") ? "practica" : slugify(text));
+        for (let n = 2; !own && used.has(id); n++) id = `${slugify(text)}-${n}`;
+        used.add(id);
+        // Etiqueta corta: lo que va antes de ": ", sin contar los dos puntos dentro de <code>
+        const short = decode(inner.replace(/<code>[\s\S]*?<\/code>/g, (c) => c.replace(/:/g, "\u0000")).replace(/<[^>]+>/g, ""))
+            .trim()
+            .split(/:\s/)[0]
+            .replace(/\u0000/g, ":");
+        if (!/^(Fuentes|Sources)$/.test(text)) topics.push({ id, label: short });
+        return `<h2${own ? attrs : `${attrs} id="${id}"`}>${inner}</h2>`;
+    });
+    return { html: out, topics };
+};
+const sourceOf = (p: Part) => contents[`../../../content/posts/${s.id}/${lang}/${p.id}.html`];
+// El índice solo muestra el mapa de aprendizaje; los capítulos muestran su contenido
+const { html } = isIndex ? { html: "" } : sections(sourceOf(part));
+
+// Mapa de aprendizaje (solo en el índice): etapas → capítulos → temas
+const roadmap = isIndex
+    ? s.stages.map((stage) => ({
+          title: stage.title[lang],
+          parts: stage.parts.map((id) => {
+              const i = parts.findIndex((p) => p.id === id);
+              const p = parts[i];
+              const href = partHref(s, lang, p);
+              return {
+                  n: String(i).padStart(2, "0"),
+                  title: p.title,
+                  lede: p.lede,
+                  minutes: p.minutes,
+                  href,
+                  optional: stage.optional?.includes(id) ?? false,
+                  topics: sections(sourceOf(p)).topics.map((topic) => ({ ...topic, href: `${href}#${topic.id}`, key: `${id}:${topic.id}` })),
+              };
+          }),
+      }))
+    : [];
+const topicCount = roadmap.reduce((sum, stage) => sum + stage.parts.reduce((n, p) => n + p.topics.length, 0), 0);
 const title = isIndex ? s.title[lang] : part.title;
 ---
 
 <Base lang={lang} noindex title={`${title} · Jhon Acevedo`} description={part.lede}>
     <Fragment slot="head">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..800;1,300..600&family=DM+Mono:wght@400;500&display=swap" />
+        <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..800;1,300..600&family=DM+Mono:wght@400;500&display=swap`} />
         {supported.map((l) => <link rel="alternate" hreflang={l} href={hrefs[l]} />)}
     </Fragment>
 
@@ -63,9 +111,15 @@ const title = isIndex ? s.title[lang] : part.title;
                 <h1>{title}</h1>
                 <p class="post-lede">{part.lede}</p>
                 <div class="post-meta">
-                    <span>
-                        {part.minutes} {t.read}
-                    </span>
+                    {isIndex ? (
+                        <span>
+                            {parts.length - 1} {t.chapters} · {parts.slice(1).reduce((sum, p) => sum + p.minutes, 0)} {t.read}
+                        </span>
+                    ) : (
+                        <span>
+                            {part.minutes} {t.read}
+                        </span>
+                    )}
                     {part.pills.map((p) => <span>{p}</span>)}
                 </div>
             </header>
@@ -90,22 +144,56 @@ const title = isIndex ? s.title[lang] : part.title;
                 {
                     isIndex && (
                         <>
-                            <h2>{t.inSeries}</h2>
-                            <ol class="series-list">
-                                {parts.slice(1).map((p, i) => (
-                                    <li>
-                                        <a href={partHref(s, lang, p)}>
-                                            <span class="series-n">{String(i + 1).padStart(2, "0")}</span>
-                                            <span class="series-title">{p.title}</span>
-                                            <span class="series-min">
-                                                {p.minutes} {t.read}
-                                            </span>
-                                            <span class="series-lede">{p.lede}</span>
-                                        </a>
-                                    </li>
-                                ))}
-                            </ol>
-                            <h2>{t.start}</h2>
+                            <section class="rm" aria-labelledby="rm-h">
+                                <h2 id="rm-h">{t.map}</h2>
+                                <p class="rm-hint">{t.mapHint}</p>
+                                <div class="rm-top">
+                                    <div class="rm-progress">
+                                        <div class="rm-bar" aria-hidden="true">
+                                            <span />
+                                        </div>
+                                        <span class="rm-count" data-pct={t.pct} data-label={t.progress}>
+                                            <b>0%</b> {t.pct} · 0 / {topicCount} {t.progress}
+                                        </span>
+                                    </div>
+                                    <ul class="rm-legend" aria-hidden="true">
+                                        <li><i class="lg-main" />{t.chapter}</li>
+                                        <li><i class="lg-sub" />{t.topic}</li>
+                                        <li><i class="lg-opt" />{t.optional}</li>
+                                        <li><i class="lg-done" />{t.done}</li>
+                                    </ul>
+                                </div>
+                                <div class="rm-flow">
+                                    {roadmap.map((stage, si) => (
+                                        <div class="rm-stage">
+                                            <h3 class="rm-stage-h">
+                                                <span>{si + 1}</span>
+                                                {stage.title}
+                                            </h3>
+                                            {stage.parts.map((p, pi) => (
+                                                <div class:list={["rm-row", { optional: p.optional }]} data-side={(si + pi) % 2 ? "left" : "right"}>
+                                                    <a class="rm-node" href={p.href} title={p.lede}>
+                                                        <span class="rm-n">{p.n}</span>
+                                                        <span class="rm-title">{p.title}</span>
+                                                        <span class="rm-meta">
+                                                            {p.optional && <>{t.optional} · </>}
+                                                            {p.minutes} min · <b class="rm-done-n">0</b>/{p.topics.length}
+                                                        </span>
+                                                    </a>
+                                                    <ul class="rm-subs">
+                                                        {p.topics.map((topic) => (
+                                                            <li>
+                                                                <input type="checkbox" data-topic={topic.key} aria-label={`${t.mark}: ${topic.label}`} />
+                                                                <a href={topic.href}>{topic.label}</a>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
                         </>
                     )
                 }
@@ -231,6 +319,42 @@ const title = isIndex ? s.title[lang] : part.title;
             });
             refresh();
         });
+
+        // Mapa de aprendizaje: progreso por tema, guardado en el navegador
+        const rm = post.querySelector<HTMLElement>(".rm");
+        if (rm) {
+            let seen: Record<string, boolean> = {};
+            try {
+                seen = JSON.parse(load("cc-roadmap") || "{}") || {};
+            } catch {}
+            const boxes = rm.querySelectorAll<HTMLInputElement>("input[data-topic]");
+            const count = rm.querySelector<HTMLElement>(".rm-count")!;
+            const refresh = () => {
+                let n = 0;
+                boxes.forEach((b) => {
+                    b.parentElement!.classList.toggle("done", b.checked);
+                    if (b.checked) n++;
+                });
+                rm.querySelectorAll<HTMLElement>(".rm-row").forEach((row) => {
+                    const own = [...row.querySelectorAll<HTMLInputElement>("input[data-topic]")];
+                    const c = own.filter((b) => b.checked).length;
+                    row.querySelector(".rm-done-n")!.textContent = String(c);
+                    row.classList.toggle("done", own.length > 0 && c === own.length);
+                });
+                const pct = boxes.length ? Math.round((100 * n) / boxes.length) : 0;
+                count.innerHTML = `<b>${pct}%</b> ${count.dataset.pct} · ${n} / ${boxes.length} ${count.dataset.label}`;
+                rm.querySelector<HTMLElement>(".rm-bar span")!.style.width = `${pct}%`;
+            };
+            boxes.forEach((b) => {
+                b.checked = !!seen[b.dataset.topic!];
+                b.addEventListener("change", () => {
+                    seen[b.dataset.topic!] = b.checked;
+                    store("cc-roadmap", JSON.stringify(seen));
+                    refresh();
+                });
+            });
+            refresh();
+        }
 
         // Autoevaluación
         post.querySelectorAll<HTMLElement>("[data-quiz]").forEach((box) => {

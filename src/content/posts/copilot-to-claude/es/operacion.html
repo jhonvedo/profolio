@@ -43,7 +43,84 @@ claude -r "PAY-482-reembolso-parcial"</code></pre></div>
 <li><strong><code>/desktop</code> · <code>/mobile</code></strong><span>Continuar la sesión en la app de escritorio · QR para la app móvil.</span></li>
 <li><strong><code>claude.ai/code</code></strong><span>Sesiones en la nube sobre GitHub; varias a la vez desde el navegador o el celular.</span></li>
 </ul>
-  <div class="note warn"><strong>Paralelo sin conflictos:</strong> dos sesiones editando la misma carpeta se pisan. Para trabajo paralelo real usa worktrees de git (una carpeta por rama) o sesiones en la nube.</div>
+  <div class="note warn"><strong>Paralelo sin conflictos:</strong> dos sesiones editando la misma carpeta se pisan: una deshace o rompe lo que hace la otra. Para trabajo paralelo real, cada sesión necesita su propia copia de los archivos: un <strong>git worktree</strong>.</div>
+
+  <h3>Ejemplo: una feature y un bug a la vez</h3>
+  <p class="prose">Un worktree es otra carpeta con su propia rama, que comparte el mismo historial de git. Claude Code los crea por ti con <code>-w</code>: estás implementando el resumen de reembolsos y entra un bug urgente.</p>
+  <div class="code"><div class="fname"><span>Dos terminales, dos tareas, cero choques</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="c"># Una sola vez por repo: que los worktrees no aparezcan como archivos sin seguimiento</span>
+echo ".claude/worktrees/" &gt;&gt; .gitignore
+
+<span class="c"># Terminal 1 · la feature</span>
+claude -w pay-12-resumen
+<span class="c"># → crea .claude/worktrees/pay-12-resumen en la rama worktree-pay-12-resumen</span>
+&gt; Implementa GET /orders/{id}/refund-summary con sus tests.
+
+<span class="c"># Terminal 2 · el bug, sin tocar los archivos de la terminal 1</span>
+claude -w bug-7-saldo
+&gt; Reproduce con un test que se puede reembolsar más que el saldo del pedido y corrígelo.
+
+<span class="c"># Cualquier terminal · qué hay en paralelo</span>
+git worktree list</code></pre></div>
+  <ul class="kv">
+<li><strong>Al salir</strong><span>Si el worktree tiene cambios o commits, Claude pregunta si conservarlo o borrarlo. Si lo conservas, al salir imprime el comando para volver: <code>claude --worktree pay-12-resumen --resume</code>.</span></li>
+<li><strong>Desde dónde parte</strong><span>Por defecto, de la rama principal del remoto (<code>origin/main</code>): cada tarea empieza limpia. Con <code>"worktree": { "baseRef": "head" }</code> en settings parte de tu rama local actual.</span></li>
+<li><strong>Un PR o una rama que ya existe</strong><span><code>claude -w "#123"</code> trae ese PR desde <code>origin</code>. Para una rama existente o una carpeta fuera del repo, a mano: <code>git worktree add ../orders-hotfix hotfix/timeout</code>, luego <code>cd ../orders-hotfix</code> y <code>claude</code>; al terminar, <code>git worktree remove ../orders-hotfix</code>.</span></li>
+<li><strong>Subagentes en paralelo</strong><span>Con <code>isolation: worktree</code> en su frontmatter, cada subagente edita en su propio worktree temporal, que se borra solo si termina sin cambios.</span></li>
+</ul>
+
+  <h3>Sesiones que se hablan entre sí</h3>
+  <p class="prose">Cada sesión tiene su propio contexto: lo que sabe la del bug no lo sabe la de la feature. En vez de copiar y pegar entre terminales, una sesión le puede escribir a otra que esté abierta en tu máquina. Solo necesitan nombre (<code>/rename</code> o <code>-n</code>), y las mencionas con <code>@</code>, que tiene autocompletado.</p>
+  <div class="code"><div class="fname"><span>Las dos terminales del ejemplo, coordinándose</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="c"># Terminal 2 · el bug ya está corregido</span>
+&gt; /rename BUG-7-saldo
+&gt; Explícale a @PAY-12-resumen qué cambió en CreateRefund y por qué.
+
+<span class="c"># Terminal 1 · la feature, que depende de ese cálculo</span>
+&gt; /rename PAY-12-resumen
+&gt; /list-agents
+<span class="c"># → las sesiones abiertas que esta puede alcanzar</span>
+&gt; Pregúntale a @BUG-7-saldo cómo calcula ahora el saldo disponible y usa lo mismo en availableToRefund.
+&gt; Avísame cuando @BUG-7-saldo termine.</code></pre></div>
+  <ul class="kv">
+<li><strong>Qué viaja</strong><span>Un mensaje de texto que escribe Claude. No viaja el historial ni los archivos de la otra sesión: para eso está git.</span></li>
+<li><strong>Cuándo llega</strong><span>Entre una herramienta y otra si la sesión está trabajando, o como un turno nuevo si está esperando.</span></li>
+<li><strong>Qué no puede hacer</strong><span>Aprobar permisos ni cambiar la configuración de la sesión que lo recibe.</span></li>
+<li><strong>Requisitos</strong><span>Sesiones abiertas en la misma máquina (en Windows, v2.1.234 o superior). Una sesión de WSL y una de Windows no se ven entre sí.</span></li>
+<li><strong>Si la sesión ya terminó</strong><span>No hay a quién preguntarle. Retómala con <code>claude -r BUG-7-saldo</code>, o deja su resultado en un archivo: <code>/export bug-7.txt</code> y en la otra sesión <code>Según @bug-7.txt, ¿por qué validamos en el endpoint?</code></span></li>
+</ul>
+
+  <h3>Partir de una sesión sin tocarla: <code>--fork-session</code></h3>
+  <p class="prose">A veces la sesión valiosa es la de investigación: ya leyó el módulo, entendió las reglas y respondió tus preguntas. <code>claude -r nombre</code> la retoma y le agrega todo lo que hagas después. Con <code>--fork-session</code> la retomas en una <strong>copia nueva</strong>: la original queda intacta para volver a partir de ella cuantas veces quieras.</p>
+  <div class="code"><div class="fname"><span>Una investigación, dos tareas que parten de ella</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="c"># Lunes · la sesión que entiende el módulo</span>
+claude -n REF-analisis
+&gt; Explícame el flujo de reembolsos: endpoints, store, validaciones y tests. No cambies nada.
+
+<span class="c"># Martes · la feature parte de ese análisis, en una copia</span>
+claude -r REF-analisis --fork-session
+&gt; /rename PAY-12-resumen
+&gt; Con lo que ya sabes del flujo, planea GET /orders/{id}/refund-summary.
+
+<span class="c"># Miércoles · el bug parte del mismo análisis, sin lo que se habló el martes</span>
+claude -r REF-analisis --fork-session
+&gt; /rename BUG-7-saldo
+&gt; Con lo que ya sabes del flujo, reproduce con un test el reembolso que excede el saldo.</code></pre></div>
+  <ul class="kv">
+<li><strong>Copia la conversación, no los archivos</strong><span>Igual que <code>/branch</code>. Si la copia y la original van a editar a la vez, cada una necesita su propio worktree.</span></li>
+<li><strong>No es gratis</strong><span>La copia arranca con todo el contexto de la original. Conviene si ese análisis costó mucho; si la investigación fue corta, una sesión nueva sale más barata.</span></li>
+<li><strong>Dentro de una sesión</strong><span><code>/branch</code> bifurca aquí mismo para probar otra dirección; <code>/fork</code> manda la copia a segundo plano y sigues trabajando en la original.</span></li>
+</ul>
+
+  <h3>Buenas prácticas para trabajar en paralelo</h3>
+  <div class="prose"><ul>
+    <li><strong>Una tarea, un worktree, una rama y un PR.</strong> Nombra el worktree con el ticket (<code>-w pay-12-resumen</code>): así sabes qué es cada carpeta, cada terminal y cada rama.</li>
+    <li><strong>Paraleliza lo que es independiente.</strong> Dos tareas que tocan los mismos archivos chocan igual al integrar, solo que más tarde. Si comparten módulo, hazlas en secuencia.</li>
+    <li><strong>Prepara el entorno de cada worktree.</strong> Es un checkout limpio: hay que instalar dependencias (<code>dotnet restore</code>, <code>pnpm install</code>) y faltan los archivos ignorados. Un <code>.worktreeinclude</code> en la raíz, con sintaxis de <code>.gitignore</code> (por ejemplo <code>.env</code>), los copia solo a cada worktree nuevo.</li>
+    <li><strong>Cuida lo que se comparte fuera de git.</strong> Si dos sesiones levantan la API o usan la misma base de datos local, chocan: usa otro puerto u otra base por worktree.</li>
+    <li><strong>Pocas sesiones a la vez.</strong> Dos o tres que puedas revisar de verdad. Cada sesión tiene su propio contexto y consume su propia cuota (ver <a href="/es/blog/de-copilot-a-claude/consumo-y-eficiencia">Consumo y eficiencia</a>).</li>
+    <li><strong>Revisa cada rama por separado.</strong> <code>/diff</code> y <code>/code-review</code> dentro de cada worktree, tests en verde y un PR por rama. Paralelizar el trabajo no es paralelizar la revisión.</li>
+    <li><strong>Ojo con los hooks.</strong> Si Claude entra a un worktree a mitad de una sesión, <code>$CLAUDE_PROJECT_DIR</code> sigue apuntando al checkout principal. Un hook que necesite la ruta del worktree debe leer el campo <code>cwd</code> de su entrada.</li>
+    <li><strong>Coordina con mensajes, documenta en archivos.</strong> Los mensajes entre sesiones sirven mientras las dos están abiertas. Lo que importa después (una decisión, el porqué de un cambio) va al repo: <code>docs/decisiones/bug-7.md</code> lo lee cualquier sesión y cualquier persona.</li>
+    <li><strong>Limpia al terminar.</strong> <code>git worktree list</code> muestra lo que quedó; borra con <code>git worktree remove</code> lo que ya se integró.</li>
+  </ul></div>
 
   <h2>Plugins: instalar, activar, desactivar</h2>
   <div class="code"><div class="fname"><span>Dentro de Claude Code</span><button class="copy" type="button">Copiar</button></div><pre><code>/plugin                                         <span class="c"># panel: Discover · Installed · Marketplaces · Errors · Stats</span>
@@ -63,7 +140,7 @@ claude plugin details plataforma-tools@empresa-tools   <span class="c"># qué sk
   <div class="prose"><ul>
     <li><strong>Scopes:</strong> <em>user</em> (tú, todos los repos), <em>project</em> (todo el equipo, se escribe en <code>.claude/settings.json</code>), <em>local</em> (tú, solo este repo). Los de scope <em>managed</em> los pone el admin y no se pueden quitar.</li>
     <li>Si desinstalas un plugin que el proyecto activa, Claude Code pregunta si desactivarlo solo para ti (override en <code>settings.local.json</code>) o para todos.</li>
-    <li>La pestaña <strong>Installed</strong> marca los plugins "Not used recently": desactívalos, porque cada uno consume contexto en cada turno.</li>
+    <li>La pestaña <strong>Installed</strong> marca los plugins "Not used recently": desactívalos: sus skills, subagentes y servidores MCP ocupan contexto aunque no los uses.</li>
     <li>El panel muestra el <strong>costo de contexto</strong> de un plugin antes de instalarlo.</li>
     <li>Plugins útiles del marketplace oficial: <code>csharp-lsp</code> y <code>typescript-lsp</code> (Claude ve errores de compilación al editar; requieren instalar <code>csharp-ls</code> o <code>typescript-language-server</code>), <code>github</code>, <code>atlassian</code>, <code>commit-commands</code>, <code>pr-review-toolkit</code>, <code>security-guidance</code>.</li>
   </ul></div>
@@ -95,6 +172,7 @@ claude plugin details plataforma-tools@empresa-tools   <span class="c"># qué sk
 }</code></pre></div>
 
   <h2>Salud, costos y actualizaciones</h2>
+  <p class="prose">Para entender qué consume y cómo ahorrar sin perder calidad, ver <a href="/es/blog/de-copilot-a-claude/consumo-y-eficiencia">Consumo y eficiencia</a>.</p>
   <ul class="kv">
 <li><strong><code>/usage</code> (alias <code>/cost</code>)</strong><span>Tokens y costo de la sesión.</span></li>
 <li><strong><code>/context</code></strong><span>Qué ocupa el contexto: CLAUDE.md, MCP, skills, historial.</span></li>

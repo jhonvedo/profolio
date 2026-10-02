@@ -1,0 +1,106 @@
+<p class="prose">Skills y subagentes son las dos piezas que más se confunden, porque las dos sirven para darle trabajo a Claude. La diferencia está en <strong>quién</strong> lo hace y <strong>con qué contexto</strong>. Este capítulo amplía la tabla de <a href="/es/blog/de-copilot-a-claude/conceptos">Conceptos</a>; en la <a href="/es/blog/de-copilot-a-claude/sesion-5-hooks-skills-subagentes">sesión 5</a> se crean en el repo.</p>
+  <p class="course"><strong>Cursos complementarios:</strong> <a href="https://anthropic.skilljar.com/introduction-to-agent-skills">Introduction to Agent Skills</a> · <a href="https://anthropic.skilljar.com/introduction-to-subagents">Introduction to Subagents</a></p>
+
+  <h2>Skill vs. agente: la diferencia que más confunde</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Skill = "cómo se hace"</h3>
+      <p>Es conocimiento procedimental. Mientras no se usa, Claude solo ve su nombre y descripción (unas pocas líneas). Cuando se invoca, sus instrucciones entran <strong>al contexto de la conversación actual</strong> y el mismo Claude las sigue. Tú ves cada paso.</p>
+      <p><strong>Ejemplos:</strong> crear una migración de EF Core, preparar un release, el formato del changelog, el checklist de un endpoint nuevo.</p>
+    </div>
+    <div class="card">
+      <h3>Subagente = "quién lo hace"</h3>
+      <p>Es un trabajador aparte. Arranca con un <strong>contexto limpio</strong> (no ve tu conversación), usa solo las herramientas que le permitas y puede usar otro modelo. Puede leer 40 archivos y devolverte un resumen de 20 líneas: tu sesión principal no se llena.</p>
+      <p><strong>Ejemplos:</strong> revisor de seguridad, investigador del código, escritor de tests, analista de logs.</p>
+    </div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>Skill</th><th>Subagente</th></tr></thead>
+    <tbody>
+      <tr><td>Dónde vive</td><td data-label="Skill"><code>.claude/skills/&lt;nombre&gt;/SKILL.md</code></td><td data-label="Subagente"><code>.claude/agents/&lt;nombre&gt;.md</code></td></tr>
+      <tr><td>Contexto</td><td data-label="Skill">Se suma al de la conversación</td><td data-label="Subagente">Propio y aislado; devuelve un resultado</td></tr>
+      <tr><td>Quién ejecuta</td><td data-label="Skill">El Claude de la sesión</td><td data-label="Subagente">Otra instancia de Claude</td></tr>
+      <tr><td>Modelo</td><td data-label="Skill">El de la sesión. Si la skill trae <code>model:</code>, Claude usa ese modelo solo mientras responde a esa invocación; con tu siguiente mensaje vuelve el de la sesión.</td><td data-label="Subagente">Configurable: <code>haiku</code>, <code>sonnet</code>, <code>opus</code>, <code>fable</code>, <code>inherit</code></td></tr>
+      <tr><td>Esfuerzo</td><td data-label="Skill">El de la sesión. Con <code>effort:</code> la skill usa otro nivel mientras está activa.</td><td data-label="Subagente">Hereda el de la sesión o lo fijas con <code>effort:</code>; aplica solo mientras el subagente trabaja.</td></tr>
+      <tr><td>Herramientas</td><td data-label="Skill">Las de la sesión; <code>allowed-tools</code> pre-aprueba</td><td data-label="Subagente">Lista blanca/negra propia (<code>tools</code>, <code>disallowedTools</code>)</td></tr>
+      <tr><td>Cómo se invoca</td><td data-label="Skill"><code>/nombre args</code> o Claude la elige por su descripción</td><td data-label="Subagente">"usa el agente X", <code>@"x (agent)"</code>, o Claude delega solo</td></tr>
+      <tr><td>Funciona en claude.ai</td><td data-label="Skill">Sí, mismo formato</td><td data-label="Subagente">Es una función de Claude Code</td></tr>
+      <tr><td>Úsalo cuando…</td><td data-label="Skill">Quieres que algo se haga <em>siempre igual</em></td><td data-label="Subagente">El trabajo intermedio es mucho, necesita otra perspectiva o menos permisos</td></tr>
+    </tbody>
+  </table></div>
+  <h2>Cómo se combinan</h2>
+  <p class="prose">No hay que elegir entre una y otro. Se pueden usar juntos de tres formas.</p>
+
+  <p class="prose"><strong>1 · Una skill que se ejecuta en un subagente.</strong> Normalmente una skill corre dentro de tu conversación. Con <code>context: fork</code> (<a href="#context-fork">detalle abajo</a>), Claude Code crea un subagente, le pasa la skill como tarea y a tu conversación solo vuelve el resumen; mientras tanto puedes seguir trabajando. <code>agent:</code> elige qué subagente hace el trabajo (si no lo indicas, <code>general-purpose</code>).</p>
+  <div class="code"><div class="fname"><span>.claude/skills/investigar/SKILL.md</span><button class="copy" type="button">Copiar</button></div><pre><code>---
+description: Investigates how something works in this repo and returns a short summary with file paths. Use it for questions that require reading many files.
+context: fork
+agent: Explore
+---
+Investiga $ARGUMENTS en este repositorio: encuentra los archivos relevantes,
+léelos y devuelve un resumen corto con rutas y líneas.</code></pre></div>
+  <div class="prose">
+    <p><strong>¿Qué es <code>agent: Explore</code>?</strong> Le dice a Claude Code <em>qué subagente</em> ejecuta la skill. Explore viene incluido en Claude Code y está hecho para buscar: encuentra y lee archivos, pero <strong>no puede editarlos</strong>, y arranca con un contexto mínimo (no carga el CLAUDE.md). Es la opción natural para una skill que solo investiga. Las alternativas:</p>
+  </div>
+  <ul class="kv">
+<li><strong><code>agent: Explore</code></strong><span>Solo lectura y rápido. Para investigar, buscar o resumir.</span></li>
+<li><strong><code>agent: Plan</code></strong><span>Investiga para armar un plan, sin editar.</span></li>
+<li><strong><code>agent: general-purpose</code></strong><span>Puede leer, editar y ejecutar comandos. Es el que se usa si no pones <code>agent:</code>.</span></li>
+<li><strong><code>agent: revisor-seguridad</code></strong><span>Cualquier subagente propio de <code>.claude/agents/</code>, con su prompt, herramientas y modelo.</span></li>
+</ul>
+  <div class="code"><div class="fname"><span>Así se ve al usarla (ilustrativo)</span><button class="copy" type="button">Copiar</button></div><pre><code>&gt; /investigar cómo se calcula un reembolso parcial
+
+<span class="c"># Claude Code crea un subagente Explore y le pasa la skill con tu argumento.</span>
+<span class="c"># Tú sigues trabajando. El subagente, por su cuenta:</span>
+<span class="c">#   busca "Refund" → 14 archivos · lee el servicio, la política de descuentos y los tests</span>
+<span class="c"># Nada de eso entra a tu contexto. Cuando termina, llega solo esto:</span>
+
+El reembolso parcial se calcula en <span data-stack="dotnet">RefundService.CalculateRefund
+(src/Payments/RefundService.cs:88)</span><span data-stack="node">RefundService.calculateRefund
+(apps/api/src/refunds/refund.service.ts:88)</span>. Aplica el descuento del pedido
+y redondea al final. Los tests cubren descuentos fijos, pero no porcentuales.</code></pre></div>
+  <p class="prose">El subagente leyó catorce archivos; tu sesión solo recibió cuatro líneas.</p>
+
+  <p class="prose"><strong>2 · Un subagente que arranca sabiendo una skill.</strong> Con <code>skills:</code> en el frontmatter del subagente, el contenido completo de esas skills entra a su contexto desde el inicio, sin que tenga que buscarlas. Cuando Claude delega en <code>implementador-api</code>, ese subagente ya conoce las convenciones del equipo desde el primer mensaje.</p>
+  <div class="code"><div class="fname"><span>.claude/agents/implementador-api.md</span><button class="copy" type="button">Copiar</button></div><pre><code>---
+name: implementador-api
+description: Implements API endpoints following the team's conventions.
+skills: [convenciones-api]
+---
+Implementa el endpoint que te pidan siguiendo las convenciones precargadas.</code></pre></div>
+
+  <p class="prose"><strong>3 · Una skill que reparte el trabajo entre subagentes.</strong> Aquí la skill <em>no</em> lleva <code>context: fork</code>: corre en tu sesión porque es la que coordina. En cada paso le pide a un subagente distinto que haga una parte, y cada uno trabaja en su propio contexto y devuelve solo su resultado. La skill junta las respuestas y te entrega el resumen.</p>
+  <div class="code"><div class="fname"><span>.claude/skills/revisar-rama/SKILL.md</span><button class="copy" type="button">Copiar</button></div><pre><code>---
+description: Reviews the current branch before opening a PR (scope, tests, security). Only when the user runs /revisar-rama.
+disable-model-invocation: true
+---
+Revisa la rama actual antes de abrir el PR:
+1. Delega al subagente Explore: lista los archivos que cambiaron respecto a main
+   y qué módulos tocan. Pide solo rutas y una línea por módulo.
+2. Delega a escritor-tests: comprueba que cada cambio tenga test y escribe los que falten.
+3. Delega a revisor-seguridad: revisa el diff y reporta hallazgos con archivo y línea.
+4. Con los tres resultados, entrégame una tabla: módulo → tests → hallazgos.</code></pre></div>
+  <p class="prose">Al escribir <code>/revisar-rama</code>, tu sesión ve tres delegaciones y tres resúmenes, no los archivos que leyó cada subagente. <code>revisor-seguridad</code> es el subagente de la <a href="/es/blog/de-copilot-a-claude/sesion-5-hooks-skills-subagentes">sesión 5</a>; <code>escritor-tests</code> sería otro igual, con permiso para editar archivos de tests.</p>
+
+  <h2 id="context-fork">Qué cambia con <code>context: fork</code></h2>
+  <p class="prose">Es una sola línea en el frontmatter de la skill, pero cambia dónde y cómo se ejecuta:</p>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>Skill normal</th><th>Skill con <code>context: fork</code></th></tr></thead>
+    <tbody>
+      <tr><td>Dónde corre</td><td data-label="Skill normal">En tu conversación, con el mismo Claude</td><td data-label="Con context: fork">En un subagente nuevo, del tipo que diga <code>agent:</code> (por defecto <code>general-purpose</code>)</td></tr>
+      <tr><td>Qué sabe</td><td data-label="Skill normal">Todo lo que ya hablaron en la sesión</td><td data-label="Con context: fork">Solo el texto de la skill y los argumentos. No ve tu conversación</td></tr>
+      <tr><td>Qué ves mientras trabaja</td><td data-label="Skill normal">Cada paso, en tu sesión</td><td data-label="Con context: fork">Nada: corre en segundo plano y sigues trabajando. Con <code>background: false</code>, esperas el resultado</td></tr>
+      <tr><td>Qué queda en tu contexto</td><td data-label="Skill normal">Todo lo que leyó y ejecutó</td><td data-label="Con context: fork">Solo el resumen que devuelve</td></tr>
+      <tr><td>Modelo</td><td data-label="Skill normal">El de la sesión, o <code>model:</code> mientras responde</td><td data-label="Con context: fork"><code>model:</code> fija el modelo del subagente</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note warn"><strong>Ojo con el nombre.</strong> "Fork" suena a copiar la conversación, pero no la copia: el subagente arranca sin saber nada de lo que hablaste. Por eso la skill tiene que traer todo lo que necesita, y lo que cambia entre usos va en los argumentos (<code>$ARGUMENTS</code>). Si usas <code>agent: Explore</code>, ni siquiera carga el CLAUDE.md.</div>
+  <ul class="kv">
+<li><strong>Úsalo cuando…</strong><span>La skill lee mucho para devolver poco: investigar un flujo, auditar dependencias, resumir logs, revisar un módulo.</span></li>
+<li><strong>No lo uses cuando…</strong><span>La skill depende de lo que ya hablaron, tiene que editar archivos mientras tú miras, o te va a hacer preguntas a mitad de camino.</span></li>
+</ul>
+
+  <div class="practice">
+<h2 class="practice-h">Práctica</h2>
+<div class="quiz" data-quiz="sa"></div>
+</div>

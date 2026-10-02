@@ -7,9 +7,9 @@
         "slug": "",
         "title": "El cambio de mentalidad",
         "kicker": "Antes de empezar",
-        "lede": "Seis sesiones prácticas para que un equipo que viene de GitHub Copilot trabaje con Claude a nivel experto: la plataforma, Claude Design, Claude Code, la carpeta .claude/, hooks e integraciones.",
+        "lede": "Seis sesiones prácticas para que un equipo de desarrollo pase de cero a trabajar con Claude a nivel experto: la plataforma, Claude Design, Claude Code, la carpeta .claude/, hooks e integraciones.",
         "pills": [],
-        "minutes": 3,
+        "minutes": 1,
         "hasStack": false
       },
       {
@@ -17,11 +17,23 @@
         "slug": "conceptos",
         "title": "Las piezas de Claude y cuándo usar cada una",
         "kicker": "Conceptos clave",
-        "lede": "Modelo, esfuerzo, contexto, skills, subagentes, hooks, MCP y plugins: las piezas con las que se arma todo lo demás, y en qué idioma conviene escribirle a Claude.",
+        "lede": "Modelo, esfuerzo, tokens, contexto, skills, subagentes, hooks, MCP y plugins: las piezas con las que se arma todo lo demás, y en qué idioma conviene escribirle a Claude.",
         "pills": [
           "Base para todas las sesiones"
         ],
-        "minutes": 8,
+        "minutes": 10,
+        "hasStack": true
+      },
+      {
+        "id": "skills-agentes",
+        "slug": "skills-y-subagentes",
+        "title": "Skills y subagentes",
+        "kicker": "Conceptos clave",
+        "lede": "La diferencia que más confunde: qué es una skill, qué es un subagente, cómo se combinan y qué cambia con context: fork.",
+        "pills": [
+          "Base para la sesión 5"
+        ],
+        "minutes": 7,
         "hasStack": true
       },
       {
@@ -34,7 +46,7 @@
           "~2 h",
           "claude.ai · web, escritorio y móvil"
         ],
-        "minutes": 5,
+        "minutes": 4,
         "hasStack": true
       },
       {
@@ -47,7 +59,7 @@
           "~1.5 h",
           "Beta · Pro, Max, Team, Enterprise"
         ],
-        "minutes": 3,
+        "minutes": 2,
         "hasStack": false
       },
       {
@@ -73,7 +85,7 @@
           "~2 h",
           "Manejo de conocimiento"
         ],
-        "minutes": 13,
+        "minutes": 14,
         "hasStack": true
       },
       {
@@ -86,7 +98,7 @@
           "~2.5 h",
           "Automatización determinista y reutilizable"
         ],
-        "minutes": 9,
+        "minutes": 11,
         "hasStack": true
       },
       {
@@ -112,21 +124,20 @@
           "Se cubre en S3 y S6",
           "Referencia de uso continuo"
         ],
-        "minutes": 5,
+        "minutes": 11,
         "hasStack": false
       },
       {
-        "id": "demo",
-        "slug": "demo-en-vivo",
-        "title": "Del issue al PR revisado, en vivo",
-        "kicker": "Demo en vivo",
-        "lede": "Un flujo real de 30 minutos que usa casi todo el programa: de un issue de GitHub a un PR revisado, con guion minuto a minuto y plan B.",
+        "id": "consumo",
+        "slug": "consumo-y-eficiencia",
+        "title": "Consumo y eficiencia",
+        "kicker": "Buenas prácticas",
+        "lede": "Qué se carga en cada turno, cómo medirlo y cómo ahorrar tokens sin perder calidad, con ejemplos de \"no hagas esto → haz esto\".",
         "pills": [
-          "~30 min",
-          "Ensayar 2 veces antes"
+          "Referencia de uso continuo"
         ],
         "minutes": 10,
-        "hasStack": true
+        "hasStack": false
       },
       {
         "id": "cursos",
@@ -146,9 +157,21 @@
         "slug": "referencia",
         "title": "Para tener a mano",
         "kicker": "Referencia rápida",
-        "lede": "Atajos, comandos, precedencias y los errores más comunes de un equipo que viene de Copilot. Más las fuentes oficiales.",
+        "lede": "Atajos, comandos, precedencias y los errores más comunes al empezar. Más las fuentes oficiales.",
         "pills": [],
         "minutes": 2,
+        "hasStack": false
+      },
+      {
+        "id": "comparativa",
+        "slug": "copilot-claude-gemini-chatgpt",
+        "title": "Copilot, Claude, Gemini y ChatGPT",
+        "kicker": "Panorama",
+        "lede": "Qué ofrece cada uno a desarrollo, QA y diseño, dónde destaca, cómo pueden convivir y las equivalencias si el equipo viene de Copilot.",
+        "pills": [
+          "Estado a octubre de 2026"
+        ],
+        "minutes": 8,
         "hasStack": false
       }
     ]
@@ -161,9 +184,9 @@
         "slug": "",
         "title": "The mindset shift",
         "kicker": "Before you start",
-        "lede": "Six hands-on sessions to get a team coming from GitHub Copilot working with Claude at an expert level: the platform, Claude Design, Claude Code, the .claude/ folder, hooks and integrations.",
+        "lede": "Six hands-on sessions to take a development team from zero to working with Claude at an expert level: the platform, Claude Design, Claude Code, the .claude/ folder, hooks and integrations.",
         "pills": [],
-        "minutes": 3,
+        "minutes": 1,
         "hasStack": false
       },
       {
@@ -171,11 +194,23 @@
         "slug": "concepts",
         "title": "Claude's building blocks and when to use each",
         "kicker": "Key concepts",
-        "lede": "Model, effort, context, skills, subagents, hooks, MCP and plugins: the pieces everything else is built from, and which language to write to Claude in.",
+        "lede": "Model, effort, tokens, context, skills, subagents, hooks, MCP and plugins: the pieces everything else is built from, and which language to write to Claude in.",
         "pills": [
           "Foundation for every session"
         ],
-        "minutes": 7,
+        "minutes": 9,
+        "hasStack": true
+      },
+      {
+        "id": "skills-agentes",
+        "slug": "skills-and-subagents",
+        "title": "Skills and subagents",
+        "kicker": "Key concepts",
+        "lede": "The most confusing difference: what a skill is, what a subagent is, how they combine, and what context: fork changes.",
+        "pills": [
+          "Foundation for session 5"
+        ],
+        "minutes": 6,
         "hasStack": true
       },
       {
@@ -188,7 +223,7 @@
           "~2 h",
           "claude.ai · web, desktop and mobile"
         ],
-        "minutes": 4,
+        "minutes": 3,
         "hasStack": true
       },
       {
@@ -214,7 +249,7 @@
           "~2 h",
           "Terminal · VS Code · JetBrains · Desktop · Web"
         ],
-        "minutes": 11,
+        "minutes": 10,
         "hasStack": true
       },
       {
@@ -253,7 +288,7 @@
           "~2.5 h",
           "MCP · plugins · CI · governance"
         ],
-        "minutes": 6,
+        "minutes": 5,
         "hasStack": false
       },
       {
@@ -266,21 +301,20 @@
           "Covered in S3 and S6",
           "Ongoing reference"
         ],
-        "minutes": 5,
+        "minutes": 11,
         "hasStack": false
       },
       {
-        "id": "demo",
-        "slug": "live-demo",
-        "title": "From issue to reviewed PR, live",
-        "kicker": "Live demo",
-        "lede": "A real 30-minute flow that uses almost the whole program: from a GitHub issue to a reviewed PR, with a minute-by-minute script and a plan B.",
+        "id": "consumo",
+        "slug": "consumption-and-efficiency",
+        "title": "Consumption and efficiency",
+        "kicker": "Best practices",
+        "lede": "What loads on every turn, how to measure it and how to save tokens without losing quality, with \"don't do this → do this\" examples.",
         "pills": [
-          "~30 min",
-          "Rehearse twice beforehand"
+          "Ongoing reference"
         ],
         "minutes": 9,
-        "hasStack": true
+        "hasStack": false
       },
       {
         "id": "cursos",
@@ -300,9 +334,21 @@
         "slug": "reference",
         "title": "Keep it handy",
         "kicker": "Quick reference",
-        "lede": "Shortcuts, commands, precedence rules and the most common mistakes of a team coming from Copilot. Plus the official sources.",
+        "lede": "Shortcuts, commands, precedence rules and the most common mistakes when starting out. Plus the official sources.",
         "pills": [],
         "minutes": 2,
+        "hasStack": false
+      },
+      {
+        "id": "comparativa",
+        "slug": "copilot-claude-gemini-chatgpt",
+        "title": "Copilot, Claude, Gemini and ChatGPT",
+        "kicker": "The landscape",
+        "lede": "What each one offers development, QA and design, where it stands out, how they can coexist, and the equivalents if the team comes from Copilot.",
+        "pills": [
+          "Status as of October 2026"
+        ],
+        "minutes": 7,
         "hasStack": false
       }
     ]
