@@ -1,0 +1,94 @@
+<p class="prose">Este programa usa Claude, pero el equipo va a convivir con las otras herramientas: Copilot ya está en el IDE, alguien usa ChatGPT para todo y Google empuja Gemini en Workspace. No hay una "mejor" para todo. Lo útil es saber qué hace bien cada una para <strong>desarrollo, QA y diseño</strong>, y decidir con criterio.</p>
+  <div class="note warn"><strong>Estado a octubre de 2026.</strong> Estas herramientas cambian cada mes: en junio, por ejemplo, Google retiró Gemini CLI para cuentas personales y lo reemplazó por Antigravity. Antes de decidir, revisa las fuentes del final.</div>
+
+  <h2>Lo esencial</h2>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>GitHub Copilot</th><th>Claude</th><th>Gemini</th><th>ChatGPT</th></tr></thead>
+    <tbody>
+      <tr><td>Punto fuerte</td><td data-label="GitHub Copilot">Vive dentro de GitHub y del IDE; deja elegir modelo de varios proveedores.</td><td data-label="Claude">Agente de código muy configurable para el equipo (Claude Code) y circuito diseño ↔ código.</td><td data-label="Gemini">Plataforma de agentes de Google (Antigravity), integración con Google Cloud y Workspace.</td><td data-label="ChatGPT">Asistente general que el equipo ya conoce, con Codex en todos los planes.</td></tr>
+      <tr><td>Herramientas para código</td><td data-label="GitHub Copilot">Extensión del IDE, Copilot CLI y agente en GitHub.</td><td data-label="Claude">Claude Code: terminal, VS Code, JetBrains, escritorio y web.</td><td data-label="Gemini">Antigravity 2.0 (IDE de escritorio) y Antigravity CLI. En planes de empresa siguen Gemini Code Assist y Gemini CLI.</td><td data-label="ChatGPT">Codex: CLI, extensión del IDE, app de escritorio y web.</td></tr>
+      <tr><td>Autocompletado mientras escribes</td><td data-label="GitHub Copilot">Sí, es su origen.</td><td data-label="Claude">No: trabaja por tareas.</td><td data-label="Gemini">Sí, en el editor de Antigravity y en Code Assist.</td><td data-label="ChatGPT">No es su enfoque: Codex trabaja por tareas.</td></tr>
+      <tr><td>Tarea en la nube que termina en PR</td><td data-label="GitHub Copilot">Asignas un issue al agente de Copilot y abre un PR borrador.</td><td data-label="Claude">Claude Code en la web y <code>@claude</code> en issues y PRs.</td><td data-label="Gemini">Agentes en segundo plano de Antigravity. Jules cerró para cuentas personales en junio de 2026.</td><td data-label="ChatGPT">Tareas de Codex en la nube, con entornos reutilizables del repo.</td></tr>
+      <tr><td>Revisión de PRs</td><td data-label="GitHub Copilot">Revisión de Copilot en GitHub y en el editor.</td><td data-label="Claude"><code>/code-review</code>, <code>/security-review</code>, Code Review y GitHub Action.</td><td data-label="Gemini">Gemini Code Assist en GitHub (versión de empresa; la personal cerró en julio de 2026).</td><td data-label="ChatGPT">Revisión de Codex en GitHub (planes Business y Enterprise).</td></tr>
+      <tr><td>Modelos</td><td data-label="GitHub Copilot">Claude, GPT, Gemini y otros, a elección.</td><td data-label="Claude">Claude: Fable, Opus, Sonnet, Haiku.</td><td data-label="Gemini">Gemini.</td><td data-label="ChatGPT">GPT de OpenAI.</td></tr>
+      <tr><td>Configuración del equipo</td><td data-label="GitHub Copilot">Instrucciones, MCP, Spaces y agentes personalizados.</td><td data-label="Claude">CLAUDE.md, reglas, skills, subagentes, hooks, plugins y MCP.</td><td data-label="Gemini">Configuración de agentes en Antigravity y MCP.</td><td data-label="ChatGPT">Agentes de workspace, skills, conectores y MCP.</td></tr>
+      <tr><td>Gobierno</td><td data-label="GitHub Copilot">Políticas de organización y enterprise en GitHub.</td><td data-label="Claude">Managed settings, consola de administración y SSO/SCIM en Enterprise.</td><td data-label="Gemini">A través de Google Cloud (IAM y facturación por consumo).</td><td data-label="ChatGPT">Consola de administración de Business y Enterprise.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Para desarrollo</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Necesidad</th><th>GitHub Copilot</th><th>Claude</th><th>Gemini</th><th>ChatGPT</th></tr></thead>
+    <tbody>
+      <tr><td>Escribir código línea a línea</td><td data-label="GitHub Copilot"><strong>Su terreno.</strong> Autocompletado en casi cualquier IDE.</td><td data-label="Claude">No lo cubre.</td><td data-label="Gemini">Autocompletado en Antigravity y Code Assist.</td><td data-label="ChatGPT">No lo cubre.</td></tr>
+      <tr><td>Cambio de varios archivos con build y tests</td><td data-label="GitHub Copilot">Modo agente en VS Code, Visual Studio, JetBrains, Eclipse y Xcode.</td><td data-label="Claude"><strong>Su terreno.</strong> Claude Code con modo Plan, permisos por fase y hooks que obligan a dejar los tests en verde.</td><td data-label="Gemini">Antigravity reparte el trabajo entre varios agentes.</td><td data-label="ChatGPT">Codex en local o en la nube, con agentes en paralelo y worktrees aislados.</td></tr>
+      <tr><td>Que todo el equipo trabaje igual</td><td data-label="GitHub Copilot">Instrucciones del repo y políticas de la organización.</td><td data-label="Claude"><strong>Su terreno.</strong> Carpeta <code>.claude/</code> versionada y plugins para distribuirla.</td><td data-label="Gemini">Configuración por proyecto en Antigravity.</td><td data-label="ChatGPT">Skills y agentes compartidos en el workspace.</td></tr>
+      <tr><td>Repo en GitHub, tarea que llega como issue</td><td data-label="GitHub Copilot"><strong>Su terreno.</strong> Asignar el issue a Copilot es nativo.</td><td data-label="Claude"><code>@claude</code> en el issue o Claude Code en la web.</td><td data-label="Gemini">Agentes de Antigravity sobre el repo.</td><td data-label="ChatGPT">Tarea de Codex conectada al repo.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Para QA</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Necesidad</th><th>GitHub Copilot</th><th>Claude</th><th>Gemini</th><th>ChatGPT</th></tr></thead>
+    <tbody>
+      <tr><td>Generar tests desde código o criterios de aceptación</td><td data-label="GitHub Copilot">Sí, en el chat o en modo agente.</td><td data-label="Claude">Sí, con un subagente dedicado y reglas por ruta para los archivos de tests.</td><td data-label="Gemini">Sí, con los agentes de Antigravity.</td><td data-label="ChatGPT">Sí, con Codex.</td></tr>
+      <tr><td>Probar la app en un navegador</td><td data-label="GitHub Copilot">Con el servidor MCP de Playwright.</td><td data-label="Claude">Claude en Chrome (navega, hace clic y lee la consola) o MCP de Playwright.</td><td data-label="Gemini"><strong>Su terreno.</strong> El Browser Subagent de Antigravity prueba la app web de punta a punta.</td><td data-label="ChatGPT">Con el MCP de Playwright en Codex.</td></tr>
+      <tr><td>Garantizar que no se entrega con tests en rojo</td><td data-label="GitHub Copilot">Checks de CI en el PR.</td><td data-label="Claude">Hook <code>Stop</code> que no deja terminar con tests fallando, además de CI.</td><td data-label="Gemini">Checks de CI en el PR.</td><td data-label="ChatGPT">Codex corre los tests en su entorno; checks de CI en el PR.</td></tr>
+      <tr><td>Buscar bugs en un PR</td><td data-label="GitHub Copilot">Revisión de Copilot.</td><td data-label="Claude">Subagente revisor de solo lectura y <code>/security-review</code>.</td><td data-label="Gemini">Gemini Code Assist en GitHub (empresa).</td><td data-label="ChatGPT">Revisión de Codex en GitHub.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Para diseño</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Necesidad</th><th>GitHub Copilot</th><th>Claude</th><th>Gemini</th><th>ChatGPT</th></tr></thead>
+    <tbody>
+      <tr><td>Prototipo desde un requisito</td><td data-label="GitHub Copilot">No tiene herramienta de diseño propia.</td><td data-label="Claude"><strong>Claude Design</strong>: prototipos interactivos con estados reales.</td><td data-label="Gemini"><strong>Stitch</strong> (Google Labs): pantallas web y móviles desde texto, en un lienzo infinito.</td><td data-label="ChatGPT">Generación de imágenes y Codex Sites (vista previa) para apps interactivas.</td></tr>
+      <tr><td>Design system a partir del código real</td><td data-label="GitHub Copilot">—</td><td data-label="Claude"><strong>Su terreno.</strong> Claude Design lo construye desde el repo y verifica los diseños nuevos contra él.</td><td data-label="Gemini">Stitch importa desde Figma.</td><td data-label="ChatGPT">—</td></tr>
+      <tr><td>Trabajo con Figma</td><td data-label="GitHub Copilot">MCP de Figma en VS Code: trae contexto del diseño y devuelve la UI a Figma como capas editables.</td><td data-label="Claude">Conector de Figma en claude.ai y MCP en Claude Code.</td><td data-label="Gemini">Stitch copia a Figma e importa desde Figma.</td><td data-label="ChatGPT">Por MCP.</td></tr>
+      <tr><td>Del diseño al código</td><td data-label="GitHub Copilot">El agente lee el diseño por el MCP de Figma.</td><td data-label="Claude">Paquete de handoff de Claude Design a Claude Code, sin partir de un pantallazo.</td><td data-label="Gemini">Stitch exporta código (HTML, Tailwind, React, Flutter y más) y tiene un MCP para herramientas de código.</td><td data-label="ChatGPT">Codex implementa desde capturas o especificaciones.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Cómo pueden convivir</h2>
+  <div class="prose"><ul>
+    <li><strong>Copilot + Claude:</strong> la combinación más común. Copilot sigue con el autocompletado en el IDE y Claude Code hace el trabajo de agente. Copilot incluso permite usar modelos Claude y, en algunos planes, delegarle tareas al agente de Claude (en vista previa).</li>
+    <li><strong>Diseño:</strong> el que se elija debe hablar con Figma y con el agente de código. Claude Design y Stitch cubren ese puente de formas distintas: el primero parte del código del equipo; el segundo, de la exploración visual.</li>
+    <li><strong>Documentos y día a día:</strong> si la empresa vive en Google Workspace, Gemini ya está en Docs y Sheets; Claude tiene Projects, Docs y Slides; ChatGPT, sus agentes de workspace. Mejor elegir uno para el conocimiento compartido del equipo.</li>
+  </ul></div>
+  <div class="note"><strong>Cuidado con duplicar.</strong> Pagar cuatro herramientas para hacer lo mismo diluye la adopción: cada una necesita su configuración, sus reglas y su gobierno. Define cuál se usa para qué y escríbelo.</div>
+
+  <h2>Cómo elegir</h2>
+  <ul class="kv">
+<li><strong>¿Dónde vive el código?</strong><span>GitHub favorece a Copilot; Google Cloud, a Gemini. Claude y Codex trabajan bien con cualquier repo Git; con Azure DevOps o GitLab, en modo headless dentro del pipeline.</span></li>
+<li><strong>¿Qué pesa más en el día a día?</strong><span>Autocompletado: Copilot. Tareas de varios archivos con reglas del equipo: Claude Code. Pruebas en navegador integradas: Antigravity. Asistente general para todos los roles: ChatGPT.</span></li>
+<li><strong>¿Qué exige compliance?</strong><span>Revisa retención de datos, uso para entrenamiento, SSO, auditoría y certificaciones en el plan de empresa de cada uno, no en el personal.</span></li>
+<li><strong>¿Cómo comparar de verdad?</strong><span>Un piloto de dos semanas con las mismas tres tareas reales (un bug, una feature y un test de UI), midiendo adopción, tiempo de issue a PR y calidad antes y después.</span></li>
+</ul>
+
+  <h2 id="si-vienes-de-copilot">Si vienes de Copilot: equivalencias</h2>
+  <p class="prose">Casi todo lo que el equipo ya configuró en Copilot tiene un lugar en Claude. Esta tabla sirve de guía de migración.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>En Copilot</th><th>En Claude</th><th>Notas</th></tr></thead>
+    <tbody>
+      <tr><td data-label="En Copilot">Copilot Chat en el IDE</td><td data-label="En Claude">Extensión de Claude Code para VS Code / JetBrains, o <code>claude</code> en la terminal</td><td data-label="Notas">Mismo agente en todas las superficies; comparten configuración.</td></tr>
+      <tr><td data-label="En Copilot">Agent mode / coding agent</td><td data-label="En Claude">Claude Code (local), Claude Code en la web (nube) y <code>@claude</code> en GitHub</td><td data-label="Notas">Sesión S3 y S6.</td></tr>
+      <tr><td data-label="En Copilot"><code>.github/copilot-instructions.md</code></td><td data-label="En Claude"><code>CLAUDE.md</code></td><td data-label="Notas"><code>/init</code> lee el archivo de Copilot e incorpora lo relevante.</td></tr>
+      <tr><td data-label="En Copilot"><code>.github/instructions/*.instructions.md</code> con <code>applyTo</code></td><td data-label="En Claude"><code>.claude/rules/*.md</code> con <code>paths</code></td><td data-label="Notas">Reglas que solo se cargan cuando Claude toca archivos que coinciden.</td></tr>
+      <tr><td data-label="En Copilot"><code>.github/prompts/*.prompt.md</code></td><td data-label="En Claude">Skills: <code>.claude/skills/&lt;nombre&gt;/SKILL.md</code></td><td data-label="Notas">Se invocan como <code>/nombre</code> y Claude también puede usarlas solo. Se migran a mano: <code>/import</code> no trae configuración de Copilot.</td></tr>
+      <tr><td data-label="En Copilot">Custom agents / chat modes</td><td data-label="En Claude">Subagentes: <code>.claude/agents/*.md</code></td><td data-label="Notas">Cada uno con su prompt, herramientas y modelo.</td></tr>
+      <tr><td data-label="En Copilot"><code>AGENTS.md</code></td><td data-label="En Claude">Se lee directo si no hay <code>CLAUDE.md</code></td><td data-label="Notas">O impórtalo con <code>@AGENTS.md</code> dentro de <code>CLAUDE.md</code>.</td></tr>
+      <tr><td data-label="En Copilot">MCP en <code>.vscode/mcp.json</code></td><td data-label="En Claude"><code>.mcp.json</code> en la raíz del repo</td><td data-label="Notas">Sesión S6.</td></tr>
+      <tr><td data-label="En Copilot">Copilot code review</td><td data-label="En Claude"><code>/code-review</code>, <code>/security-review</code>, Code Review y GitHub Action</td><td data-label="Notas">Sesión S6.</td></tr>
+      <tr><td data-label="En Copilot">Spaces / contexto compartido</td><td data-label="En Claude">Projects en claude.ai + skills de organización</td><td data-label="Notas">Sesión S1.</td></tr>
+      <tr><td data-label="En Copilot">Autocompletado inline (ghost text)</td><td data-label="En Claude">Sin equivalente directo</td><td data-label="Notas">Claude trabaja por tareas, no por sugerencia de línea. Muchos equipos mantienen el autocompletado que prefieran y usan Claude para el trabajo de agente.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Fuentes</h2>
+  <p class="prose">Revisadas el 1 de octubre de 2026.</p>
+  <div class="prose"><ul>
+    <li><a href="https://github.com/features/copilot/plans">Planes de GitHub Copilot</a> · <a href="https://docs.github.com/en/copilot/get-started/plans">Copilot Business y Enterprise</a> · <a href="https://github.blog/changelog/2026-03-06-figma-mcp-server-can-now-generate-design-layers-from-vs-code/">MCP de Figma en VS Code</a></li>
+    <li><a href="https://code.claude.com/docs/en/overview">Claude Code</a> · <a href="https://support.claude.com/en/articles/14604416-get-started-with-claude-design">Claude Design</a> · <a href="https://code.claude.com/docs/en/costs">Costos de Claude Code</a></li>
+    <li><a href="https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/">De Gemini CLI a Antigravity CLI</a> · <a href="https://antigravity.google/product/antigravity-ide/">Antigravity</a> · <a href="https://developers.google.com/gemini-code-assist/docs/deprecations/consumer-code-review">Gemini Code Assist en GitHub</a> · <a href="https://stitch.withgoogle.com">Stitch</a></li>
+    <li><a href="https://learn.chatgpt.com/docs/pricing">Planes de ChatGPT y Codex</a> · <a href="https://help.openai.com/en/articles/11391654-chatgpt-business-release-notes">Novedades de ChatGPT Business</a></li>
+  </ul></div>

@@ -32,7 +32,7 @@ winget install Anthropic.ClaudeCode</code></pre></div>
   <div class="prose"><ul>
     <li><strong>Da el criterio de éxito:</strong> un test, un comando que debe pasar, una salida esperada.</li>
     <li><strong>Referencia archivos con <code>@</code>:</strong> <code>@src/Payments/RefundService.cs</code> (con autocompletado).</li>
-    <li><strong>Pega imágenes</strong> con Ctrl+V: pantallazos de errores, diseños, diagramas.</li>
+    <li><strong>Pega imágenes</strong> con Ctrl+V (en Windows, <strong>Alt+V</strong>): pantallazos de errores, diseños, diagramas.</li>
     <li><strong>Corrige temprano:</strong> Esc interrumpe; escribe mientras Claude trabaja y el mensaje se encola.</li>
   </ul></div>
 
@@ -52,8 +52,9 @@ claude --permission-mode plan
 { <span class="k">"permissions"</span>: { <span class="k">"defaultMode"</span>: <span class="s">"plan"</span> } }</code></pre></div>
   <p class="prose">También puedes escribir <code>/plan</code> seguido de la tarea para entrar directo a modo Plan con esa petición.</p>
 
-  <h3><code>default</code>: pregunta la primera vez</h3>
+  <h3><code>default</code> (Manual): pregunta la primera vez</h3>
   <div class="prose">
+    <p>En la terminal, las extensiones del IDE y la app de escritorio aparece con la etiqueta <strong>Manual</strong>. En la configuración puedes escribir <code>default</code> o <code>manual</code>.</p>
     <p>Claude te pide permiso la primera vez que quiere usar cada herramienta o comando. Cuando pregunta, tienes tres opciones: aprobar solo esta vez, aprobar y <strong>no volver a preguntar</strong> por ese comando en este proyecto, o rechazar y decirle qué hacer distinto.</p>
     <p><strong>Ejemplo.</strong> Le pides <em>"corre los tests del módulo de pagos"</em>. Claude propone <span data-stack="dotnet"><code>dotnet test tests/Payments.Tests</code></span><span data-stack="node"><code>pnpm --filter api test payments</code></span> y espera. Si eliges "no volver a preguntar", queda guardado como regla <code>allow</code> y la próxima vez corre sin interrumpirte.</p>
     <p><strong>Úsalo</strong> en un repo que no conoces o mientras aprendes. En pocos días habrás aprobado los comandos habituales y casi no te preguntará.</p>
@@ -125,7 +126,7 @@ claude --permission-mode plan
   <h2>Los comandos con /</h2>
   <div class="prose">
     <p>Escribe <code>/</code> al inicio del prompt y aparece un menú con todos los comandos y una descripción corta; sigue escribiendo para filtrar. Muchos aceptan texto después del nombre. Las skills de tu equipo también aparecen en este menú (sesión 5).</p>
-    <p>No hace falta aprenderlos todos. Estos son los que se usan en una tarea normal, agrupados por el momento en que los necesitas.</p>
+    <p>No hace falta aprenderlos todos. Estos son los que se usan en una tarea normal, agrupados por el momento en que los necesitas. En la sesión se practican los de la tarea completa del final; el resto queda como referencia.</p>
   </div>
 
   <h3>Antes de empezar</h3>
@@ -215,27 +216,5 @@ claude --permission-mode plan
 
   <div class="practice">
 <h2 class="practice-h">Práctica</h2>
-<div class="lab">
-    <div class="lab-h"><h3>Laboratorio 3 · Primera feature con Claude Code</h3><span class="pill">60 min</span></div>
-    <ol>
-      <li>En el repo de práctica, abre <code>claude</code> y pide: <em>"Explícame la arquitectura de este repo y cómo corro build y tests."</em></li>
-      <li>Activa modo Plan y pide una feature pequeña. Ejemplo:
-        <span data-stack="dotnet">"Agrega <code>GET /orders/{id}/refunds</code> con paginación, validación y tests de integración con WebApplicationFactory."</span>
-        <span data-stack="node">"Agrega <code>GET /orders/:id/refunds</code> en NestJS con paginación, DTO validado con class-validator y tests con Vitest + Supertest."</span></li>
-      <li>Corrige al menos un punto del plan antes de aprobarlo.</li>
-      <li>Cambia a <code>acceptEdits</code> y deja que implemente. Observa cómo corre <span data-stack="dotnet"><code>dotnet test</code></span><span data-stack="node"><code>pnpm test</code></span> y corrige fallos.</li>
-      <li>Revisa con <code>/diff</code>, corre <code>/code-review</code> y pide el commit.</li>
-      <li>Revisa <code>/usage</code> para ver cuánto costó la tarea.</li>
-    </ol>
-  </div>
-  <div class="check" data-check="s3">
-    <h3>Checklist · Sesión 3</h3>
-    <label><input type="checkbox" id="s3-1"><span>Claude Code instalado, autenticado y conectado a mi IDE.</span></label>
-    <label><input type="checkbox" id="s3-2"><span>Completé una feature usando Plan antes de implementar.</span></label>
-    <label><input type="checkbox" id="s3-3"><span>Sé usar /context, /clear, /compact y /rewind.</span></label>
-    <label><input type="checkbox" id="s3-4"><span>Escribo prompts con criterio de éxito verificable.</span></label>
-    <label><input type="checkbox" id="s3-5"><span>Cambio de modo según la fase: Plan para diseñar, acceptEdits para implementar.</span></label>
-    <label><input type="checkbox" id="s3-6"><span>Usé /plan, /btw, /diff y /code-review en una tarea real.</span></label>
-  </div>
   <div class="quiz" data-quiz="s3"></div>
 </div>

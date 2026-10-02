@@ -1,0 +1,128 @@
+<p class="prose">Cada mensaje que envías hace que Claude Code le mande al modelo todo el contexto acumulado. Por eso el consumo depende menos de cuánto escribes y más de <strong>cuánto contexto arrastras</strong>. La meta no es gastar lo mínimo a cualquier precio, sino no pagar por tokens que no aportan: un contexto pequeño y relevante es más barato <em>y</em> da mejores respuestas.</p>
+
+  <h2>Qué se carga y cuánto ocupa</h2>
+  <p class="prose">No todo entra completo en cada turno. Muchas piezas ponen solo una línea en el contexto y cargan el resto cuando hace falta:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Pieza</th><th>Qué ocupa en tu contexto</th><th>Cómo controlarlo</th></tr></thead>
+    <tbody>
+      <tr><td data-label="Pieza">Instrucciones del sistema y datos del entorno</td><td data-label="Qué ocupa">Siempre, desde el inicio.</td><td data-label="Cómo controlarlo">No se controla: es la base de cada sesión.</td></tr>
+      <tr><td data-label="Pieza">Servidores MCP</td><td data-label="Qué ocupa">Solo los <strong>nombres</strong> de sus herramientas y sus instrucciones. La definición completa de una herramienta entra cuando Claude la va a usar.</td><td data-label="Cómo controlarlo">Desactiva los que no usas con <code>/mcp</code>. Si existe una CLI (<code>gh</code>, <code>az</code>), suele ser más liviana que un MCP.</td></tr>
+      <tr><td data-label="Pieza">Skills</td><td data-label="Qué ocupa">Una línea por skill: su descripción. El contenido completo, solo cuando se usa. Las que tienen <code>disable-model-invocation: true</code> no ocupan nada hasta que las invocas con <code>/nombre</code>.</td><td data-label="Cómo controlarlo">Desactiva las que no usas en <code>/skills</code>. Marca con <code>disable-model-invocation</code> las que solo lanzas tú.</td></tr>
+      <tr><td data-label="Pieza">Subagentes</td><td data-label="Qué ocupa">Su nombre y descripción, para que Claude sepa a quién delegar. Su prompt y todo lo que leen se quedan en el contexto del subagente.</td><td data-label="Cómo controlarlo">Descripciones cortas y claras; borra los que nadie usa.</td></tr>
+      <tr><td data-label="Pieza">Plugins</td><td data-label="Qué ocupa">Nada por sí mismos: ocupan lo de sus piezas (skills, subagentes, MCP).</td><td data-label="Cómo controlarlo">En <code>/plugin</code>, desactiva los marcados como "Not used recently".</td></tr>
+      <tr><td data-label="Pieza">Hooks</td><td data-label="Qué ocupa">Nada, salvo lo que le devuelven a Claude: la salida de <code>SessionStart</code> y <code>UserPromptSubmit</code>, el motivo de un bloqueo o un <code>additionalContext</code>.</td><td data-label="Cómo controlarlo">Que devuelvan lo justo: un resumen, no un log entero.</td></tr>
+      <tr><td data-label="Pieza">CLAUDE.md y auto memory</td><td data-label="Qué ocupa">Completos desde el inicio. De la memoria, las primeras 200 líneas de <code>MEMORY.md</code>.</td><td data-label="Cómo controlarlo">CLAUDE.md por debajo de 200 líneas; lo específico, a reglas o skills.</td></tr>
+      <tr><td data-label="Pieza">Reglas en <code>.claude/rules/</code></td><td data-label="Qué ocupa">Sin <code>paths</code>, como <code>estilo.md</code>: completas desde el inicio, en cada turno. Con <code>paths: ["**/*.test.ts"]</code>, como <code>testing.md</code>: solo cuando Claude lee un archivo de tests.</td><td data-label="Cómo controlarlo">Pon <code>paths</code> a toda regla que no aplique a todo el repo.</td></tr>
+      <tr><td data-label="Pieza">Archivos leídos y salidas de comandos</td><td data-label="Qué ocupa">Todo lo que Claude lee o ejecuta. Suele ser la mayor parte.</td><td data-label="Cómo controlarlo">Pedidos específicos, subagentes para explorar y salidas filtradas (abajo).</td></tr>
+      <tr><td data-label="Pieza">Historial de la conversación</td><td data-label="Qué ocupa">Crece con cada mensaje y viaja en cada turno.</td><td data-label="Cómo controlarlo"><code>/clear</code> al cambiar de tarea; <code>/compact</code> si sigues en la misma.</td></tr>
+      <tr><td data-label="Pieza">Respuesta y razonamiento</td><td data-label="Qué ocupa">Tokens de <strong>salida</strong>, los más caros. El razonamiento puede llegar a decenas de miles de tokens por respuesta.</td><td data-label="Cómo controlarlo">Esfuerzo acorde a la tarea y respuestas concisas.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Cómo medirlo</h2>
+  <ul class="kv">
+<li><strong><code>/context</code></strong><span>Qué ocupa el contexto ahora y cuánto queda: memoria, MCP, skills, historial.</span></li>
+<li><strong><code>/usage</code></strong><span>Tokens y costo de la sesión. En Pro, Max, Team y Enterprise muestra además qué parte del consumo reciente vino de cada skill, subagente, plugin y servidor MCP, y avisa cuando algo (contexto largo, fallos de caché) pasa del 10%.</span></li>
+<li><strong>Barra de estado</strong><span>El % de contexto siempre a la vista (<a href="/es/blog/de-copilot-a-claude/sesion-4-conocimiento">sesión 4</a>).</span></li>
+<li><strong><code>count_tokens</code></strong><span>Endpoint de la API que cuenta un texto antes de enviarlo.</span></li>
+</ul>
+  <div class="note"><strong>Mide antes de optimizar.</strong> Una semana mirando <code>/usage</code> dice más que cualquier regla general: muestra si lo que pesa es un MCP, una skill, los subagentes o sesiones que nunca se limpian.</div>
+
+  <h2>Lo que conviene saber</h2>
+  <div class="prose"><ul>
+    <li><strong>Caché:</strong> lo que se repite en cada turno se reutiliza desde caché y cuesta menos, pero igual ocupa espacio. Dura una hora en una suscripción y, por defecto, cinco minutos con API key: al volver de una pausa larga, el primer mensaje reprocesa todo el contexto.</li>
+    <li><strong>Salida:</strong> cuesta más que la entrada, y el razonamiento cuenta como salida.</li>
+    <li><strong>Autocompactación:</strong> cuando el contexto se acerca al límite, Claude Code lo resume solo y se pierden detalles. Mejor decidir tú cuándo.</li>
+    <li><strong><code>/compact</code> no es gratis:</strong> lee toda la conversación para resumirla. <code>/clear</code> no cuesta nada.</li>
+    <li><strong>Los subagentes ahorran contexto, no consumo:</strong> sus peticiones también cuentan contra tu plan. Por eso conviene darles un modelo más chico.</li>
+  </ul></div>
+
+  <h2>Buenas prácticas: no hagas esto → haz esto</h2>
+
+  <h3>Sesiones y contexto</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>No hagas esto</th><th>Haz esto</th></tr></thead>
+    <tbody>
+      <tr><td data-label="No hagas esto">Usar una sola sesión todo el día para tareas sin relación.</td><td data-label="Haz esto">Una sesión por tarea: <code>/rename PAY-12-resumen</code> al empezar, <code>/clear</code> al cambiar de tarea y <code>/resume PAY-12-resumen</code> para volver. El contexto viejo se paga en cada mensaje.</td></tr>
+      <tr><td data-label="No hagas esto"><code>/compact</code> para «empezar limpio».</td><td data-label="Haz esto"><code>/clear</code>, que no cuesta nada. <code>/compact</code> lee toda la conversación para resumirla: úsalo solo para seguir con la misma tarea y dile qué conservar, por ejemplo <code>/compact conserva las decisiones de la API y los tests pendientes</code>.</td></tr>
+      <tr><td data-label="No hagas esto">Volver después de horas a una sesión enorme para preguntar algo corto.</td><td data-label="Haz esto">Si es otro tema, abre una sesión nueva (<code>/clear</code> o <code>claude -n otro-tema</code>). La caché ya venció y ese primer mensaje vuelve a procesar todo el historial.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Pedir bien</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>No hagas esto</th><th>Haz esto</th></tr></thead>
+    <tbody>
+      <tr><td data-label="No hagas esto">«Mejora el módulo de pagos.»</td><td data-label="Haz esto">«Agrega validación del monto al crear un reembolso (#482) y un test que la cubra.» Un pedido vago obliga a Claude a recorrer medio repo; uno concreto le dice dónde mirar y cuándo terminó.</td></tr>
+      <tr><td data-label="No hagas esto">Pedir un cambio de varios archivos y dejar que empiece a editar.</td><td data-label="Haz esto">Empieza con <code>/plan agrega paginación al listado de reembolsos</code> y corrige el plan antes de aprobarlo. Corregir un plan cuesta poco; rehacer código, miles de tokens.</td></tr>
+      <tr><td data-label="No hagas esto">Dejar que siga cuando ves que va por mal camino.</td><td data-label="Haz esto"><strong>Esc</strong> para detenerlo y corrígelo: «No toques DiscountPolicy, el bug está en RefundService». Si ya editó, <strong>Esc Esc</strong> (o <code>/rewind</code>) para volver al punto anterior.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Lo que se carga siempre</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>No hagas esto</th><th>Haz esto</th></tr></thead>
+    <tbody>
+      <tr><td data-label="No hagas esto">Un CLAUDE.md de 600 líneas con el paso a paso del release y de las migraciones.</td><td data-label="Haz esto">CLAUDE.md por debajo de 200 líneas, con lo que vale siempre: comandos y convenciones. El paso a paso del release va a una skill (<code>.claude/skills/release/SKILL.md</code>) y las reglas de tests a <code>.claude/rules/testing.md</code> con <code>paths: ["**/*.test.ts"]</code>: así solo se cargan cuando hacen falta.</td></tr>
+      <tr><td data-label="No hagas esto">Ocho servidores MCP conectados «por si acaso».</td><td data-label="Haz esto">Solo los que el equipo usa: <code>/mcp disable jira</code> apaga uno. Si existe una CLI, pídela directo: «Usa <code>gh issue view 482</code> y resúmeme el issue» en lugar de un servidor MCP de GitHub.</td></tr>
+      <tr><td data-label="No hagas esto">Plugins instalados que nadie usa.</td><td data-label="Haz esto"><code>/plugin</code> → pestaña <strong>Installed</strong> → desactiva los que dicen «Not used recently», o directo: <code>/plugin disable nombre@marketplace</code>.</td></tr>
+      <tr><td data-label="No hagas esto">Una skill de deploy que solo lanzas tú, sin configurar nada más.</td><td data-label="Haz esto">Agrega <code>disable-model-invocation: true</code> a su frontmatter: sale de la lista que Claude ve en cada turno y no ocupa nada hasta que escribes <code>/deploy</code>.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Que Claude lea menos</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>No hagas esto</th><th>Haz esto</th></tr></thead>
+    <tbody>
+      <tr><td data-label="No hagas esto">«Lee logs/app.log y dime por qué falla el pago» (10.000 líneas).</td><td data-label="Haz esto">Filtra primero: «Corre <code>grep -n ERROR logs/app.log | tail -50</code> y explícame qué falla». De decenas de miles de tokens a cientos.</td></tr>
+      <tr><td data-label="No hagas esto">Correr toda la suite y que la salida completa entre al contexto.</td><td data-label="Haz esto">Pide solo los tests afectados («corre <code>dotnet test --filter RefundServiceTests</code>») o usa un hook que deje pasar solo las fallas (ejemplo abajo).</td></tr>
+      <tr><td data-label="No hagas esto">Dejar que Claude busque un método con grep y abra archivo por archivo hasta dar con el correcto.</td><td data-label="Haz esto">Instala el plugin de <em>code intelligence</em> de tu lenguaje (explicado abajo). Claude le pregunta al lenguaje dónde está definido y dónde se usa, igual que tu IDE con F12, y recibe la ruta y la línea exactas en una sola consulta.</td></tr>
+      <tr><td data-label="No hagas esto">Pedirle que investigue cómo funciona algo dentro de tu sesión principal.</td><td data-label="Haz esto">«Usa el subagente Explore para averiguar cómo se calcula un reembolso; devuélveme solo rutas y una línea por archivo.» Lo que lee se queda en el subagente (<a href="/es/blog/de-copilot-a-claude/skills-y-subagentes#context-fork">ver Skills y subagentes</a>).</td></tr>
+    </tbody>
+  </table></div>
+  <div class="code"><div class="fname"><span>.claude/hooks/solo-fallas.sh · PreToolUse con matcher "Bash"</span><button class="copy" type="button">Copiar</button></div><pre><code>#!/usr/bin/env bash
+<span class="c"># Si el comando corre tests, deja pasar a Claude solo las fallas.</span>
+<span class="c"># Adaptado del ejemplo de la documentación oficial de costos.</span>
+INPUT=$(cat)
+CMD=$(echo "$INPUT" | jq -r '.tool_input.command')
+if [[ "$CMD" =~ ^(dotnet\ test|pnpm\ (-r\ |--filter\ [^\ ]+\ )?test) ]]; then
+  FILTRADO="$CMD 2&gt;&amp;1 | grep -i -A 5 -E '(fail|error)' | head -100; echo '(salida filtrada: solo fallas)'"
+  echo "$INPUT" | jq --arg c "$FILTRADO" \
+    '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "allow", updatedInput: (.tool_input + {command: $c})}}'
+else
+  echo "{}"
+fi</code></pre></div>
+  <p class="prose">El hook reescribe el comando antes de que corra: Claude ve hasta 100 líneas alrededor de las fallas en vez de toda la salida. Regístralo en <code>.claude/settings.json</code> bajo <code>PreToolUse</code> con <code>"matcher": "Bash"</code>, como los hooks de la <a href="/es/blog/de-copilot-a-claude/sesion-5-hooks-skills-subagentes">sesión 5</a>.</p>
+
+  <h3>Qué es un plugin LSP y por qué ahorra tokens</h3>
+  <div class="prose">
+    <p>Tu IDE sabe dónde está definido cada método porque usa un <strong>servidor de lenguaje</strong> (LSP): es el motor detrás de F12, «Ir a definición» y «Buscar referencias». Claude Code no lo trae por defecto, así que para encontrar un método busca texto: corre un grep, encuentra diez coincidencias (comentarios, tests, nombres parecidos) y abre varios archivos hasta dar con el correcto. Cada archivo abierto son tokens.</p>
+    <p>Con el plugin, Claude le pregunta al servidor de lenguaje y recibe la ruta y la línea exactas. De paso, ve los errores de compilación apenas edita un archivo, sin esperar al build.</p>
+  </div>
+  <div class="code"><div class="fname"><span>Instalar el plugin de tu lenguaje</span><button class="copy" type="button">Copiar</button></div><pre><code><span class="c"># 1. Una vez por máquina: el servidor de lenguaje</span>
+dotnet tool install --global csharp-ls                 <span class="c"># .NET</span>
+npm i -g typescript-language-server typescript         <span class="c"># Node / TypeScript</span>
+
+<span class="c"># 2. En Claude Code: el plugin del marketplace oficial</span>
+/plugin install csharp-lsp@claude-plugins-official
+/plugin install typescript-lsp@claude-plugins-official
+
+<span class="c"># 3. Pregunta como siempre; Claude usa el servidor de lenguaje cuando le sirve</span>
+&gt; ¿Dónde se define CalculateRefund y quién lo llama?</code></pre></div>
+
+  <h3>Modelo y esfuerzo</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>No hagas esto</th><th>Haz esto</th></tr></thead>
+    <tbody>
+      <tr><td data-label="No hagas esto">Opus o Fable en <code>max</code> para renombrar o formatear.</td><td data-label="Haz esto">Baja para esa tarea: <code>/model</code> → elige Sonnet → con ← → llega a <code>low</code> → pulsa <code>s</code> (solo esta sesión). Reserva el modelo grande y <code>xhigh</code> para lo difícil (<a href="/es/blog/de-copilot-a-claude/conceptos#modelos">ver Conceptos</a>).</td></tr>
+      <tr><td data-label="No hagas esto">Subagentes de búsqueda con el modelo de la sesión.</td><td data-label="Haz esto">Dales un modelo chico en su frontmatter: <code>model: haiku</code>. Sus peticiones también cuentan contra tu plan.</td></tr>
+      <tr><td data-label="No hagas esto">Cambiar de modelo varias veces en la misma tarea.</td><td data-label="Haz esto">Elige el modelo al empezar (<code>claude --model sonnet</code>) y cámbialo entre tareas, no en medio: con otro modelo la caché no sirve y todo el contexto se procesa de nuevo.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><strong>Regla práctica:</strong> si Claude se pone lento o empieza a olvidar cosas, mira <code>/context</code> antes de culpar al modelo. Casi siempre sobra historial o hay archivos leídos de otra tarea.</div>
+
+  <div class="practice">
+<h2 class="practice-h">Práctica</h2>
+<div class="quiz" data-quiz="con"></div>
+</div>

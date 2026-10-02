@@ -9,11 +9,11 @@
   <h2>Modelos y esfuerzo</h2>
   <ul class="kv">
 <li><strong><strong>Claude Fable 5.1</strong></strong><span>El más capaz para código y trabajo de conocimiento (septiembre 2026). Refactors grandes, diseño de arquitectura, bugs difíciles.</span></li>
-<li><strong><strong>Claude Opus 5</strong></strong><span>Tareas complejas de varios pasos con buen balance de velocidad. Tiene modo Fast.</span></li>
-<li><strong><strong>Claude Sonnet 5</strong></strong><span>Trabajo diario: features medianas, tests, explicación de código. Rápido y económico.</span></li>
+<li><strong><strong>Claude Opus 5.5</strong></strong><span>Tareas complejas de varios pasos con buen balance de velocidad. Tiene modo Fast.</span></li>
+<li><strong><strong>Claude Sonnet 5.5</strong></strong><span>Trabajo diario: features medianas, tests, explicación de código. Rápido y económico.</span></li>
 <li><strong><strong>Claude Haiku 4.5</strong></strong><span>Tareas cortas y de alto volumen; buen candidato para subagentes de búsqueda.</span></li>
 </ul>
-  <p class="prose">Ejemplos concretos por tipo de tarea en <a href="/es/blog/de-copilot-a-claude/conceptos#modelo-esfuerzo">Conceptos → Modelo y esfuerzo</a>. El <strong>esfuerzo</strong> (Low, Medium, High, Extra High, Max) controla cuánto razona el modelo antes de responder. Más esfuerzo es mejor para problemas ambiguos y peor para preguntas simples, porque tarda más y consume más cuota. En Fable 5.1 y Opus 5 el razonamiento ("Thinking") siempre está activo.</p>
+  <p class="prose">Ejemplos concretos por tipo de tarea en <a href="/es/blog/de-copilot-a-claude/conceptos#modelo-esfuerzo">Conceptos → Modelo y esfuerzo</a>. El <strong>esfuerzo</strong> (Low, Medium, High, Extra High, Max) controla cuánto razona el modelo antes de responder. Más esfuerzo es mejor para problemas ambiguos y peor para preguntas simples, porque tarda más y consume más cuota. En Fable 5.1 y Opus 5.5 el razonamiento ("Thinking") siempre está activo.</p>
 
   <h2>Projects: el conocimiento compartido del equipo</h2>
   <div class="prose">
@@ -57,25 +57,6 @@ Stack: <span data-stack="dotnet">.NET 8 (ASP.NET Core Minimal APIs, EF Core, SQL
 
   <div class="practice">
 <h2 class="practice-h">Práctica</h2>
-<div class="lab">
-    <div class="lab-h"><h3>Laboratorio 1 · Project del equipo</h3><span class="pill">45 min</span></div>
-    <ol>
-      <li>Crea un Project con el nombre del producto. Sube 3–5 documentos reales: un ADR, el estándar de API, el contrato OpenAPI de un servicio y la guía de estilo.</li>
-      <li>Escribe instrucciones a partir de la plantilla de arriba y ajústalas a tu equipo.</li>
-      <li>Pregunta: <em>"Según nuestros ADRs, ¿cómo deberíamos exponer un endpoint de reembolsos?"</em>. Revisa si cita los documentos correctos.</li>
-      <li>Cambia a Sonnet 5 con esfuerzo bajo y repite. Compara calidad y tiempo con Fable 5.1 en esfuerzo alto.</li>
-      <li>Pide un Claude Doc con el diseño del endpoint y deja un comentario con <code>@Claude</code> pidiendo añadir los casos de error.</li>
-      <li>Comparte el Project con el equipo como "Can view".</li>
-    </ol>
-  </div>
 
-  <div class="check" data-check="s1">
-    <h3>Checklist · Sesión 1</h3>
-    <label><input type="checkbox" id="s1-1"><span>Sé cuándo usar Fable 5.1, Opus 5, Sonnet 5 y Haiku 4.5.</span></label>
-    <label><input type="checkbox" id="s1-2"><span>Tengo un Project del equipo con conocimiento e instrucciones.</span></label>
-    <label><input type="checkbox" id="s1-3"><span>Entiendo la diferencia entre memoria, conocimiento del Project y documentación del repo.</span></label>
-    <label><input type="checkbox" id="s1-4"><span>Creé un Doc y lo edité con @Claude.</span></label>
-    <label><input type="checkbox" id="s1-5"><span>Puedo explicar la política de datos del plan.</span></label>
-  </div>
   <div class="quiz" data-quiz="s1"></div>
 </div>

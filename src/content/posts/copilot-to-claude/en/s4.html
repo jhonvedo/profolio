@@ -48,7 +48,8 @@
     <li><strong>What Claude can't figure out on its own:</strong> exact commands, decisions and their why, known pitfalls. Don't copy what the code already says.</li>
     <li><strong>Concrete and verifiable:</strong> "Use <code>Result&lt;T&gt;</code> for business errors" beats "handle errors properly".</li>
     <li><strong>No contradictions</strong>: if two rules clash, Claude picks one at random.</li>
-    <li><strong>Start with <code>/init</code>:</strong> it analyzes the repo and generates a draft. If <code>.github/copilot-instructions.md</code> already exists, it reads it and pulls in what's relevant.</li>
+    <li><strong>Start with <code>/init</code>:</strong> it analyzes the repo and generates a draft. If <code>.github/copilot-instructions.md</code> already exists, it reads it and pulls in what's relevant. With <code>CLAUDE_CODE_NEW_INIT=1</code> the flow is interactive and also proposes skills and hooks. <code>/import</code> doesn't help here: it brings in configuration from Codex, Gemini CLI or Cursor, not Copilot, so <code>.prompt.md</code> and <code>*.instructions.md</code> files are migrated by hand using the equivalence table.</li>
+    <li><strong>Audit it now and then:</strong> <code>/doctor prompt-audit</code> looks for instructions that contradict each other, are outdated, or mention files and commands that no longer exist. It proposes changes but doesn't apply them until you ask.</li>
   </ul></div>
 
   <div data-stack="dotnet">
@@ -166,6 +167,7 @@ paths:
       <span class="s">"Read(./.env.*)"</span>,
       <span class="s">"Read(**/appsettings.Production.json)"</span>,
       <span class="s">"Read(~/.microsoft/usersecrets/**)"</span>,
+      <span class="s">"Read(~/AppData/Roaming/Microsoft/UserSecrets/**)"</span>,
       <span class="s">"Bash(dotnet nuget push *)"</span>
     ]
   },
@@ -210,11 +212,24 @@ paths:
     </ul>
   </div>
 
+  <h3>Sandbox: the operating system's guarantee</h3>
+  <div class="prose">
+    <p>Permission rules decide which tools Claude uses. The <strong>sandbox</strong> works one level lower: the operating system limits which files and network domains Bash commands and all their child processes can touch, including a Python or Node script that opens files on its own, which a <code>Read(...)</code> rule can't reach.</p>
+    <ul>
+      <li><strong>Turn it on:</strong> <code>/sandbox</code> opens the panel and shows whether any dependency is missing. For all your projects, <code>"sandbox": { "enabled": true }</code> in <code>~/.claude/settings.json</code>. The admin can enforce it from managed settings.</li>
+      <li><strong>By default:</strong> commands can only write to the project folder, a temp directory and folders added with <code>/add-dir</code>. Network access is limited to the domains you approve.</li>
+      <li><strong>Secrets:</strong> <code>sandbox.filesystem.denyRead</code> blocks paths for any process. Combine it with the <code>Read(...)</code> rules above, which cover Claude's own tools.</li>
+      <li><strong>Where it works:</strong> macOS, Linux and WSL2. <strong>It doesn't work on native Windows</strong>: a .NET team on Windows that wants it must run Claude Code inside WSL2. On Linux and WSL2 it needs <code>bubblewrap</code> and <code>socat</code>.</li>
+    </ul>
+  </div>
+  <div class="note">Depending on the mode you pick in <code>/sandbox</code>, commands that stay within those limits run without asking. That's why it fits <code>auto</code> mode and long tasks: fewer interruptions and a boundary that doesn't depend on what the model decides.</div>
+
   <h2>settings.json recipes</h2>
   <div class="prose">
     <p>So far we've covered permissions. But <code>settings.json</code> does much more: notifications, status line, default model, environment variables, how you authenticate. These recipes are the most useful day to day.</p>
     <p>Almost all of them are <strong>personal</strong>: they go in <code>~/.claude/settings.json</code> (your user folder) and apply to all your repos. When a recipe makes sense for the whole team, I say so.</p>
   </div>
+  <div class="note"><strong>In the session</strong> you only set up notifications and the status line. The other recipes are reference for when you need them. The <code>//</code> comments in the examples are explanatory: delete them in the real file.</div>
 
   <h3>Get notified when Claude finishes or needs permission</h3>
   <div class="prose">
@@ -259,9 +274,10 @@ Install-Module BurntToast -Scope CurrentUser
 <span class="c"># Claude Code sends the session data on stdin, as JSON.</span>
 INPUT=$(cat)
 MODEL=$(echo "$INPUT" | jq -r '.model.display_name')
-DIR=$(echo "$INPUT" | jq -r '.workspace.current_dir' | xargs basename)
+CWD=$(echo "$INPUT" | jq -r '.workspace.current_dir')
 CTX=$(echo "$INPUT" | jq -r '.context_window.used_percentage // 0')
-BRANCH=$(git -C "$(echo "$INPUT" | jq -r '.workspace.current_dir')" branch --show-current 2&gt;/dev/null)
+BRANCH=$(git -C "$CWD" branch --show-current 2&gt;/dev/null)
+DIR="${CWD//\\//}"; DIR="${DIR##*/}"   <span class="c"># folder name; works with Windows paths too</span>
 
 echo "[$MODEL] $DIR ${BRANCH:+on $BRANCH} · ${CTX}% context"</code></pre></div>
   <div class="code"><div class="fname"><span>~/.claude/settings.json</span><button class="copy" type="button">Copy</button></div><pre><code>{
@@ -270,7 +286,7 @@ echo "[$MODEL] $DIR ${BRANCH:+on $BRANCH} · ${CTX}% context"</code></pre></div>
     <span class="k">"command"</span>: <span class="s">"bash ~/.claude/statusline.sh"</span>
   }
 }</code></pre></div>
-  <p class="prose">Result: <code>[Sonnet 5] orders-api on PAY-482 · 34% context</code>. Once the percentage goes past 70–80%, it's a good time for <code>/compact</code> or <code>/clear</code>. Requires <code>jq</code>.</p>
+  <p class="prose">Result: <code>[Sonnet 5.5] orders-api on PAY-482 · 34% context</code>. Once the percentage goes past 70–80%, it's a good time for <code>/compact</code> or <code>/clear</code>. Requires <code>jq</code>.</p>
 
   <h3>Use an API key instead of the subscription</h3>
   <div class="prose">
@@ -350,26 +366,5 @@ export ANTHROPIC_VERTEX_PROJECT_ID=my-project</code></pre></div>
 
   <div class="practice">
 <h2 class="practice-h">Practice</h2>
-<div class="lab">
-    <div class="lab-h"><h3>Lab 4 · Set up the team repo</h3><span class="pill">60 min</span></div>
-    <ol>
-      <li>If the repo has <code>.github/copilot-instructions.md</code>, run <code>/init</code> and check what it pulled in. If not, run <code>/init</code> anyway.</li>
-      <li>Trim CLAUDE.md to under 200 lines. Move endpoint- and test-specific content to <code>.claude/rules/</code>.</li>
-      <li>Create <code>.claude/settings.json</code> with the allow/ask/deny from the example, adapted to your commands.</li>
-      <li>Create your <code>CLAUDE.local.md</code> and add it to <code>.gitignore</code> along with <code>.claude/settings.local.json</code>.</li>
-      <li>Open a new session and run <code>/context</code>: check that the right files load.</li>
-      <li>Ask Claude to read <code>.env</code>: it should refuse because of the <code>deny</code>.</li>
-      <li>Open a PR with the <code>.claude/</code> folder for the team to review.</li>
-    </ol>
-  </div>
-  <div class="check" data-check="s4">
-    <h3>Checklist · Session 4</h3>
-    <label><input type="checkbox" id="s4-1"><span>The repo has a CLAUDE.md under 200 lines reviewed by the team.</span></label>
-    <label><input type="checkbox" id="s4-2"><span>There's at least one rule with <code>paths</code>.</span></label>
-    <label><input type="checkbox" id="s4-3"><span>settings.json with allow/ask/deny in the repo; secrets denied.</span></label>
-    <label><input type="checkbox" id="s4-4"><span>I know what goes in CLAUDE.local.md, ~/.claude and managed policy.</span></label>
-    <label><input type="checkbox" id="s4-5"><span>I get notified when Claude finishes or asks for permission.</span></label>
-    <label><input type="checkbox" id="s4-6"><span>I have a status line with model, branch and context %.</span></label>
-  </div>
   <div class="quiz" data-quiz="s4"></div>
 </div>

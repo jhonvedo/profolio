@@ -13,14 +13,22 @@ export type Part = {
 	hasStack: boolean
 }
 export type SeriesLang = { slug: string; parts: Part[] }
-export type Series = { id: string; title: Record<Lang, string>; eyebrow: Record<Lang, string>; langs: Record<Lang, SeriesLang> }
+// Etapas del mapa de aprendizaje del índice: agrupan los ids de las partes, en el orden de la serie.
+export type Stage = { title: Record<Lang, string>; parts: string[]; optional?: string[] }
+export type Series = { id: string; title: Record<Lang, string>; eyebrow: Record<Lang, string>; langs: Record<Lang, SeriesLang>; stages: Stage[] }
 
 export const series: Series[] = [
 	{
 		id: "copilot-to-claude",
-		title: { es: "De Copilot a Claude", en: "From Copilot to Claude" },
+		title: { es: "Claude desde 0", en: "Claude from scratch" },
 		eyebrow: { es: "Programa de capacitación · Septiembre 2026", en: "Training program · September 2026" },
 		langs: seriesData as Record<Lang, SeriesLang>,
+		stages: [
+			{ title: { es: "Fundamentos", en: "Foundations" }, parts: ["conceptos", "skills-agentes"] },
+			{ title: { es: "Las seis sesiones", en: "The six sessions" }, parts: ["s1", "s2", "s3", "s4", "s5", "s6"] },
+			{ title: { es: "Día a día", en: "Day to day" }, parts: ["operacion", "consumo"] },
+			{ title: { es: "Recursos", en: "Resources" }, parts: ["cursos", "ref"], optional: ["cursos", "ref"] },
+		],
 	},
 ]
 

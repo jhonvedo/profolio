@@ -9,11 +9,11 @@
   <h2>Models and effort</h2>
   <ul class="kv">
 <li><strong><strong>Claude Fable 5.1</strong></strong><span>The most capable for code and knowledge work (September 2026). Large refactors, architecture design, hard bugs.</span></li>
-<li><strong><strong>Claude Opus 5</strong></strong><span>Complex multi-step tasks with a good balance of speed. Has Fast mode.</span></li>
-<li><strong><strong>Claude Sonnet 5</strong></strong><span>Daily work: medium features, tests, explaining code. Fast and economical.</span></li>
+<li><strong><strong>Claude Opus 5.5</strong></strong><span>Complex multi-step tasks with a good balance of speed. Has Fast mode.</span></li>
+<li><strong><strong>Claude Sonnet 5.5</strong></strong><span>Daily work: medium features, tests, explaining code. Fast and economical.</span></li>
 <li><strong><strong>Claude Haiku 4.5</strong></strong><span>Short, high-volume tasks; a good fit for search subagents.</span></li>
 </ul>
-  <p class="prose">Concrete examples by task type in <a href="/en/blog/from-copilot-to-claude/concepts#modelo-esfuerzo">Concepts → Model and effort</a>. <strong>Effort</strong> (Low, Medium, High, Extra High, Max) controls how much the model reasons before answering. More effort is better for ambiguous problems and worse for simple questions, because it takes longer and uses more quota. On Fable 5.1 and Opus 5, reasoning ("Thinking") is always on.</p>
+  <p class="prose">Concrete examples by task type in <a href="/en/blog/from-copilot-to-claude/concepts#modelo-esfuerzo">Concepts → Model and effort</a>. <strong>Effort</strong> (Low, Medium, High, Extra High, Max) controls how much the model reasons before answering. More effort is better for ambiguous problems and worse for simple questions, because it takes longer and uses more quota. On Fable 5.1 and Opus 5.5, reasoning ("Thinking") is always on.</p>
 
   <h2>Projects: the team's shared knowledge</h2>
   <div class="prose">
@@ -57,25 +57,6 @@ Stack: <span data-stack="dotnet">.NET 8 (ASP.NET Core Minimal APIs, EF Core, SQL
 
   <div class="practice">
 <h2 class="practice-h">Practice</h2>
-<div class="lab">
-    <div class="lab-h"><h3>Lab 1 · The team Project</h3><span class="pill">45 min</span></div>
-    <ol>
-      <li>Create a Project named after the product. Upload 3–5 real documents: an ADR, the API standard, a service's OpenAPI contract and the style guide.</li>
-      <li>Write instructions based on the template above and adapt them to your team.</li>
-      <li>Ask: <em>"According to our ADRs, how should we expose a refunds endpoint?"</em>. Check whether it cites the right documents.</li>
-      <li>Switch to Sonnet 5 on low effort and repeat. Compare quality and time with Fable 5.1 on high effort.</li>
-      <li>Ask for a Claude Doc with the endpoint design and leave an <code>@Claude</code> comment asking it to add the error cases.</li>
-      <li>Share the Project with the team as "Can view".</li>
-    </ol>
-  </div>
 
-  <div class="check" data-check="s1">
-    <h3>Checklist · Session 1</h3>
-    <label><input type="checkbox" id="s1-1"><span>I know when to use Fable 5.1, Opus 5, Sonnet 5 and Haiku 4.5.</span></label>
-    <label><input type="checkbox" id="s1-2"><span>I have a team Project with knowledge and instructions.</span></label>
-    <label><input type="checkbox" id="s1-3"><span>I understand the difference between memory, Project knowledge and repo documentation.</span></label>
-    <label><input type="checkbox" id="s1-4"><span>I created a Doc and edited it with @Claude.</span></label>
-    <label><input type="checkbox" id="s1-5"><span>I can explain the plan's data policy.</span></label>
-  </div>
   <div class="quiz" data-quiz="s1"></div>
 </div>
