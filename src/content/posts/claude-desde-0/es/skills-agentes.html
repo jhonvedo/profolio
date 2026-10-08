@@ -1,4 +1,4 @@
-<p class="prose">Skills y subagentes son las dos piezas que más se confunden, porque las dos sirven para darle trabajo a Claude. La diferencia está en <strong>quién</strong> lo hace y <strong>con qué contexto</strong>. Este capítulo amplía la tabla de <a href="/es/blog/de-copilot-a-claude/conceptos">Conceptos</a>; en la <a href="/es/blog/de-copilot-a-claude/sesion-5-hooks-skills-subagentes">sesión 5</a> se crean en el repo.</p>
+<p class="prose">Skills y subagentes son las dos piezas que más se confunden, porque las dos sirven para darle trabajo a Claude. La diferencia está en <strong>quién</strong> lo hace y <strong>con qué contexto</strong>. Este capítulo amplía la tabla de <a href="/es/blog/claude-desde-0/conceptos">Conceptos</a>; en la <a href="/es/blog/claude-desde-0/sesion-5-hooks-skills-subagentes">sesión 5</a> se crean en el repo.</p>
   <p class="course"><strong>Cursos complementarios:</strong> <a href="https://anthropic.skilljar.com/introduction-to-agent-skills">Introduction to Agent Skills</a> · <a href="https://anthropic.skilljar.com/introduction-to-subagents">Introduction to Subagents</a></p>
 
   <h2>Skill vs. agente: la diferencia que más confunde</h2>
@@ -80,7 +80,8 @@ Revisa la rama actual antes de abrir el PR:
 2. Delega a escritor-tests: comprueba que cada cambio tenga test y escribe los que falten.
 3. Delega a revisor-seguridad: revisa el diff y reporta hallazgos con archivo y línea.
 4. Con los tres resultados, entrégame una tabla: módulo → tests → hallazgos.</code></pre></div>
-  <p class="prose">Al escribir <code>/revisar-rama</code>, tu sesión ve tres delegaciones y tres resúmenes, no los archivos que leyó cada subagente. <code>revisor-seguridad</code> es el subagente de la <a href="/es/blog/de-copilot-a-claude/sesion-5-hooks-skills-subagentes">sesión 5</a>; <code>escritor-tests</code> sería otro igual, con permiso para editar archivos de tests.</p>
+  <p class="prose">Al escribir <code>/revisar-rama</code>, tu sesión ve tres delegaciones y tres resúmenes, no los archivos que leyó cada subagente. <code>revisor-seguridad</code> es el subagente de la <a href="/es/blog/claude-desde-0/sesion-5-hooks-skills-subagentes">sesión 5</a>; <code>escritor-tests</code> sería otro igual, con permiso para editar archivos de tests.</p>
+  <p class="prose"><code>disable-model-invocation: true</code> hace que la skill solo corra cuando tú escribes <code>/revisar-rama</code>: Claude nunca la lanza por su cuenta. Úsalo en las skills que tienen efectos (commits, deploys, migraciones) o que cuestan mucho, como esta, que lanza tres subagentes.</p>
 
   <h2 id="context-fork">Qué cambia con <code>context: fork</code></h2>
   <p class="prose">Es una sola línea en el frontmatter de la skill, pero cambia dónde y cómo se ejecuta:</p>

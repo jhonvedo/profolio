@@ -43,9 +43,9 @@ claude mcp remove db</code></pre></div>
 
   <h2>Conectores en claude.ai</h2>
   <div class="prose"><ul>
-    <li>El admin habilita cada conector y puede dejar sus acciones en solo lectura, con aprobación o bloqueadas.</li>
-    <li>Conectores propios (servidores MCP remotos): solo los Owners los agregan en Team/Enterprise. La conexión sale desde la nube de Anthropic, así que el servidor debe ser accesible desde internet o permitir las IPs de Anthropic.</li>
-    <li>Con autorización de toda la organización (Okta), el admin autoriza una vez y los miembros heredan el acceso.</li>
+    <li>El admin habilita cada conector y marca cada permiso como permitido, con aprobación o bloqueado; nadie puede cambiarlo para sí.</li>
+    <li>Conectores propios (servidores MCP remotos): la conexión sale desde la nube de Anthropic, así que el servidor debe ser accesible desde internet; si está detrás de un firewall, permite los rangos de IP de Anthropic.</li>
+    <li>Con la autenticación administrada por la empresa (beta en Team y Enterprise), el admin autoriza un conector una vez para toda la organización.</li>
   </ul></div>
 
   <h2>Plugins: distribuir la configuración del equipo</h2>
@@ -120,9 +120,9 @@ claude -p "Revisa el diff contra main y lista riesgos" \
 
   <h2>Más superficies</h2>
   <div class="grid3">
-    <div class="card"><h3>Claude en Slack</h3><p>@Claude en un hilo lee el contexto; puede convertir un reporte de bug en un PR borrador. Beta para Team y Enterprise.</p></div>
+    <div class="card"><h3>Claude Tag (Slack)</h3><p>@Claude en un canal, con el acceso que configura el admin; puede convertir un reporte de bug en un PR borrador. Beta pública para Team y Enterprise; el trabajo en canales se cobra del saldo de uso de la organización.</p></div>
     <div class="card"><h3>Claude en Chrome</h3><p>Extensión que navega, hace clic y lee la consola. Útil para verificar la UI que Claude Code acaba de construir.</p></div>
-    <div class="card"><h3>Code Review</h3><p>Revisión automática en cada PR sin mantener un workflow propio.</p></div>
+    <div class="card"><h3>Code Review</h3><p>Revisión automática en cada PR sin mantener un workflow propio. Vista previa para Team y Enterprise.</p></div>
   </div>
 
   <h2>Gobierno: managed settings</h2>

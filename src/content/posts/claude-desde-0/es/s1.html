@@ -8,12 +8,12 @@
 
   <h2>Modelos y esfuerzo</h2>
   <ul class="kv">
-<li><strong><strong>Claude Fable 5.1</strong></strong><span>El más capaz para código y trabajo de conocimiento (septiembre 2026). Refactors grandes, diseño de arquitectura, bugs difíciles.</span></li>
+<li><strong><strong>Claude Fable 5.1</strong></strong><span>El más capaz, para el razonamiento más exigente y el trabajo largo. Refactors grandes, diseño de arquitectura, bugs difíciles.</span></li>
 <li><strong><strong>Claude Opus 5.5</strong></strong><span>Tareas complejas de varios pasos con buen balance de velocidad. Tiene modo Fast.</span></li>
 <li><strong><strong>Claude Sonnet 5.5</strong></strong><span>Trabajo diario: features medianas, tests, explicación de código. Rápido y económico.</span></li>
-<li><strong><strong>Claude Haiku 4.5</strong></strong><span>Tareas cortas y de alto volumen; buen candidato para subagentes de búsqueda.</span></li>
+<li><strong><strong>Claude Haiku 5.5</strong></strong><span>El más rápido y barato: tareas cortas y de alto volumen; buen candidato para subagentes de búsqueda. Salió el 7 de octubre de 2026 y reemplaza a Haiku 4.5.</span></li>
 </ul>
-  <p class="prose">Ejemplos concretos por tipo de tarea en <a href="/es/blog/de-copilot-a-claude/conceptos#modelo-esfuerzo">Conceptos → Modelo y esfuerzo</a>. El <strong>esfuerzo</strong> (Low, Medium, High, Extra High, Max) controla cuánto razona el modelo antes de responder. Más esfuerzo es mejor para problemas ambiguos y peor para preguntas simples, porque tarda más y consume más cuota. En Fable 5.1 y Opus 5.5 el razonamiento ("Thinking") siempre está activo.</p>
+  <p class="prose">Ejemplos concretos por tipo de tarea en <a href="/es/blog/claude-desde-0/conceptos#modelo-esfuerzo">Conceptos → Modelo y esfuerzo</a>. El <strong>esfuerzo</strong> (Low, Medium, High, Extra High, Max) controla cuánto razona el modelo antes de responder. Más esfuerzo es mejor para problemas ambiguos y peor para preguntas simples, porque tarda más y consume más cuota. En Fable 5.1 y Opus 5.5 el razonamiento ("Thinking") siempre está activo.</p>
 
   <h2>Projects: el conocimiento compartido del equipo</h2>
   <div class="prose">
@@ -43,13 +43,14 @@ Stack: <span data-stack="dotnet">.NET 8 (ASP.NET Core Minimal APIs, EF Core, SQL
     <div class="card"><h3>Claude Docs</h3><p>Documentos vivos con coedición, comentarios y @Claude en el hilo. Exporta a .docx, PDF, .md o Google Docs. Ideal para specs y postmortems.</p></div>
     <div class="card"><h3>Claude Slides</h3><p>Presentaciones 16:9 exportables a PPTX o PDF. Para demos de sprint y propuestas técnicas.</p></div>
   </div>
+  <div class="note warn"><strong>Ojo con las fechas.</strong> El 16 de septiembre de 2026 Anthropic unificó Cowork y el chat en una sola app de Claude y lanzó Claude Docs y Claude Slides, en beta. Llegaron primero a Pro y Max; en Enterprise, el admin decide cuándo activar Docs, Slides y Design. Si alguna pantalla no coincide con esta guía, probablemente es eso.</div>
 
   <h2>Research, archivos y conectores</h2>
   <div class="prose"><ul>
     <li><strong>Research</strong> ("+" → Research): varias búsquedas encadenadas con citas. Útil para comparar librerías o evaluar una migración. Requiere búsqueda web activa.</li>
     <li><strong>Creación de archivos:</strong> Claude genera y edita .xlsx, .pptx, .docx y PDF ejecutando código en un entorno aislado. El admin controla la salida a internet de ese entorno.</li>
     <li><strong>Conectores:</strong> GitHub, Jira/Confluence, Linear, Slack, Google Drive, Notion, Figma. Heredan los permisos del usuario en el sistema de origen: Claude no ve nada que tú no puedas ver.</li>
-    <li><strong>Skills de organización:</strong> un admin sube un .zip con <code>SKILL.md</code> en <em>Organization settings → Skills</em> y queda disponible para todos (sesión S5).</li>
+    <li><strong>Skills de organización:</strong> un admin sube un .zip con <code>SKILL.md</code> en <em>Organization settings → Plugins &amp; skills</em> y queda disponible para todos; cada persona puede desactivarla para sí (sesión S5).</li>
   </ul></div>
 
   <h2>Datos y privacidad en planes comerciales</h2>

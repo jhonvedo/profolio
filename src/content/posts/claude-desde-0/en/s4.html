@@ -3,7 +3,7 @@
     <li>Write an effective CLAUDE.md and path-scoped rules.</li>
     <li>Configure shared and personal permissions in <code>settings.json</code>.</li>
     <li>Set up notifications, a status line and authentication in their personal <code>settings.json</code>.</li>
-    <li>Migrate the Copilot instructions.</li>
+    <li>Start with <code>/init</code> and reuse the instructions the repo already has.</li>
   </ul></div>
   <p class="course"><strong>Companion course:</strong> <a href="https://anthropic.skilljar.com/claude-code-in-action">Claude Code in Action</a></p>
 
@@ -48,7 +48,7 @@
     <li><strong>What Claude can't figure out on its own:</strong> exact commands, decisions and their why, known pitfalls. Don't copy what the code already says.</li>
     <li><strong>Concrete and verifiable:</strong> "Use <code>Result&lt;T&gt;</code> for business errors" beats "handle errors properly".</li>
     <li><strong>No contradictions</strong>: if two rules clash, Claude picks one at random.</li>
-    <li><strong>Start with <code>/init</code>:</strong> it analyzes the repo and generates a draft. If <code>.github/copilot-instructions.md</code> already exists, it reads it and pulls in what's relevant. With <code>CLAUDE_CODE_NEW_INIT=1</code> the flow is interactive and also proposes skills and hooks. <code>/import</code> doesn't help here: it brings in configuration from Codex, Gemini CLI or Cursor, not Copilot, so <code>.prompt.md</code> and <code>*.instructions.md</code> files are migrated by hand using the equivalence table.</li>
+    <li><strong>Start with <code>/init</code>:</strong> it analyzes the repo and generates a draft; if a CLAUDE.md already exists, it suggests improvements instead of overwriting it. With <code>CLAUDE_CODE_NEW_INIT=1</code> the flow is interactive and also proposes skills and hooks. If the team comes from Codex, Gemini CLI or Cursor, <code>/import</code> brings that configuration in (and <code>/init</code> offers it when it finds it).</li>
     <li><strong>Audit it now and then:</strong> <code>/doctor prompt-audit</code> looks for instructions that contradict each other, are outdated, or mention files and commands that no longer exist. It proposes changes but doesn't apply them until you ask.</li>
   </ul></div>
 
@@ -113,7 +113,7 @@
   <p class="prose">Claude Code loads <code>CLAUDE.md</code> and <code>CLAUDE.local.md</code> from the current directory and every parent; <strong>they're concatenated, not overridden</strong>. Ones in subdirectories load when Claude reads files there. In monorepos, <code>claudeMdExcludes</code> avoids loading other teams' files. If the repo only has <code>AGENTS.md</code>, Claude reads it as the project instructions.</p>
 
   <h2>Path-scoped rules</h2>
-  <p class="prose">They're the equivalent of Copilot's <code>*.instructions.md</code> with <code>applyTo</code>. They only load when Claude reads matching files, so they don't spend context the rest of the time.</p>
+  <p class="prose">They're scoped instructions: a file in <code>.claude/rules/</code> with <code>paths</code> in its header only loads when Claude reads matching files, so it doesn't spend context the rest of the time.</p>
   <div data-stack="dotnet">
   <div class="code"><div class="fname"><span>.claude/rules/endpoints.md</span><button class="copy" type="button">Copy</button></div><pre><code>---
 paths:
@@ -207,6 +207,7 @@ paths:
       <li><code>Bash(git log *)</code>: the <code>*</code> goes after the subcommand. <code>Bash(git *)</code> would allow all of git, including <code>push</code>.</li>
       <li><code>Read</code>/<code>Edit</code> use gitignore-style patterns: <code>./path</code> relative to the current directory, <code>/path</code> relative to the settings file, <code>~/path</code> from your home, <code>//path</code> absolute.</li>
       <li><code>WebFetch(domain:learn.microsoft.com)</code>, <code>mcp__github__create_issue</code>, <code>Agent(name)</code>.</li>
+      <li><strong>On Windows</strong>, Claude runs commands with the <strong>PowerShell</strong> tool (on by default with claude.ai accounts), and <code>Bash(...)</code> rules don't cover it. Repeat the important ones in the same shape: <code>PowerShell(dotnet test *)</code>, <code>PowerShell(dotnet nuget push *)</code>. <code>Read</code> and <code>Edit</code> rules apply the same.</li>
       <li>Bash rules that try to restrict arguments are fragile (<code>curl</code> with different options). For real guarantees use hooks or the sandbox.</li>
       <li><code>/permissions</code> shows and edits them; <code>/fewer-permission-prompts</code> analyzes your sessions and suggests an allowlist.</li>
     </ul>
@@ -233,7 +234,7 @@ paths:
 
   <h3>Get notified when Claude finishes or needs permission</h3>
   <div class="prose">
-    <p>The problem: you give Claude a task, switch windows, and don't notice it's been waiting five minutes for your approval. The fix is two hooks:</p>
+    <p>The problem: you give Claude a task, switch windows, and don't notice it's been waiting five minutes for your approval. Claude Code already sends a desktop notification, but only in Ghostty, Kitty and iTerm2. In other terminals (Windows Terminal, VS Code's) you have two options: <code>"preferredNotifChannel": "terminal_bell"</code> to ring the bell, or two hooks with the sound or notification you prefer:</p>
     <ul>
       <li><code>Notification</code> fires when Claude needs your attention: a pending permission or a long wait.</li>
       <li><code>Stop</code> fires every time Claude finishes responding.</li>

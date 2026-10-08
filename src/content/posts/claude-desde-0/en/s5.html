@@ -216,11 +216,11 @@ Create the `$verb` endpoint for the `$resource` resource:
 <li><strong><code>user-invocable: false</code></strong><span>Only Claude uses it (reference knowledge).</span></li>
 <li><strong><code>allowed-tools</code></strong><span>Tools pre-approved while it runs.</span></li>
 <li><strong><code>argument-hint</code>, <code>arguments</code></strong><span>Arguments: <code>$ARGUMENTS</code>, <code>$0</code>, <code>$1</code> or <code>$name</code>.</span></li>
-<li><strong><code>context: fork</code> + <code>agent</code></strong><span>Runs the skill in a subagent that doesn't see your conversation and only returns the summary (<a href="/en/blog/from-copilot-to-claude/skills-and-subagents#context-fork">see Skills and subagents</a>).</span></li>
+<li><strong><code>context: fork</code> + <code>agent</code></strong><span>Runs the skill in a subagent that doesn't see your conversation and only returns the summary (<a href="/en/blog/claude-from-scratch/skills-and-subagents#context-fork">see Skills and subagents</a>).</span></li>
 <li><strong><code>paths</code>, <code>model</code>, <code>effort</code></strong><span>Activate by path; change the model or effort while the skill is active.</span></li>
 </ul>
   <p class="prose"><code>!`command`</code> runs the command before the skill is sent and replaces the placeholder with the output, so Claude gets real data. Keep <code>SKILL.md</code> under 500 lines and move detail into supporting files. <code>/skills</code> lists the skills and <code>/skill-doctor</code> checks how much context they use.</p>
-  <div class="note"><strong>Skills in claude.ai and in Claude Code:</strong> the same format works in both. Skills an admin provisions for the organization sync to Claude Code and show up as <code>/anthropic-skills:&lt;name&gt;</code>.</div>
+  <div class="note"><strong>Skills in claude.ai and in Claude Code:</strong> the same format works in both. Skills an admin provisions for the organization sync to Claude Code: you invoke them with <code>/&lt;name&gt;</code>, or with <code>/anthropic-skills:&lt;name&gt;</code> if another command uses that name.</div>
 
   <h2>Subagents</h2>
   <p class="prose">A subagent works in its own context and returns only the result, so the main session doesn't fill up with files it read. Claude Code ships with <strong>Explore</strong> (read-only search), <strong>Plan</strong> and <strong>general-purpose</strong>. You create your own with <code>/agents</code> or by hand:</p>

@@ -1,4 +1,4 @@
-<p class="prose">Skills and subagents are the two most confused pieces, because both are ways to give Claude work. The difference is <strong>who</strong> does it and <strong>with what context</strong>. This chapter expands on the table in <a href="/en/blog/from-copilot-to-claude/concepts">Concepts</a>; in <a href="/en/blog/from-copilot-to-claude/session-5-hooks-skills-subagents">session 5</a> you create them in the repo.</p>
+<p class="prose">Skills and subagents are the two most confused pieces, because both are ways to give Claude work. The difference is <strong>who</strong> does it and <strong>with what context</strong>. This chapter expands on the table in <a href="/en/blog/claude-from-scratch/concepts">Concepts</a>; in <a href="/en/blog/claude-from-scratch/session-5-hooks-skills-subagents">session 5</a> you create them in the repo.</p>
   <p class="course"><strong>Companion courses:</strong> <a href="https://anthropic.skilljar.com/introduction-to-agent-skills">Introduction to Agent Skills</a> · <a href="https://anthropic.skilljar.com/introduction-to-subagents">Introduction to Subagents</a></p>
 
   <h2>Skill vs. agent: the most confusing difference</h2>
@@ -80,7 +80,8 @@ Review the current branch before opening the PR:
 2. Delegate to test-writer: check that every change has a test and write the missing ones.
 3. Delegate to security-reviewer: review the diff and report findings with file and line.
 4. With the three results, give me a table: module → tests → findings.</code></pre></div>
-  <p class="prose">When you type <code>/review-branch</code>, your session sees three delegations and three summaries, not the files each subagent read. <code>security-reviewer</code> is the subagent from <a href="/en/blog/from-copilot-to-claude/session-5-hooks-skills-subagents">session 5</a>; <code>test-writer</code> would be a similar one, allowed to edit test files.</p>
+  <p class="prose">When you type <code>/review-branch</code>, your session sees three delegations and three summaries, not the files each subagent read. <code>security-reviewer</code> is the subagent from <a href="/en/blog/claude-from-scratch/session-5-hooks-skills-subagents">session 5</a>; <code>test-writer</code> would be a similar one, allowed to edit test files.</p>
+  <p class="prose"><code>disable-model-invocation: true</code> makes the skill run only when you type <code>/review-branch</code>: Claude never launches it on its own. Use it on skills that have side effects (commits, deploys, migrations) or that cost a lot, like this one, which launches three subagents.</p>
 
   <h2 id="context-fork">What <code>context: fork</code> changes</h2>
   <p class="prose">It's a single line in the skill's frontmatter, but it changes where and how the skill runs:</p>

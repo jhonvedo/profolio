@@ -11,10 +11,10 @@
 <span class="c"># alternative</span>
 winget install Anthropic.ClaudeCode</code></pre></div>
   <div class="prose">
-    <p>The native installer updates itself. There's also Homebrew (<code>brew install --cask claude-code</code>) and npm (<code>npm install -g @anthropic-ai/claude-code</code>, requires Node 22+).</p>
+    <p>The native installer updates itself. There's also Homebrew (<code>brew install --cask claude-code</code>) and npm (<code>npm install -g @anthropic-ai/claude-code</code>, requires Node 22+). winget and Homebrew installs don't update themselves: <code>winget upgrade Anthropic.ClaudeCode</code> or <code>brew upgrade claude-code</code>.</p>
     <p>Then, in the repo folder: <code>claude</code> → sign in with the organization's claude.ai account. For the IDE, install the <strong>VS Code</strong> extension (also works in Cursor) or the <strong>JetBrains</strong> plugin (Rider for .NET, WebStorm for Node). Both show diffs in the IDE's viewer and share your current selection with Claude.</p>
   </div>
-  <div class="note warn"><strong>Windows and .NET:</strong> Claude Code runs natively on Windows. If your tooling lives in WSL, install inside WSL and open the repo from there. For this course's sample hooks to work on native Windows you need Git Bash (which Claude Code uses for hooks) and <code>jq</code>.</div>
+  <div class="note warn"><strong>Windows and .NET:</strong> Claude Code runs natively on Windows and runs commands in <strong>PowerShell</strong> there by default; how to write permissions for that is in session 4. This course's sample hooks are bash scripts: on native Windows you need Git Bash (Claude Code uses it to run hooks) and <code>jq</code>. If your tooling lives in WSL, install inside WSL and open the repo from there.</div>
 
   <h2>The work cycle</h2>
   <div class="grid2">
@@ -132,8 +132,8 @@ claude --permission-mode plan
   <h3>Before you start</h3>
   <ul class="kv">
 <li><strong><code>/init</code></strong><span>Analyzes the repo and generates an initial <code>CLAUDE.md</code>. Used once per repo (session 4).</span></li>
-<li><strong><code>/model</code></strong><span>Opens the model picker; ← → adjust effort. Directly: <code>/model sonnet</code>.</span></li>
-<li><strong><code>/effort</code></strong><span>Changes only the effort: <code>/effort low</code> for something mechanical, <code>/effort xhigh</code> for a hard bug.</span></li>
+<li><strong><code>/model</code></strong><span>Opens the model picker; ← → adjust effort. Directly: <code>/model sonnet</code>. Note: the choice becomes the default for future sessions; in the picker, <code>s</code> applies it to this session only.</span></li>
+<li><strong><code>/effort</code></strong><span>Changes only the effort: <code>/effort low</code> for something mechanical, <code>/effort xhigh</code> for a hard bug. It also becomes the default.</span></li>
 <li><strong><code>/plan</code></strong><span>Enters Plan mode with the task: <code>/plan add pagination to the refunds endpoint</code>.</span></li>
 <li><strong><code>/add-dir</code></strong><span>Gives access to another folder: <code>/add-dir ../shared-contracts</code> if the task touches another repo.</span></li>
 </ul>
@@ -145,7 +145,7 @@ claude --permission-mode plan
 <li><strong><code>/compact</code></strong><span>Summarizes the conversation to free space and keep going on the same task. You can guide it: <code>/compact keep the API decisions and the pending tests</code>.</span></li>
 <li><strong><code>/clear</code></strong><span>Clears the conversation and starts fresh. Use it between unrelated tasks.</span></li>
 <li><strong><code>/btw</code></strong><span>A side question that doesn't stay in the history: <code>/btw which EF Core version does this repo use?</code></span></li>
-<li><strong><code>/rewind</code></strong><span>Takes code and conversation back to an earlier point. Shortcut: Esc Esc. Use it when Claude went down the wrong path.</span></li>
+<li><strong><code>/rewind</code></strong><span>Takes code and conversation back to an earlier point. Shortcut: Esc Esc. Use it when Claude went down the wrong path. It undoes what Claude edited with its file tools, not what it did with shell commands.</span></li>
 <li><strong><code>/branch</code></strong><span>Creates a branch of the conversation to try another idea without losing the current one.</span></li>
 <li><strong><code>/permissions</code></strong><span>View and edit the allow / ask / deny rules without opening the file.</span></li>
 </ul>
@@ -212,7 +212,7 @@ claude --permission-mode plan
     <div class="card"><h3>Desktop</h3><p>The Claude app with a graphical interface, local or cloud. <code>/desktop</code> continues the current session there.</p></div>
   </div>
 
-  <div class="note"><strong>For day-to-day work</strong> (naming and resuming sessions, parallel work, plugins, costs) see <a href="/en/blog/from-copilot-to-claude/day-to-day">Running Claude day to day</a>.</div>
+  <div class="note"><strong>For day-to-day work</strong> (naming and resuming sessions, parallel work, plugins, costs) see <a href="/en/blog/claude-from-scratch/day-to-day">Running Claude day to day</a>.</div>
 
   <div class="practice">
 <h2 class="practice-h">Practice</h2>

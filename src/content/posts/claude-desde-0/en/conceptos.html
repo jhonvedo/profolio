@@ -16,7 +16,7 @@
     </tbody>
   </table></div>
 
-  <div class="note"><strong>Skills and subagents</strong> are the most confused pieces, so they get their own chapter: <a href="/en/blog/from-copilot-to-claude/skills-and-subagents">Skills and subagents</a>.</div>
+  <div class="note"><strong>Skills and subagents</strong> are the most confused pieces, so they get their own chapter: <a href="/en/blog/claude-from-scratch/skills-and-subagents">Skills and subagents</a>.</div>
 
   <h2>Which piece do I need? Quick questions</h2>
   <ul class="kv">
@@ -45,7 +45,7 @@
     ]
   }
 }</code></pre></div>
-  <p class="prose">With this, Claude can't read the <code>.env</code> files or publish the package even if asked, and every file it edits gets formatted automatically. <code>deny</code> rules are covered in depth in <a href="/en/blog/from-copilot-to-claude/session-4-knowledge#settings-json-layers-and-permissions">session 4</a>, and hooks, with events and more examples, in <a href="/en/blog/from-copilot-to-claude/session-5-hooks-skills-subagents#hooks">session 5</a>.</p>
+  <p class="prose">With this, Claude can't read the <code>.env</code> files or publish the package even if asked, and every file it edits gets formatted automatically. <code>deny</code> rules are covered in depth in <a href="/en/blog/claude-from-scratch/session-4-knowledge#settings-json-layers-and-permissions">session 4</a>, and hooks, with events and more examples, in <a href="/en/blog/claude-from-scratch/session-5-hooks-skills-subagents#hooks">session 5</a>.</p>
 
   <h2 id="tokens">Tokens: the unit everything is measured in</h2>
   <div class="prose">
@@ -60,21 +60,22 @@ Claude refactored the refunds service
 [Claude][ refactor][ed][ the][ refunds][ service]</code></pre></div>
   <p class="prose">The split is illustrative: Anthropic doesn't publish how its tokenizer cuts text. What does hold: common English words are usually a single token, long words or words in other languages get split into pieces, and the space sticks to the next word. For an exact count, use <code>count_tokens</code>.</p>
   <div class="prose">
-    <p>What surprises people at first: the model doesn't remember between messages. Every time you write, Claude Code sends it the whole accumulated context again: instructions, CLAUDE.md, files read and history. That's why a long session with mixed topics gets slower and more expensive with every turn.</p>
+    <p>What surprises people at first: the model doesn't remember between messages. Every time you write, Claude Code sends it the whole accumulated context again: instructions, CLAUDE.md, files read and history. That's why a long session with mixed topics gets slower and more expensive with every turn. Caching makes what repeats cheaper, but it still takes up space and still costs.</p>
   </div>
-  <div class="note"><strong>What loads on every turn, how to measure it and how to save tokens without losing quality</strong> has its own chapter: <a href="/en/blog/from-copilot-to-claude/consumption-and-efficiency">Consumption and efficiency</a>.</div>
+  <div class="note"><strong>What loads on every turn, how to measure it and how to save tokens without losing quality</strong> has its own chapter: <a href="/en/blog/claude-from-scratch/consumption-and-efficiency">Consumption and efficiency</a>.</div>
 
   <h2 id="modelos">Available models and their consumption</h2>
-  <p class="prose">How much each model consumes per token, with Haiku as the baseline (October 2026):</p>
+  <p class="prose">How much each model consumes per token, with Haiku 5.5 as the baseline (October 2026):</p>
   <div class="tbl"><table>
     <thead><tr><th>Model</th><th>Consumption per token</th><th>Default effort</th><th>What for</th></tr></thead>
     <tbody>
-      <tr><td data-label="Model"><strong>Haiku 4.5</strong></td><td data-label="Consumption per token"><strong>1×</strong></td><td data-label="Default effort">No levels</td><td data-label="What for">Short tasks and search subagents.</td></tr>
-      <tr><td data-label="Model"><strong>Sonnet 5.5</strong></td><td data-label="Consumption per token"><strong>2×</strong></td><td data-label="Default effort"><code>medium</code></td><td data-label="What for">Day-to-day work: features, tests, explaining code.</td></tr>
-      <tr><td data-label="Model"><strong>Opus 5.5</strong></td><td data-label="Consumption per token"><strong>4×</strong></td><td data-label="Default effort"><code>medium</code></td><td data-label="What for">Complex work. Claude Code's default model.</td></tr>
-      <tr><td data-label="Model"><strong>Fable 5.1</strong></td><td data-label="Consumption per token"><strong>10×</strong></td><td data-label="Default effort"><code>high</code></td><td data-label="What for">The hardest work: architecture, complex bugs.</td></tr>
+      <tr><td data-label="Model"><strong>Haiku 5.5</strong></td><td data-label="Consumption per token"><strong>1×</strong></td><td data-label="Default effort"><code>medium</code></td><td data-label="What for">Short, high-volume tasks and search subagents.</td></tr>
+      <tr><td data-label="Model"><strong>Sonnet 5.5</strong></td><td data-label="Consumption per token"><strong>20×</strong></td><td data-label="Default effort"><code>medium</code></td><td data-label="What for">Day-to-day work: features, tests, explaining code.</td></tr>
+      <tr><td data-label="Model"><strong>Opus 5.5</strong></td><td data-label="Consumption per token"><strong>40×</strong></td><td data-label="Default effort"><code>medium</code></td><td data-label="What for">Complex work. Claude Code's default model.</td></tr>
+      <tr><td data-label="Model"><strong>Fable 5.1</strong></td><td data-label="Consumption per token"><strong>100×</strong></td><td data-label="Default effort"><code>high</code></td><td data-label="What for">The hardest work: architecture, complex bugs.</td></tr>
     </tbody>
   </table></div>
+  <p class="prose"><strong>Watch Haiku 5.5 in long sessions:</strong> once the prompt passes 100,000 tokens, it costs 5 times more. In Claude Code that comes fast, because every turn sends the whole context; there Haiku 5.5 sits at 5× and Sonnet only 4 times above it. On Bedrock and Vertex, the <code>haiku</code> alias still points to Haiku 4.5, which costs 10×.</p>
   <p class="prose">Effort multiplies on top of this: more effort means more reasoning, and reasoning is billed as output, which costs 5 times input. There's no fixed multiplier per level; measure it with <code>/usage</code>. Prices on the <a href="https://platform.claude.com/docs/en/about-claude/pricing">official page</a>.</p>
 
   <h2 id="modelo-esfuerzo">Model and effort: concrete examples</h2>
@@ -85,14 +86,14 @@ Claude refactored the refunds service
   <div class="tbl"><table>
     <thead><tr><th>Situation</th><th>Model</th><th>Effort</th><th>Why</th></tr></thead>
     <tbody>
-      <tr><td data-label="Situation">"How do I do a <span data-stack="dotnet"><code>GroupBy</code> in LINQ</span><span data-stack="node">conditional type in TS</span>?", renaming, formatting</td><td data-label="Model">Sonnet 5.5 or Haiku 4.5</td><td data-label="Effort"><code>low</code> (Haiku has no levels)</td><td data-label="Why">Known answer; thinking longer doesn't help.</td></tr>
+      <tr><td data-label="Situation">"How do I do a <span data-stack="dotnet"><code>GroupBy</code> in LINQ</span><span data-stack="node">conditional type in TS</span>?", renaming, formatting</td><td data-label="Model">Sonnet 5.5 or Haiku 5.5</td><td data-label="Effort"><code>low</code></td><td data-label="Why">Known answer; thinking longer doesn't help.</td></tr>
       <tr><td data-label="Situation">Generating the CHANGELOG or PR description from the diff</td><td data-label="Model">Sonnet 5.5</td><td data-label="Effort"><code>low</code>–<code>medium</code></td><td data-label="Why">Summarizing is easy; speed matters.</td></tr>
       <tr><td data-label="Situation">Unit tests for an existing class</td><td data-label="Model">Sonnet 5.5</td><td data-label="Effort"><code>medium</code></td><td data-label="Why">Clear, well-bounded pattern.</td></tr>
       <tr><td data-label="Situation">Typical sprint feature: endpoint + validation + tests</td><td data-label="Model">Sonnet 5.5 or Opus 5.5</td><td data-label="Effort"><code>high</code></td><td data-label="Why">Several files and small decisions.</td></tr>
       <tr><td data-label="Situation">Intermittent bug, race condition, deadlock, memory leak</td><td data-label="Model">Opus 5.5 or Fable 5.1</td><td data-label="Effort"><code>xhigh</code></td><td data-label="Why">Hypotheses need to be formed and ruled out.</td></tr>
       <tr><td data-label="Situation">Architecture design or migration (<span data-stack="dotnet">.NET Framework → .NET 8</span><span data-stack="node">Express → NestJS, CJS → ESM</span>)</td><td data-label="Model">Fable 5.1</td><td data-label="Effort"><code>xhigh</code>–<code>max</code> in Plan mode</td><td data-label="Why">Long-term trade-offs; a mistake costs weeks.</td></tr>
       <tr><td data-label="Situation">Large but repetitive refactor (100 files, same pattern)</td><td data-label="Model"><code>opusplan</code></td><td data-label="Effort"><code>high</code></td><td data-label="Why">Opus designs the plan, Sonnet executes it more cheaply.</td></tr>
-      <tr><td data-label="Situation">Subagent that searches files or reads logs</td><td data-label="Model">Haiku 4.5</td><td data-label="Effort">Not applicable</td><td data-label="Why">Mechanical work you run many times.</td></tr>
+      <tr><td data-label="Situation">Subagent that searches files or reads logs</td><td data-label="Model">Haiku 5.5</td><td data-label="Effort"><code>low</code></td><td data-label="Why">Mechanical work you run many times.</td></tr>
       <tr><td data-label="Situation">Security review before the PR</td><td data-label="Model">Opus 5.5</td><td data-label="Effort"><code>high</code></td><td data-label="Why">A false negative is expensive.</td></tr>
       <tr><td data-label="Situation">In claude.ai: summarize a document or draft an email</td><td data-label="Model">Sonnet 5.5</td><td data-label="Effort">Low or Medium</td><td data-label="Why">A language task, not a reasoning one.</td></tr>
       <tr><td data-label="Situation">In claude.ai: compare 3 messaging providers with sources</td><td data-label="Model">Opus 5.5 + Research</td><td data-label="Effort">High</td><td data-label="Why">Many sources and synthesis.</td></tr>

@@ -23,7 +23,7 @@
   <ul class="kv">
 <li><strong><code>/context</code></strong><span>Qué ocupa el contexto ahora y cuánto queda: memoria, MCP, skills, historial.</span></li>
 <li><strong><code>/usage</code></strong><span>Tokens y costo de la sesión. En Pro, Max, Team y Enterprise muestra además qué parte del consumo reciente vino de cada skill, subagente, plugin y servidor MCP, y avisa cuando algo (contexto largo, fallos de caché) pasa del 10%.</span></li>
-<li><strong>Barra de estado</strong><span>El % de contexto siempre a la vista (<a href="/es/blog/de-copilot-a-claude/sesion-4-conocimiento">sesión 4</a>).</span></li>
+<li><strong>Barra de estado</strong><span>El % de contexto siempre a la vista (<a href="/es/blog/claude-desde-0/sesion-4-conocimiento">sesión 4</a>).</span></li>
 <li><strong><code>count_tokens</code></strong><span>Endpoint de la API que cuenta un texto antes de enviarlo.</span></li>
 </ul>
   <div class="note"><strong>Mide antes de optimizar.</strong> Una semana mirando <code>/usage</code> dice más que cualquier regla general: muestra si lo que pesa es un MCP, una skill, los subagentes o sesiones que nunca se limpian.</div>
@@ -77,7 +77,7 @@
       <tr><td data-label="No hagas esto">«Lee logs/app.log y dime por qué falla el pago» (10.000 líneas).</td><td data-label="Haz esto">Filtra primero: «Corre <code>grep -n ERROR logs/app.log | tail -50</code> y explícame qué falla». De decenas de miles de tokens a cientos.</td></tr>
       <tr><td data-label="No hagas esto">Correr toda la suite y que la salida completa entre al contexto.</td><td data-label="Haz esto">Pide solo los tests afectados («corre <code>dotnet test --filter RefundServiceTests</code>») o usa un hook que deje pasar solo las fallas (ejemplo abajo).</td></tr>
       <tr><td data-label="No hagas esto">Dejar que Claude busque un método con grep y abra archivo por archivo hasta dar con el correcto.</td><td data-label="Haz esto">Instala el plugin de <em>code intelligence</em> de tu lenguaje (explicado abajo). Claude le pregunta al lenguaje dónde está definido y dónde se usa, igual que tu IDE con F12, y recibe la ruta y la línea exactas en una sola consulta.</td></tr>
-      <tr><td data-label="No hagas esto">Pedirle que investigue cómo funciona algo dentro de tu sesión principal.</td><td data-label="Haz esto">«Usa el subagente Explore para averiguar cómo se calcula un reembolso; devuélveme solo rutas y una línea por archivo.» Lo que lee se queda en el subagente (<a href="/es/blog/de-copilot-a-claude/skills-y-subagentes#context-fork">ver Skills y subagentes</a>).</td></tr>
+      <tr><td data-label="No hagas esto">Pedirle que investigue cómo funciona algo dentro de tu sesión principal.</td><td data-label="Haz esto">«Usa el subagente Explore para averiguar cómo se calcula un reembolso; devuélveme solo rutas y una línea por archivo.» Lo que lee se queda en el subagente (<a href="/es/blog/claude-desde-0/skills-y-subagentes#context-fork">ver Skills y subagentes</a>).</td></tr>
     </tbody>
   </table></div>
   <div class="code"><div class="fname"><span>.claude/hooks/solo-fallas.sh · PreToolUse con matcher "Bash"</span><button class="copy" type="button">Copiar</button></div><pre><code>#!/usr/bin/env bash
@@ -92,7 +92,7 @@ if [[ "$CMD" =~ ^(dotnet\ test|pnpm\ (-r\ |--filter\ [^\ ]+\ )?test) ]]; then
 else
   echo "{}"
 fi</code></pre></div>
-  <p class="prose">El hook reescribe el comando antes de que corra: Claude ve hasta 100 líneas alrededor de las fallas en vez de toda la salida. Regístralo en <code>.claude/settings.json</code> bajo <code>PreToolUse</code> con <code>"matcher": "Bash"</code>, como los hooks de la <a href="/es/blog/de-copilot-a-claude/sesion-5-hooks-skills-subagentes">sesión 5</a>.</p>
+  <p class="prose">El hook reescribe el comando antes de que corra: Claude ve hasta 100 líneas alrededor de las fallas en vez de toda la salida. Regístralo en <code>.claude/settings.json</code> bajo <code>PreToolUse</code> con <code>"matcher": "Bash"</code>, como los hooks de la <a href="/es/blog/claude-desde-0/sesion-5-hooks-skills-subagentes">sesión 5</a>. En Windows, cuando Claude corre los tests con la herramienta PowerShell, este hook no se dispara: está escrito para bash.</p>
 
   <h3>Qué es un plugin LSP y por qué ahorra tokens</h3>
   <div class="prose">
@@ -114,7 +114,7 @@ npm i -g typescript-language-server typescript         <span class="c"># Node / 
   <div class="tbl"><table>
     <thead><tr><th>No hagas esto</th><th>Haz esto</th></tr></thead>
     <tbody>
-      <tr><td data-label="No hagas esto">Opus o Fable en <code>max</code> para renombrar o formatear.</td><td data-label="Haz esto">Baja para esa tarea: <code>/model</code> → elige Sonnet → con ← → llega a <code>low</code> → pulsa <code>s</code> (solo esta sesión). Reserva el modelo grande y <code>xhigh</code> para lo difícil (<a href="/es/blog/de-copilot-a-claude/conceptos#modelos">ver Conceptos</a>).</td></tr>
+      <tr><td data-label="No hagas esto">Opus o Fable en <code>max</code> para renombrar o formatear.</td><td data-label="Haz esto">Baja para esa tarea: <code>/model</code> → elige Sonnet → con ← → llega a <code>low</code> → pulsa <code>s</code> (solo esta sesión). Reserva el modelo grande y <code>xhigh</code> para lo difícil (<a href="/es/blog/claude-desde-0/conceptos#modelos">ver Conceptos</a>).</td></tr>
       <tr><td data-label="No hagas esto">Subagentes de búsqueda con el modelo de la sesión.</td><td data-label="Haz esto">Dales un modelo chico en su frontmatter: <code>model: haiku</code>. Sus peticiones también cuentan contra tu plan.</td></tr>
       <tr><td data-label="No hagas esto">Cambiar de modelo varias veces en la misma tarea.</td><td data-label="Haz esto">Elige el modelo al empezar (<code>claude --model sonnet</code>) y cámbialo entre tareas, no en medio: con otro modelo la caché no sirve y todo el contexto se procesa de nuevo.</td></tr>
     </tbody>
