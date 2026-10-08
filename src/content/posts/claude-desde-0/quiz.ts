@@ -8,7 +8,7 @@ export const quizzes: Record<"es" | "en", QuizSet> = {
   es: {
     c: [
       { q: "En una sesión típica de Claude Code, ¿qué ocupa la mayor parte del contexto?", o: ["Los prompts que escribes en cada turno", "Archivos leídos y salidas de comandos", "Las respuestas que Claude te va dando"], a: 1, w: "Claude relee todo el contexto en cada mensaje, y lo que más pesa es lo que lee y ejecuta mientras trabaja. Por eso ayudan los subagentes para explorar y /clear entre tareas; recortar tus prompts casi no cambia nada." },
-      { q: "Buscar dónde se usa una clase, muchas veces al día. ¿Qué combinación rinde mejor?", o: ["Opus 5.5 con esfuerzo medio en la sesión", "Sonnet 5.5 con esfuerzo alto directamente en la sesión", "Haiku 4.5 con esfuerzo bajo en un subagente"], a: 2, w: "Es trabajo mecánico y repetido: un modelo rápido con poco esfuerzo, aislado en un subagente para no llenar tu contexto." },
+      { q: "Buscar dónde se usa una clase, muchas veces al día. ¿Qué combinación rinde mejor?", o: ["Opus 5.5 con esfuerzo medio en la sesión", "Sonnet 5.5 con esfuerzo alto directamente en la sesión", "Haiku 5.5 con esfuerzo bajo en un subagente"], a: 2, w: "Es trabajo mecánico y repetido: un modelo rápido con poco esfuerzo, aislado en un subagente para no llenar tu contexto." },
       { q: "Tu equipo habla español. ¿Qué conviene escribir en inglés para ahorrar tokens?", o: ["CLAUDE.md y las descripciones de skills", "Los prompts que escribes cada día", "Las respuestas que Claude te da en cada turno"], a: 0, w: "CLAUDE.md, reglas y descripciones se cargan en cada sesión o cada turno. En los prompts el sobrecosto real es de ~5%, porque son una parte pequeña del contexto." },
     ],
     sa: [
@@ -62,7 +62,7 @@ export const quizzes: Record<"es" | "en", QuizSet> = {
   en: {
     c: [
       { q: "In a typical Claude Code session, what takes up most of the context?", o: ["The prompts you write each turn", "Files read and command output", "The answers Claude gives you"], a: 1, w: "Claude rereads the whole context on every message, and what weighs most is what it reads and runs while working. That's why subagents for exploring and /clear between tasks help; trimming your prompts barely changes anything." },
-      { q: "Finding where a class is used, many times a day. Which combination works best?", o: ["Opus 5.5 on medium effort in the session", "Sonnet 5.5 on high effort in the session", "Haiku 4.5 on low effort in a subagent"], a: 2, w: "It's mechanical, repeated work: a fast model with little effort, isolated in a subagent so it doesn't fill your context." },
+      { q: "Finding where a class is used, many times a day. Which combination works best?", o: ["Opus 5.5 on medium effort in the session", "Sonnet 5.5 on high effort in the session", "Haiku 5.5 on low effort in a subagent"], a: 2, w: "It's mechanical, repeated work: a fast model with little effort, isolated in a subagent so it doesn't fill your context." },
       { q: "Your team speaks Spanish. What's worth writing in English to save tokens?", o: ["CLAUDE.md and skill descriptions", "The prompts you write every day", "The answers Claude gives you each turn"], a: 0, w: "CLAUDE.md, rules and descriptions load in every session or turn. In prompts the real overhead is ~5%, because they're a small part of the context." },
     ],
     sa: [

@@ -1,12 +1,12 @@
 {
   "es": {
-    "slug": "de-copilot-a-claude",
+    "slug": "claude-desde-0",
     "parts": [
       {
         "id": "mapa",
         "slug": "",
-        "title": "El cambio de mentalidad",
-        "kicker": "Antes de empezar",
+        "title": "Mapa de aprendizaje",
+        "kicker": "Índice",
         "lede": "Seis sesiones prácticas para que un equipo de desarrollo pase de cero a trabajar con Claude a nivel experto: la plataforma, Claude Design, Claude Code, la carpeta .claude/, hooks e integraciones.",
         "pills": [],
         "minutes": 1,
@@ -85,7 +85,7 @@
           "~2 h",
           "Manejo de conocimiento"
         ],
-        "minutes": 14,
+        "minutes": 15,
         "hasStack": true
       },
       {
@@ -124,7 +124,7 @@
           "Se cubre en S3 y S6",
           "Referencia de uso continuo"
         ],
-        "minutes": 11,
+        "minutes": 12,
         "hasStack": false
       },
       {
@@ -164,26 +164,26 @@
       },
       {
         "id": "comparativa",
-        "slug": "copilot-claude-gemini-chatgpt",
+        "slug": "comparativa-asistentes-ia",
         "title": "Copilot, Claude, Gemini y ChatGPT",
         "kicker": "Panorama",
-        "lede": "Qué ofrece cada uno a desarrollo, QA y diseño, dónde destaca, cómo pueden convivir y las equivalencias si el equipo viene de Copilot.",
+        "lede": "Qué ofrece cada uno a desarrollo, QA y diseño, dónde destaca y cómo pueden convivir en un equipo.",
         "pills": [
           "Estado a octubre de 2026"
         ],
-        "minutes": 8,
+        "minutes": 7,
         "hasStack": false
       }
     ]
   },
   "en": {
-    "slug": "from-copilot-to-claude",
+    "slug": "claude-from-scratch",
     "parts": [
       {
         "id": "mapa",
         "slug": "",
-        "title": "The mindset shift",
-        "kicker": "Before you start",
+        "title": "Learning map",
+        "kicker": "Index",
         "lede": "Six hands-on sessions to take a development team from zero to working with Claude at an expert level: the platform, Claude Design, Claude Code, the .claude/ folder, hooks and integrations.",
         "pills": [],
         "minutes": 1,
@@ -223,7 +223,7 @@
           "~2 h",
           "claude.ai · web, desktop and mobile"
         ],
-        "minutes": 3,
+        "minutes": 4,
         "hasStack": true
       },
       {
@@ -262,7 +262,7 @@
           "~2 h",
           "Knowledge management"
         ],
-        "minutes": 12,
+        "minutes": 13,
         "hasStack": true
       },
       {
@@ -288,7 +288,7 @@
           "~2.5 h",
           "MCP · plugins · CI · governance"
         ],
-        "minutes": 5,
+        "minutes": 6,
         "hasStack": false
       },
       {
@@ -341,14 +341,14 @@
       },
       {
         "id": "comparativa",
-        "slug": "copilot-claude-gemini-chatgpt",
+        "slug": "ai-assistants-compared",
         "title": "Copilot, Claude, Gemini and ChatGPT",
         "kicker": "The landscape",
-        "lede": "What each one offers development, QA and design, where it stands out, how they can coexist, and the equivalents if the team comes from Copilot.",
+        "lede": "What each one offers development, QA and design, where it stands out, and how they can coexist on a team.",
         "pills": [
           "Status as of October 2026"
         ],
-        "minutes": 7,
+        "minutes": 6,
         "hasStack": false
       }
     ]

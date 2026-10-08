@@ -26,7 +26,7 @@ claude -r "PAY-482-reembolso-parcial"</code></pre></div>
       <tr><td data-label="Comando"><code>claude --from-pr 123</code></td><td data-label="Qué hace">Muestra las sesiones ligadas a ese PR.</td><td data-label="Cuándo">Te piden cambios en un PR que hizo Claude.</td></tr>
       <tr><td data-label="Comando"><code>--fork-session</code></td><td data-label="Qué hace">Con <code>-r</code> o <code>-c</code>: retoma en una copia nueva, sin tocar la original.</td><td data-label="Cuándo">Probar otra solución sin perder la primera.</td></tr>
       <tr><td data-label="Comando"><code>/branch</code></td><td data-label="Qué hace">Crea una rama de la conversación para explorar otra dirección.</td><td data-label="Cuándo">"¿Y si lo hacemos con eventos en vez de polling?"</td></tr>
-      <tr><td data-label="Comando"><code>/rewind</code> (Esc Esc)</td><td data-label="Qué hace">Vuelve código y conversación a un checkpoint.</td><td data-label="Cuándo">Claude tomó un mal camino.</td></tr>
+      <tr><td data-label="Comando"><code>/rewind</code> (Esc Esc)</td><td data-label="Qué hace">Vuelve código y conversación a un checkpoint. No deshace comandos de shell.</td><td data-label="Cuándo">Claude tomó un mal camino.</td></tr>
       <tr><td data-label="Comando"><code>/clear</code></td><td data-label="Qué hace">Conversación nueva con contexto vacío.</td><td data-label="Cuándo">Entre tareas no relacionadas.</td></tr>
       <tr><td data-label="Comando"><code>/compact [foco]</code></td><td data-label="Qué hace">Resume la conversación para liberar contexto.</td><td data-label="Cuándo">Misma tarea, contexto lleno.</td></tr>
       <tr><td data-label="Comando"><code>/export archivo</code> · <code>/copy</code></td><td data-label="Qué hace">Exporta la conversación a texto · copia la última respuesta.</td><td data-label="Cuándo">Documentar una decisión o compartir un análisis.</td></tr>
@@ -115,7 +115,7 @@ claude -r REF-analisis --fork-session
     <li><strong>Paraleliza lo que es independiente.</strong> Dos tareas que tocan los mismos archivos chocan igual al integrar, solo que más tarde. Si comparten módulo, hazlas en secuencia.</li>
     <li><strong>Prepara el entorno de cada worktree.</strong> Es un checkout limpio: hay que instalar dependencias (<code>dotnet restore</code>, <code>pnpm install</code>) y faltan los archivos ignorados. Un <code>.worktreeinclude</code> en la raíz, con sintaxis de <code>.gitignore</code> (por ejemplo <code>.env</code>), los copia solo a cada worktree nuevo.</li>
     <li><strong>Cuida lo que se comparte fuera de git.</strong> Si dos sesiones levantan la API o usan la misma base de datos local, chocan: usa otro puerto u otra base por worktree.</li>
-    <li><strong>Pocas sesiones a la vez.</strong> Dos o tres que puedas revisar de verdad. Cada sesión tiene su propio contexto y consume su propia cuota (ver <a href="/es/blog/de-copilot-a-claude/consumo-y-eficiencia">Consumo y eficiencia</a>).</li>
+    <li><strong>Pocas sesiones a la vez.</strong> Dos o tres que puedas revisar de verdad. Cada sesión tiene su propio contexto y consume su propia cuota (ver <a href="/es/blog/claude-desde-0/consumo-y-eficiencia">Consumo y eficiencia</a>).</li>
     <li><strong>Revisa cada rama por separado.</strong> <code>/diff</code> y <code>/code-review</code> dentro de cada worktree, tests en verde y un PR por rama. Paralelizar el trabajo no es paralelizar la revisión.</li>
     <li><strong>Ojo con los hooks.</strong> Si Claude entra a un worktree a mitad de una sesión, <code>$CLAUDE_PROJECT_DIR</code> sigue apuntando al checkout principal. Un hook que necesite la ruta del worktree debe leer el campo <code>cwd</code> de su entrada.</li>
     <li><strong>Coordina con mensajes, documenta en archivos.</strong> Los mensajes entre sesiones sirven mientras las dos están abiertas. Lo que importa después (una decisión, el porqué de un cambio) va al repo: <code>docs/decisiones/bug-7.md</code> lo lee cualquier sesión y cualquier persona.</li>
@@ -140,7 +140,7 @@ claude plugin details plataforma-tools@empresa-tools   <span class="c"># qué sk
   <div class="prose"><ul>
     <li><strong>Scopes:</strong> <em>user</em> (tú, todos los repos), <em>project</em> (todo el equipo, se escribe en <code>.claude/settings.json</code>), <em>local</em> (tú, solo este repo). Los de scope <em>managed</em> los pone el admin y no se pueden quitar.</li>
     <li>Si desinstalas un plugin que el proyecto activa, Claude Code pregunta si desactivarlo solo para ti (override en <code>settings.local.json</code>) o para todos.</li>
-    <li>La pestaña <strong>Installed</strong> marca los plugins "Not used recently": desactívalos: sus skills, subagentes y servidores MCP ocupan contexto aunque no los uses.</li>
+    <li>La pestaña <strong>Installed</strong> marca los plugins "Not used recently". Desactívalos, porque sus skills, subagentes y servidores MCP ocupan contexto aunque no los uses.</li>
     <li>El panel muestra el <strong>costo de contexto</strong> de un plugin antes de instalarlo.</li>
     <li>Plugins útiles del marketplace oficial: <code>csharp-lsp</code> y <code>typescript-lsp</code> (Claude ve errores de compilación al editar; requieren instalar <code>csharp-ls</code> o <code>typescript-language-server</code>), <code>github</code>, <code>atlassian</code>, <code>commit-commands</code>, <code>pr-review-toolkit</code>, <code>security-guidance</code>.</li>
   </ul></div>
@@ -172,7 +172,7 @@ claude plugin details plataforma-tools@empresa-tools   <span class="c"># qué sk
 }</code></pre></div>
 
   <h2>Salud, costos y actualizaciones</h2>
-  <p class="prose">Para entender qué consume y cómo ahorrar sin perder calidad, ver <a href="/es/blog/de-copilot-a-claude/consumo-y-eficiencia">Consumo y eficiencia</a>.</p>
+  <p class="prose">Para entender qué consume y cómo ahorrar sin perder calidad, ver <a href="/es/blog/claude-desde-0/consumo-y-eficiencia">Consumo y eficiencia</a>.</p>
   <ul class="kv">
 <li><strong><code>/usage</code> (alias <code>/cost</code>)</strong><span>Tokens y costo de la sesión.</span></li>
 <li><strong><code>/context</code></strong><span>Qué ocupa el contexto: CLAUDE.md, MCP, skills, historial.</span></li>
@@ -190,3 +190,14 @@ claude plugin details plataforma-tools@empresa-tools   <span class="c"># qué sk
     <li><strong>Projects:</strong> renombrar, archivar y cambiar permisos de compartido.</li>
     <li>Las skills y plugins habilitados en claude.ai se sincronizan a Claude Code. Los plugins sincronizados aparecen en <code>/plugin</code> → Installed con origen <em>synced</em>; ahí se desactivan, salvo que la organización los marque como obligatorios.</li>
   </ul></div>
+
+  <h2>Cómo saber si funcionó</h2>
+  <div class="prose">
+    <p>Toma una línea base antes de la sesión 1 y repite la medición un mes después de la sesión 6:</p>
+    <ul>
+      <li><strong>Adopción:</strong> personas activas y sesiones por semana en el panel de analíticas de Claude Code del plan.</li>
+      <li><strong>Flujo:</strong> tiempo de issue a PR y rondas de revisión por PR.</li>
+      <li><strong>Calidad:</strong> PRs revertidos y bugs que vienen de cambios hechos con Claude.</li>
+      <li><strong>Uso individual:</strong> <code>/insights</code> genera un reporte de las sesiones recientes de cada persona. Que cada uno comparta con el equipo un patrón que quiera corregir.</li>
+    </ul>
+  </div>

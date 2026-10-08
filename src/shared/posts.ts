@@ -1,5 +1,5 @@
 import type { Lang } from "./i18n"
-import * as seriesData from "../content/posts/copilot-to-claude/series.json"
+import * as seriesData from "../content/posts/claude-desde-0/series.json"
 
 // Posts sin listar: solo se llega a ellos por URL. No aparecen en el menú, llevan noindex y están fuera del sitemap.
 export type Part = {
@@ -19,9 +19,9 @@ export type Series = { id: string; title: Record<Lang, string>; eyebrow: Record<
 
 export const series: Series[] = [
 	{
-		id: "copilot-to-claude",
+		id: "claude-desde-0",
 		title: { es: "Claude desde 0", en: "Claude from scratch" },
-		eyebrow: { es: "Programa de capacitación · Septiembre 2026", en: "Training program · September 2026" },
+		eyebrow: { es: "Programa de capacitación · Octubre 2026", en: "Training program · October 2026" },
 		langs: seriesData as Record<Lang, SeriesLang>,
 		stages: [
 			{ title: { es: "Fundamentos", en: "Foundations" }, parts: ["conceptos", "skills-agentes"] },

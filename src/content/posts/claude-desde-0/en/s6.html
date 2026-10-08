@@ -43,9 +43,9 @@ claude mcp remove db</code></pre></div>
 
   <h2>Connectors in claude.ai</h2>
   <div class="prose"><ul>
-    <li>The admin enables each connector and can set its actions to read-only, approval-required or blocked.</li>
-    <li>Custom connectors (remote MCP servers): only Owners can add them on Team/Enterprise. The connection comes from Anthropic's cloud, so the server must be reachable from the internet or allowlist Anthropic's IPs.</li>
-    <li>With organization-wide authorization (Okta), the admin authorizes once and members inherit access.</li>
+    <li>The admin enables each connector and sets each permission to always allowed, needs approval or blocked; no one can change it for themselves.</li>
+    <li>Custom connectors (remote MCP servers): the connection comes from Anthropic's cloud, so the server must be reachable from the internet; if it's behind a firewall, allowlist Anthropic's IP ranges.</li>
+    <li>With enterprise-managed authentication (beta on Team and Enterprise), the admin authorizes a connector once for the whole organization.</li>
   </ul></div>
 
   <h2>Plugins: distributing the team's configuration</h2>
@@ -120,9 +120,9 @@ claude -p "Review the diff against main and list risks" \
 
   <h2>More surfaces</h2>
   <div class="grid3">
-    <div class="card"><h3>Claude in Slack</h3><p>@Claude in a thread reads the context; it can turn a bug report into a draft PR. Beta for Team and Enterprise.</p></div>
+    <div class="card"><h3>Claude Tag (Slack)</h3><p>@Claude in a channel, with the access the admin configures; it can turn a bug report into a draft PR. Public beta for Team and Enterprise; channel work bills to the organization's usage balance.</p></div>
     <div class="card"><h3>Claude in Chrome</h3><p>An extension that browses, clicks and reads the console. Useful for verifying the UI Claude Code just built.</p></div>
-    <div class="card"><h3>Code Review</h3><p>Automatic review on every PR without maintaining your own workflow.</p></div>
+    <div class="card"><h3>Code Review</h3><p>Automatic review on every PR without maintaining your own workflow. Preview for Team and Enterprise.</p></div>
   </div>
 
   <h2>Governance: managed settings</h2>

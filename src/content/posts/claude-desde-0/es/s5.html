@@ -216,11 +216,11 @@ Crea el endpoint `$verbo` para el recurso `$recurso`:
 <li><strong><code>user-invocable: false</code></strong><span>Solo Claude la usa (conocimiento de referencia).</span></li>
 <li><strong><code>allowed-tools</code></strong><span>Herramientas pre-aprobadas mientras corre.</span></li>
 <li><strong><code>argument-hint</code>, <code>arguments</code></strong><span>Argumentos: <code>$ARGUMENTS</code>, <code>$0</code>, <code>$1</code> o <code>$nombre</code>.</span></li>
-<li><strong><code>context: fork</code> + <code>agent</code></strong><span>Ejecuta la skill en un subagente que no ve tu conversación y solo devuelve el resumen (<a href="/es/blog/de-copilot-a-claude/skills-y-subagentes#context-fork">ver Skills y subagentes</a>).</span></li>
+<li><strong><code>context: fork</code> + <code>agent</code></strong><span>Ejecuta la skill en un subagente que no ve tu conversación y solo devuelve el resumen (<a href="/es/blog/claude-desde-0/skills-y-subagentes#context-fork">ver Skills y subagentes</a>).</span></li>
 <li><strong><code>paths</code>, <code>model</code>, <code>effort</code></strong><span>Activar por ruta; cambiar el modelo o el esfuerzo mientras la skill está activa.</span></li>
 </ul>
   <p class="prose"><code>!`comando`</code> ejecuta el comando antes de enviar la skill y reemplaza el marcador con la salida, así Claude recibe datos reales. Mantén <code>SKILL.md</code> por debajo de 500 líneas y mueve el detalle a archivos de apoyo. <code>/skills</code> lista las skills y <code>/skill-doctor</code> revisa cuánto contexto consumen.</p>
-  <div class="note"><strong>Skills en claude.ai y en Claude Code:</strong> el mismo formato sirve en ambos. Las skills que un admin provisiona en la organización se sincronizan a Claude Code y aparecen como <code>/anthropic-skills:&lt;nombre&gt;</code>.</div>
+  <div class="note"><strong>Skills en claude.ai y en Claude Code:</strong> el mismo formato sirve en ambos. Las skills que un admin provisiona en la organización se sincronizan a Claude Code: se invocan con <code>/&lt;nombre&gt;</code>, o con <code>/anthropic-skills:&lt;nombre&gt;</code> si otro comando usa ese nombre.</div>
 
   <h2>Subagentes</h2>
   <p class="prose">Un subagente trabaja en su propio contexto y devuelve solo el resultado, así la sesión principal no se llena con archivos leídos. Claude Code trae <strong>Explore</strong> (búsqueda de solo lectura), <strong>Plan</strong> y <strong>general-purpose</strong>. Los propios se crean con <code>/agents</code> o a mano:</p>

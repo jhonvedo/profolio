@@ -8,12 +8,12 @@
 
   <h2>Models and effort</h2>
   <ul class="kv">
-<li><strong><strong>Claude Fable 5.1</strong></strong><span>The most capable for code and knowledge work (September 2026). Large refactors, architecture design, hard bugs.</span></li>
+<li><strong><strong>Claude Fable 5.1</strong></strong><span>The most capable, for the most demanding reasoning and long-running work. Large refactors, architecture design, hard bugs.</span></li>
 <li><strong><strong>Claude Opus 5.5</strong></strong><span>Complex multi-step tasks with a good balance of speed. Has Fast mode.</span></li>
 <li><strong><strong>Claude Sonnet 5.5</strong></strong><span>Daily work: medium features, tests, explaining code. Fast and economical.</span></li>
-<li><strong><strong>Claude Haiku 4.5</strong></strong><span>Short, high-volume tasks; a good fit for search subagents.</span></li>
+<li><strong><strong>Claude Haiku 5.5</strong></strong><span>The fastest and cheapest: short, high-volume tasks; a good fit for search subagents. Released on October 7, 2026, replacing Haiku 4.5.</span></li>
 </ul>
-  <p class="prose">Concrete examples by task type in <a href="/en/blog/from-copilot-to-claude/concepts#modelo-esfuerzo">Concepts → Model and effort</a>. <strong>Effort</strong> (Low, Medium, High, Extra High, Max) controls how much the model reasons before answering. More effort is better for ambiguous problems and worse for simple questions, because it takes longer and uses more quota. On Fable 5.1 and Opus 5.5, reasoning ("Thinking") is always on.</p>
+  <p class="prose">Concrete examples by task type in <a href="/en/blog/claude-from-scratch/concepts#modelo-esfuerzo">Concepts → Model and effort</a>. <strong>Effort</strong> (Low, Medium, High, Extra High, Max) controls how much the model reasons before answering. More effort is better for ambiguous problems and worse for simple questions, because it takes longer and uses more quota. On Fable 5.1 and Opus 5.5, reasoning ("Thinking") is always on.</p>
 
   <h2>Projects: the team's shared knowledge</h2>
   <div class="prose">
@@ -43,13 +43,14 @@ Stack: <span data-stack="dotnet">.NET 8 (ASP.NET Core Minimal APIs, EF Core, SQL
     <div class="card"><h3>Claude Docs</h3><p>Living documents with co-editing, comments and @Claude in the thread. Export to .docx, PDF, .md or Google Docs. Ideal for specs and postmortems.</p></div>
     <div class="card"><h3>Claude Slides</h3><p>16:9 presentations exportable to PPTX or PDF. For sprint demos and technical proposals.</p></div>
   </div>
+  <div class="note warn"><strong>Mind the dates.</strong> On September 16, 2026 Anthropic merged Cowork and chat into a single Claude app and launched Claude Docs and Claude Slides, in beta. They reached Pro and Max first; on Enterprise, the admin decides when to turn on Docs, Slides and Design. If a screen doesn't match this guide, that's probably why.</div>
 
   <h2>Research, files and connectors</h2>
   <div class="prose"><ul>
     <li><strong>Research</strong> ("+" → Research): several chained searches with citations. Useful for comparing libraries or evaluating a migration. Requires web search to be on.</li>
     <li><strong>File creation:</strong> Claude creates and edits .xlsx, .pptx, .docx and PDF by running code in a sandbox. The admin controls that sandbox's internet egress.</li>
     <li><strong>Connectors:</strong> GitHub, Jira/Confluence, Linear, Slack, Google Drive, Notion, Figma. They inherit the user's permissions in the source system: Claude can't see anything you can't.</li>
-    <li><strong>Organization skills:</strong> an admin uploads a .zip with a <code>SKILL.md</code> in <em>Organization settings → Skills</em> and it becomes available to everyone (session S5).</li>
+    <li><strong>Organization skills:</strong> an admin uploads a .zip with a <code>SKILL.md</code> in <em>Organization settings → Plugins &amp; skills</em> and it becomes available to everyone; each person can turn it off for themselves (session S5).</li>
   </ul></div>
 
   <h2>Data and privacy on commercial plans</h2>

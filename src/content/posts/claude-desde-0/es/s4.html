@@ -3,7 +3,7 @@
     <li>Escribir un CLAUDE.md efectivo y reglas por ruta.</li>
     <li>Configurar permisos compartidos y personales en <code>settings.json</code>.</li>
     <li>Configurar avisos, barra de estado y autenticación en su <code>settings.json</code> personal.</li>
-    <li>Migrar las instrucciones de Copilot.</li>
+    <li>Arrancar con <code>/init</code> y aprovechar las instrucciones que el repo ya tenga.</li>
   </ul></div>
   <p class="course"><strong>Curso complementario:</strong> <a href="https://anthropic.skilljar.com/claude-code-in-action">Claude Code in Action</a></p>
 
@@ -48,7 +48,7 @@
     <li><strong>Lo que Claude no puede descubrir solo:</strong> comandos exactos, decisiones y su porqué, trampas conocidas. No copies lo que ya dice el código.</li>
     <li><strong>Concreto y verificable:</strong> "Usa <code>Result&lt;T&gt;</code> para errores de negocio" es mejor que "maneja bien los errores".</li>
     <li><strong>Sin contradicciones</strong>: si dos reglas chocan, Claude elige una al azar.</li>
-    <li><strong>Empieza con <code>/init</code>:</strong> analiza el repo y genera un borrador. Si ya existe <code>.github/copilot-instructions.md</code>, lo lee e incorpora lo relevante. Con <code>CLAUDE_CODE_NEW_INIT=1</code> el flujo es interactivo y también propone skills y hooks. <code>/import</code> no sirve aquí: trae configuración de Codex, Gemini CLI o Cursor, no de Copilot, así que los <code>.prompt.md</code> y <code>*.instructions.md</code> se migran a mano con la tabla de equivalencias.</li>
+    <li><strong>Empieza con <code>/init</code>:</strong> analiza el repo y genera un borrador; si ya existe un CLAUDE.md, propone mejoras en vez de sobrescribirlo. Con <code>CLAUDE_CODE_NEW_INIT=1</code> el flujo es interactivo y también propone skills y hooks. Si el equipo viene de Codex, Gemini CLI o Cursor, <code>/import</code> trae esa configuración (y <code>/init</code> lo ofrece si la encuentra).</li>
     <li><strong>Audítalo de vez en cuando:</strong> <code>/doctor prompt-audit</code> busca instrucciones contradictorias, obsoletas o que mencionan archivos y comandos que ya no existen. Propone cambios, pero no los aplica sin que se lo pidas.</li>
   </ul></div>
 
@@ -113,7 +113,7 @@
   <p class="prose">Claude Code carga <code>CLAUDE.md</code> y <code>CLAUDE.local.md</code> del directorio actual y de todos los superiores; <strong>se concatenan, no se sobreescriben</strong>. Los de subdirectorios se cargan cuando Claude lee archivos ahí. En monorepos, <code>claudeMdExcludes</code> evita cargar los de otros equipos. Si el repo solo tiene <code>AGENTS.md</code>, Claude lo lee como instrucciones del proyecto.</p>
 
   <h2>Reglas por ruta</h2>
-  <p class="prose">Equivalen a los <code>*.instructions.md</code> con <code>applyTo</code> de Copilot. Solo se cargan cuando Claude lee archivos que coinciden, así que no gastan contexto el resto del tiempo.</p>
+  <p class="prose">Son instrucciones con alcance: un archivo de <code>.claude/rules/</code> con <code>paths</code> en su encabezado solo se carga cuando Claude lee archivos que coinciden, así que no gasta contexto el resto del tiempo.</p>
   <div data-stack="dotnet">
   <div class="code"><div class="fname"><span>.claude/rules/endpoints.md</span><button class="copy" type="button">Copiar</button></div><pre><code>---
 paths:
@@ -207,6 +207,7 @@ paths:
       <li><code>Bash(git log *)</code>: el <code>*</code> va después del subcomando. <code>Bash(git *)</code> permitiría todo git, incluido <code>push</code>.</li>
       <li><code>Read</code>/<code>Edit</code> usan patrones estilo gitignore: <code>./ruta</code> relativa al directorio actual, <code>/ruta</code> relativa al archivo de settings, <code>~/ruta</code> desde tu home, <code>//ruta</code> absoluta.</li>
       <li><code>WebFetch(domain:learn.microsoft.com)</code>, <code>mcp__github__create_issue</code>, <code>Agent(nombre)</code>.</li>
+      <li><strong>En Windows</strong>, Claude corre los comandos con la herramienta <strong>PowerShell</strong> (activa por defecto con cuentas de claude.ai) y las reglas <code>Bash(...)</code> no la cubren. Repite las importantes con la misma forma: <code>PowerShell(dotnet test *)</code>, <code>PowerShell(dotnet nuget push *)</code>. Las reglas <code>Read</code> y <code>Edit</code> valen igual.</li>
       <li>Las reglas de Bash que intentan restringir argumentos son frágiles (<code>curl</code> con distintas opciones). Para garantías reales usa hooks o el sandbox.</li>
       <li><code>/permissions</code> las muestra y edita; <code>/fewer-permission-prompts</code> analiza tus sesiones y sugiere un allowlist.</li>
     </ul>
@@ -233,7 +234,7 @@ paths:
 
   <h3>Aviso cuando Claude termina o necesita permiso</h3>
   <div class="prose">
-    <p>El problema: le das una tarea a Claude, cambias de ventana y no te enteras de que lleva cinco minutos esperando tu aprobación. La solución son dos hooks:</p>
+    <p>El problema: le das una tarea a Claude, cambias de ventana y no te enteras de que lleva cinco minutos esperando tu aprobación. Claude Code ya manda un aviso de escritorio, pero solo en Ghostty, Kitty y iTerm2. En otras terminales (Windows Terminal, la de VS Code) hay dos opciones: <code>"preferredNotifChannel": "terminal_bell"</code> para que suene la campana, o dos hooks con el sonido o aviso que prefieras:</p>
     <ul>
       <li><code>Notification</code> se dispara cuando Claude necesita tu atención: un permiso pendiente o una espera larga.</li>
       <li><code>Stop</code> se dispara cada vez que Claude termina de responder.</li>

@@ -16,7 +16,7 @@
     </tbody>
   </table></div>
 
-  <div class="note"><strong>Skills y subagentes</strong> son las piezas que más se confunden, así que tienen su propio capítulo: <a href="/es/blog/de-copilot-a-claude/skills-y-subagentes">Skills y subagentes</a>.</div>
+  <div class="note"><strong>Skills y subagentes</strong> son las piezas que más se confunden, así que tienen su propio capítulo: <a href="/es/blog/claude-desde-0/skills-y-subagentes">Skills y subagentes</a>.</div>
 
   <h2>¿Qué pieza necesito? Preguntas rápidas</h2>
   <ul class="kv">
@@ -45,7 +45,7 @@
     ]
   }
 }</code></pre></div>
-  <p class="prose">Con esto, Claude no puede leer los <code>.env</code> ni publicar el paquete aunque se lo pidan, y cada archivo que edita se formatea solo. Las reglas <code>deny</code> se ven a fondo en la <a href="/es/blog/de-copilot-a-claude/sesion-4-conocimiento#settings-json-capas-y-permisos">sesión 4</a>, y los hooks, con eventos y más ejemplos, en la <a href="/es/blog/de-copilot-a-claude/sesion-5-hooks-skills-subagentes#hooks">sesión 5</a>.</p>
+  <p class="prose">Con esto, Claude no puede leer los <code>.env</code> ni publicar el paquete aunque se lo pidan, y cada archivo que edita se formatea solo. Las reglas <code>deny</code> se ven a fondo en la <a href="/es/blog/claude-desde-0/sesion-4-conocimiento#settings-json-capas-y-permisos">sesión 4</a>, y los hooks, con eventos y más ejemplos, en la <a href="/es/blog/claude-desde-0/sesion-5-hooks-skills-subagentes#hooks">sesión 5</a>.</p>
 
   <h2 id="tokens">Tokens: la unidad con la que se mide todo</h2>
   <div class="prose">
@@ -60,21 +60,22 @@ Claude refactored the refunds service
 [Claude][ refactor][ed][ the][ refunds][ service]</code></pre></div>
   <p class="prose">La división es ilustrativa: Anthropic no publica cómo corta su tokenizador. Lo que sí se mantiene: las palabras comunes en inglés suelen ser un solo token, las largas o en otros idiomas se parten en pedazos, y el espacio va pegado a la palabra siguiente. Para un conteo exacto, usa <code>count_tokens</code>.</p>
   <div class="prose">
-    <p>Lo que más sorprende al principio: el modelo no recuerda entre mensajes. Cada vez que escribes, Claude Code le vuelve a enviar todo el contexto acumulado: instrucciones, CLAUDE.md, archivos leídos e historial. Por eso una sesión larga con temas mezclados se vuelve más lenta y más cara en cada turno.</p>
+    <p>Lo que más sorprende al principio: el modelo no recuerda entre mensajes. Cada vez que escribes, Claude Code le vuelve a enviar todo el contexto acumulado: instrucciones, CLAUDE.md, archivos leídos e historial. Por eso una sesión larga con temas mezclados se vuelve más lenta y más cara en cada turno. La caché abarata lo que se repite, pero igual ocupa espacio y se paga.</p>
   </div>
-  <div class="note"><strong>Qué se carga en cada turno, cómo medirlo y cómo ahorrar tokens sin perder calidad</strong> está en su propio capítulo: <a href="/es/blog/de-copilot-a-claude/consumo-y-eficiencia">Consumo y eficiencia</a>.</div>
+  <div class="note"><strong>Qué se carga en cada turno, cómo medirlo y cómo ahorrar tokens sin perder calidad</strong> está en su propio capítulo: <a href="/es/blog/claude-desde-0/consumo-y-eficiencia">Consumo y eficiencia</a>.</div>
 
   <h2 id="modelos">Modelos disponibles y su consumo</h2>
-  <p class="prose">Cuánto consume cada modelo por token, tomando Haiku como base (octubre de 2026):</p>
+  <p class="prose">Cuánto consume cada modelo por token, tomando Haiku 5.5 como base (octubre de 2026):</p>
   <div class="tbl"><table>
     <thead><tr><th>Modelo</th><th>Consumo por token</th><th>Esfuerzo por defecto</th><th>Para qué</th></tr></thead>
     <tbody>
-      <tr><td data-label="Modelo"><strong>Haiku 4.5</strong></td><td data-label="Consumo por token"><strong>1×</strong></td><td data-label="Esfuerzo por defecto">No usa niveles</td><td data-label="Para qué">Tareas cortas y subagentes de búsqueda.</td></tr>
-      <tr><td data-label="Modelo"><strong>Sonnet 5.5</strong></td><td data-label="Consumo por token"><strong>2×</strong></td><td data-label="Esfuerzo por defecto"><code>medium</code></td><td data-label="Para qué">El día a día: features, tests, explicar código.</td></tr>
-      <tr><td data-label="Modelo"><strong>Opus 5.5</strong></td><td data-label="Consumo por token"><strong>4×</strong></td><td data-label="Esfuerzo por defecto"><code>medium</code></td><td data-label="Para qué">Trabajo complejo. Modelo por defecto de Claude Code.</td></tr>
-      <tr><td data-label="Modelo"><strong>Fable 5.1</strong></td><td data-label="Consumo por token"><strong>10×</strong></td><td data-label="Esfuerzo por defecto"><code>high</code></td><td data-label="Para qué">Lo más difícil: arquitectura, bugs complejos.</td></tr>
+      <tr><td data-label="Modelo"><strong>Haiku 5.5</strong></td><td data-label="Consumo por token"><strong>1×</strong></td><td data-label="Esfuerzo por defecto"><code>medium</code></td><td data-label="Para qué">Tareas cortas, de mucho volumen y subagentes de búsqueda.</td></tr>
+      <tr><td data-label="Modelo"><strong>Sonnet 5.5</strong></td><td data-label="Consumo por token"><strong>20×</strong></td><td data-label="Esfuerzo por defecto"><code>medium</code></td><td data-label="Para qué">El día a día: features, tests, explicar código.</td></tr>
+      <tr><td data-label="Modelo"><strong>Opus 5.5</strong></td><td data-label="Consumo por token"><strong>40×</strong></td><td data-label="Esfuerzo por defecto"><code>medium</code></td><td data-label="Para qué">Trabajo complejo. Modelo por defecto de Claude Code.</td></tr>
+      <tr><td data-label="Modelo"><strong>Fable 5.1</strong></td><td data-label="Consumo por token"><strong>100×</strong></td><td data-label="Esfuerzo por defecto"><code>high</code></td><td data-label="Para qué">Lo más difícil: arquitectura, bugs complejos.</td></tr>
     </tbody>
   </table></div>
+  <p class="prose"><strong>Ojo con Haiku 5.5 en sesiones largas:</strong> si el prompt pasa de 100.000 tokens, cuesta 5 veces más. En Claude Code eso llega rápido, porque cada turno envía todo el contexto; ahí Haiku 5.5 queda en 5× y Sonnet solo 4 veces por encima. En Bedrock y Vertex, el alias <code>haiku</code> todavía apunta a Haiku 4.5, que cuesta 10×.</p>
   <p class="prose">El esfuerzo multiplica encima de esto: más esfuerzo es más razonamiento, y el razonamiento se cobra como salida, que cuesta 5 veces la entrada. No hay un multiplicador fijo por nivel; mídelo con <code>/usage</code>. Precios en la <a href="https://platform.claude.com/docs/en/about-claude/pricing">página oficial</a>.</p>
 
   <h2 id="modelo-esfuerzo">Modelo y esfuerzo: ejemplos concretos</h2>
@@ -85,14 +86,14 @@ Claude refactored the refunds service
   <div class="tbl"><table>
     <thead><tr><th>Situación</th><th>Modelo</th><th>Esfuerzo</th><th>Por qué</th></tr></thead>
     <tbody>
-      <tr><td data-label="Situación">"¿Cómo se hace un <span data-stack="dotnet"><code>GroupBy</code> en LINQ</span><span data-stack="node">tipo condicional en TS</span>?", renombrar, formatear</td><td data-label="Modelo">Sonnet 5.5 o Haiku 4.5</td><td data-label="Esfuerzo"><code>low</code> (Haiku no usa niveles)</td><td data-label="Por qué">Respuesta conocida; pensar más no mejora nada.</td></tr>
+      <tr><td data-label="Situación">"¿Cómo se hace un <span data-stack="dotnet"><code>GroupBy</code> en LINQ</span><span data-stack="node">tipo condicional en TS</span>?", renombrar, formatear</td><td data-label="Modelo">Sonnet 5.5 o Haiku 5.5</td><td data-label="Esfuerzo"><code>low</code></td><td data-label="Por qué">Respuesta conocida; pensar más no mejora nada.</td></tr>
       <tr><td data-label="Situación">Generar el CHANGELOG o la descripción del PR desde el diff</td><td data-label="Modelo">Sonnet 5.5</td><td data-label="Esfuerzo"><code>low</code>–<code>medium</code></td><td data-label="Por qué">Resumir es fácil; importa la velocidad.</td></tr>
       <tr><td data-label="Situación">Tests unitarios para una clase que ya existe</td><td data-label="Modelo">Sonnet 5.5</td><td data-label="Esfuerzo"><code>medium</code></td><td data-label="Por qué">Patrón claro, bien acotado.</td></tr>
       <tr><td data-label="Situación">Feature típica de sprint: endpoint + validación + tests</td><td data-label="Modelo">Sonnet 5.5 u Opus 5.5</td><td data-label="Esfuerzo"><code>high</code></td><td data-label="Por qué">Varios archivos y decisiones pequeñas.</td></tr>
       <tr><td data-label="Situación">Bug intermitente, condición de carrera, deadlock, fuga de memoria</td><td data-label="Modelo">Opus 5.5 o Fable 5.1</td><td data-label="Esfuerzo"><code>xhigh</code></td><td data-label="Por qué">Hay que formular y descartar hipótesis.</td></tr>
       <tr><td data-label="Situación">Diseño de arquitectura o migración (<span data-stack="dotnet">.NET Framework → .NET 8</span><span data-stack="node">Express → NestJS, CJS → ESM</span>)</td><td data-label="Modelo">Fable 5.1</td><td data-label="Esfuerzo"><code>xhigh</code>–<code>max</code> en modo Plan</td><td data-label="Por qué">Trade-offs de largo plazo; un error cuesta semanas.</td></tr>
       <tr><td data-label="Situación">Refactor grande pero repetitivo (100 archivos, mismo patrón)</td><td data-label="Modelo"><code>opusplan</code></td><td data-label="Esfuerzo"><code>high</code></td><td data-label="Por qué">Opus diseña el plan, Sonnet lo ejecuta más barato.</td></tr>
-      <tr><td data-label="Situación">Subagente que busca archivos o lee logs</td><td data-label="Modelo">Haiku 4.5</td><td data-label="Esfuerzo">No aplica</td><td data-label="Por qué">Trabajo mecánico; lo usas muchas veces.</td></tr>
+      <tr><td data-label="Situación">Subagente que busca archivos o lee logs</td><td data-label="Modelo">Haiku 5.5</td><td data-label="Esfuerzo"><code>low</code></td><td data-label="Por qué">Trabajo mecánico; lo usas muchas veces.</td></tr>
       <tr><td data-label="Situación">Revisión de seguridad antes del PR</td><td data-label="Modelo">Opus 5.5</td><td data-label="Esfuerzo"><code>high</code></td><td data-label="Por qué">Un falso negativo cuesta caro.</td></tr>
       <tr><td data-label="Situación">En claude.ai: resumir un documento o redactar un correo</td><td data-label="Modelo">Sonnet 5.5</td><td data-label="Esfuerzo">Low o Medium</td><td data-label="Por qué">Tarea de lenguaje, no de razonamiento.</td></tr>
       <tr><td data-label="Situación">En claude.ai: comparar 3 proveedores de mensajería con fuentes</td><td data-label="Modelo">Opus 5.5 + Research</td><td data-label="Esfuerzo">High</td><td data-label="Por qué">Muchas fuentes y síntesis.</td></tr>

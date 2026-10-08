@@ -6,7 +6,7 @@
   <p class="course"><strong>Companion tutorial:</strong> <a href="https://academy.claude.com/tutorials/using-claude-design-for-presentations-and-slide-decks">Using Claude Design for presentations (Anthropic Academy)</a></p>
 
   <div class="prose">
-    <p>Claude Design (launched in April 2026 by Anthropic Labs) produces designs, interactive prototypes, wireframes, landing pages, one-pagers and visual material. It opens at <code>claude.ai/design</code>, from the desktop app's sidebar, inside any chat (<em>Output → Design</em>) or from Claude Code with <code>/design</code>.</p>
+    <p>Claude Design (launched in April 2026 by Anthropic Labs) produces designs, interactive prototypes, wireframes, landing pages, one-pagers and visual material. It opens at <code>claude.ai/design</code>, inside any chat (<em>Output → Design</em>), from the Artifacts tab with a Design template, or from Claude Code with <code>/design</code>.</p>
     <p>For developers, the value isn't the drawing but the <strong>design ↔ code loop</strong>: the design system comes from the real components and the design goes back to code with all its information.</p>
   </div>
 
@@ -14,20 +14,21 @@
   <div class="prose"><ul>
     <li>Claude builds a design system from your GitHub repository, design files or uploads: tokens (color, typography, spacing, radii), components and guidelines.</li>
     <li>New designs are checked against your components, so no one invents buttons that don't exist.</li>
-    <li>With the <strong>Claude Design Admin</strong> role, someone approves the official design systems and locks them against edits.</li>
+    <li>On Enterprise, the admin can reserve publishing design systems, choosing the default and deleting them for specific people.</li>
     <li>From Claude Code, <code>/design-sync</code> converts a React design system and uploads it to Claude Design (<code>/design-login</code> authorizes access).</li>
   </ul></div>
   <div class="note"><strong>.NET teams:</strong> <code>/design-sync</code> works with React design systems. If your front end is Blazor or Razor, build the design system from design files or screenshots of the component library, and document the tokens in the repository.</div>
 
   <h2>Handoff to Claude Code</h2>
   <div class="flow"><span>Requirement</span><b>→</b><span>Prototype in Design</span><b>→</b><span>Review and comments</span><b>→</b><span>Handoff package</span><b>→</b><span>Claude Code implements</span></div>
-  <p class="prose">Claude builds a handoff package so Claude Code continues from the real design work "instead of starting from a screenshot". The flow also works the other way: start in code and bring the components into Design.</p>
+  <p class="prose">From <em>Export → Handoff to Claude Code</em>, the design goes to your local agent or to Claude Code on the web, so it continues from the real design work "instead of starting from a screenshot". The flow also works the other way: start in code and bring the components into Design.</p>
 
   <h2>Sharing and exporting</h2>
   <div class="prose"><ul>
-    <li>Private by default. Links with view, comment (the default within the organization) or edit permission. Several people can work with the agent on the same design.</li>
-    <li>Export to .zip, PDF, PPTX or standalone HTML; send to Canva; and integrate with Vercel, Netlify and others.</li>
+    <li>Private by default. When you share, you choose who can open it and whether they can view, comment or edit. Several people can work with the agent on the same design.</li>
+    <li>Export to .zip, PDF, PPTX, standalone HTML or Google Slides; send to Canva; and integrate with Vercel, Netlify, Replit and others.</li>
     <li>Usage counts against the plan's normal limits (shared with Claude Code).</li>
+    <li>Available on Pro, Max, Team and Enterprise. On Enterprise it comes <strong>turned off</strong> until an Owner enables it (<em>Organization settings → Artifacts</em>); on the other plans it's on.</li>
   </ul></div>
 
   <div class="practice">

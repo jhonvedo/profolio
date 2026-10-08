@@ -11,10 +11,10 @@
 <span class="c"># alternativa</span>
 winget install Anthropic.ClaudeCode</code></pre></div>
   <div class="prose">
-    <p>El instalador nativo se actualiza solo. También existen Homebrew (<code>brew install --cask claude-code</code>) y npm (<code>npm install -g @anthropic-ai/claude-code</code>, requiere Node 22+).</p>
+    <p>El instalador nativo se actualiza solo. También existen Homebrew (<code>brew install --cask claude-code</code>) y npm (<code>npm install -g @anthropic-ai/claude-code</code>, requiere Node 22+). Las instalaciones con winget y Homebrew no se actualizan solas: <code>winget upgrade Anthropic.ClaudeCode</code> o <code>brew upgrade claude-code</code>.</p>
     <p>Luego, en la carpeta del repo: <code>claude</code> → inicia sesión con la cuenta de claude.ai de la organización. Para el IDE instala la extensión de <strong>VS Code</strong> (también funciona en Cursor) o el plugin de <strong>JetBrains</strong> (Rider para .NET, WebStorm para Node). Ambos muestran los diffs en el visor del IDE y comparten la selección actual con Claude.</p>
   </div>
-  <div class="note warn"><strong>Windows y .NET:</strong> Claude Code funciona nativo en Windows. Si tu tooling vive en WSL, instala dentro de WSL y abre el repo desde ahí. Para que los hooks de ejemplo de este curso funcionen en Windows nativo necesitas Git Bash (que Claude Code usa para los hooks) y <code>jq</code>.</div>
+  <div class="note warn"><strong>Windows y .NET:</strong> Claude Code funciona nativo en Windows y ahí corre los comandos en <strong>PowerShell</strong> por defecto; cómo escribir los permisos para eso está en la sesión 4. Los hooks de ejemplo de este curso son scripts de bash: en Windows nativo necesitas Git Bash (Claude Code lo usa para correr los hooks) y <code>jq</code>. Si tu tooling vive en WSL, instala dentro de WSL y abre el repo desde ahí.</div>
 
   <h2>El ciclo de trabajo</h2>
   <div class="grid2">
@@ -132,8 +132,8 @@ claude --permission-mode plan
   <h3>Antes de empezar</h3>
   <ul class="kv">
 <li><strong><code>/init</code></strong><span>Analiza el repo y genera un <code>CLAUDE.md</code> inicial. Se usa una vez por repo (sesión 4).</span></li>
-<li><strong><code>/model</code></strong><span>Abre el selector de modelo; con ← → ajustas el esfuerzo. Directo: <code>/model sonnet</code>.</span></li>
-<li><strong><code>/effort</code></strong><span>Cambia solo el esfuerzo: <code>/effort low</code> para algo mecánico, <code>/effort xhigh</code> para un bug difícil.</span></li>
+<li><strong><code>/model</code></strong><span>Abre el selector de modelo; con ← → ajustas el esfuerzo. Directo: <code>/model sonnet</code>. Ojo: la elección queda como predeterminada para las próximas sesiones; en el selector, <code>s</code> la aplica solo a esta.</span></li>
+<li><strong><code>/effort</code></strong><span>Cambia solo el esfuerzo: <code>/effort low</code> para algo mecánico, <code>/effort xhigh</code> para un bug difícil. También queda como predeterminado.</span></li>
 <li><strong><code>/plan</code></strong><span>Entra a modo Plan con la tarea: <code>/plan agrega paginación al endpoint de reembolsos</code>.</span></li>
 <li><strong><code>/add-dir</code></strong><span>Da acceso a otra carpeta: <code>/add-dir ../shared-contracts</code> si la tarea toca otro repo.</span></li>
 </ul>
@@ -145,7 +145,7 @@ claude --permission-mode plan
 <li><strong><code>/compact</code></strong><span>Resume la conversación para liberar espacio y seguir con la misma tarea. Puedes guiarlo: <code>/compact conserva las decisiones sobre la API y los tests pendientes</code>.</span></li>
 <li><strong><code>/clear</code></strong><span>Borra la conversación y empieza de cero. Úsalo entre tareas no relacionadas.</span></li>
 <li><strong><code>/btw</code></strong><span>Pregunta lateral que no queda en el historial: <code>/btw ¿qué versión de EF Core usa este repo?</code></span></li>
-<li><strong><code>/rewind</code></strong><span>Vuelve código y conversación a un punto anterior. Atajo: Esc Esc. Úsalo cuando Claude tomó un mal camino.</span></li>
+<li><strong><code>/rewind</code></strong><span>Vuelve código y conversación a un punto anterior. Atajo: Esc Esc. Úsalo cuando Claude tomó un mal camino. Deshace lo que Claude editó con sus herramientas de archivo, no lo que hizo con comandos de shell.</span></li>
 <li><strong><code>/branch</code></strong><span>Crea una rama de la conversación para probar otra idea sin perder la actual.</span></li>
 <li><strong><code>/permissions</code></strong><span>Ver y editar las reglas allow / ask / deny sin abrir el archivo.</span></li>
 </ul>
@@ -212,7 +212,7 @@ claude --permission-mode plan
     <div class="card"><h3>Escritorio</h3><p>App de Claude con interfaz gráfica, local o nube. <code>/desktop</code> continúa ahí la sesión actual.</p></div>
   </div>
 
-  <div class="note"><strong>Para el día a día</strong> (nombrar y retomar sesiones, trabajo en paralelo, plugins, costos) ver <a href="/es/blog/de-copilot-a-claude/dia-a-dia">Administrar Claude en el día a día</a>.</div>
+  <div class="note"><strong>Para el día a día</strong> (nombrar y retomar sesiones, trabajo en paralelo, plugins, costos) ver <a href="/es/blog/claude-desde-0/dia-a-dia">Administrar Claude en el día a día</a>.</div>
 
   <div class="practice">
 <h2 class="practice-h">Práctica</h2>

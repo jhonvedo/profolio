@@ -23,7 +23,7 @@
   <ul class="kv">
 <li><strong><code>/context</code></strong><span>What's taking up the context right now and how much is left: memory, MCP, skills, history.</span></li>
 <li><strong><code>/usage</code></strong><span>The session's tokens and cost. On Pro, Max, Team and Enterprise it also shows how much of your recent usage came from each skill, subagent, plugin and MCP server, and flags anything (long context, cache misses) above 10%.</span></li>
-<li><strong>Status line</strong><span>The context % always in view (<a href="/en/blog/from-copilot-to-claude/session-4-knowledge">session 4</a>).</span></li>
+<li><strong>Status line</strong><span>The context % always in view (<a href="/en/blog/claude-from-scratch/session-4-knowledge">session 4</a>).</span></li>
 <li><strong><code>count_tokens</code></strong><span>API endpoint that counts a text before you send it.</span></li>
 </ul>
   <div class="note"><strong>Measure before optimizing.</strong> A week of watching <code>/usage</code> tells you more than any general rule: it shows whether the weight comes from an MCP server, a skill, subagents, or sessions that never get cleared.</div>
@@ -77,7 +77,7 @@
       <tr><td data-label="Don't do this">«Read logs/app.log and tell me why the payment fails» (10,000 lines).</td><td data-label="Do this">Filter first: «Run <code>grep -n ERROR logs/app.log | tail -50</code> and explain what's failing». From tens of thousands of tokens to hundreds.</td></tr>
       <tr><td data-label="Don't do this">Run the whole suite and let the full output into the context.</td><td data-label="Do this">Ask for just the affected tests («run <code>dotnet test --filter RefundServiceTests</code>») or use a hook that only lets failures through (example below).</td></tr>
       <tr><td data-label="Don't do this">Let Claude look for a method with grep and open file after file until it finds the right one.</td><td data-label="Do this">Install the <em>code intelligence</em> plugin for your language (explained below). Claude asks the language where something is defined and used, just like your IDE with F12, and gets the exact path and line in a single query.</td></tr>
-      <tr><td data-label="Don't do this">Ask it to investigate how something works inside your main session.</td><td data-label="Do this">«Use the Explore subagent to find out how a refund is calculated; return only paths and one line per file.» What it reads stays in the subagent (<a href="/en/blog/from-copilot-to-claude/skills-and-subagents#context-fork">see Skills and subagents</a>).</td></tr>
+      <tr><td data-label="Don't do this">Ask it to investigate how something works inside your main session.</td><td data-label="Do this">«Use the Explore subagent to find out how a refund is calculated; return only paths and one line per file.» What it reads stays in the subagent (<a href="/en/blog/claude-from-scratch/skills-and-subagents#context-fork">see Skills and subagents</a>).</td></tr>
     </tbody>
   </table></div>
   <div class="code"><div class="fname"><span>.claude/hooks/failures-only.sh · PreToolUse with matcher "Bash"</span><button class="copy" type="button">Copy</button></div><pre><code>#!/usr/bin/env bash
@@ -92,7 +92,7 @@ if [[ "$CMD" =~ ^(dotnet\ test|pnpm\ (-r\ |--filter\ [^\ ]+\ )?test) ]]; then
 else
   echo "{}"
 fi</code></pre></div>
-  <p class="prose">The hook rewrites the command before it runs: Claude sees up to 100 lines around the failures instead of the whole output. Register it in <code>.claude/settings.json</code> under <code>PreToolUse</code> with <code>"matcher": "Bash"</code>, like the hooks in <a href="/en/blog/from-copilot-to-claude/session-5-hooks-skills-subagents">session 5</a>.</p>
+  <p class="prose">The hook rewrites the command before it runs: Claude sees up to 100 lines around the failures instead of the whole output. Register it in <code>.claude/settings.json</code> under <code>PreToolUse</code> with <code>"matcher": "Bash"</code>, like the hooks in <a href="/en/blog/claude-from-scratch/session-5-hooks-skills-subagents">session 5</a>. On Windows, when Claude runs the tests with the PowerShell tool, this hook doesn't fire: it's written for bash.</p>
 
   <h3>What an LSP plugin is and why it saves tokens</h3>
   <div class="prose">
@@ -114,7 +114,7 @@ npm i -g typescript-language-server typescript         <span class="c"># Node / 
   <div class="tbl"><table>
     <thead><tr><th>Don't do this</th><th>Do this</th></tr></thead>
     <tbody>
-      <tr><td data-label="Don't do this">Opus or Fable on <code>max</code> to rename or format.</td><td data-label="Do this">Step down for that task: <code>/model</code> → pick Sonnet → use ← → to reach <code>low</code> → press <code>s</code> (this session only). Save the big model and <code>xhigh</code> for the hard stuff (<a href="/en/blog/from-copilot-to-claude/concepts#modelos">see Concepts</a>).</td></tr>
+      <tr><td data-label="Don't do this">Opus or Fable on <code>max</code> to rename or format.</td><td data-label="Do this">Step down for that task: <code>/model</code> → pick Sonnet → use ← → to reach <code>low</code> → press <code>s</code> (this session only). Save the big model and <code>xhigh</code> for the hard stuff (<a href="/en/blog/claude-from-scratch/concepts#modelos">see Concepts</a>).</td></tr>
       <tr><td data-label="Don't do this">Search subagents on the session's model.</td><td data-label="Do this">Give them a small model in their frontmatter: <code>model: haiku</code>. Their requests also count against your plan.</td></tr>
       <tr><td data-label="Don't do this">Switch models several times during the same task.</td><td data-label="Do this">Pick the model when you start (<code>claude --model sonnet</code>) and change it between tasks, not mid-task: with a different model the cache doesn't apply and the whole context is processed again.</td></tr>
     </tbody>
